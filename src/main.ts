@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './route'
-
-createApp(App).use(router).mount('#app')
+import VueCookies  from 'vue-cookies'
+createApp(App).use(VueCookies).use(router).mount('#app')

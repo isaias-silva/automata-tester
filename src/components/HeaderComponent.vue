@@ -1,14 +1,14 @@
 <template>
-    <div class="header">
+    <div :class="headerFixed ? 'header fixed' : 'header'">
         <div class="logo">
             <img src="logo.png" alt="logo">
             <h1>Automata tester</h1>
             <span>{{ message }}</span>
-            <div v-bind:class="noturne?'mode reverse':'mode'">
-                <input type="checkbox" id="check" v-model="noturne">
-                <label for="check"></label>
-                <img v-bind:src="noturne?require('@/assets/moon.png'):require(`@/assets/sun.png`)" alt="">
-            </div>
+            <button class="mode" @click="toggleDarkMode">
+
+                <span class="moon"></span>
+                <span class="sun"></span>
+            </button>
         </div>
 
         <div class="menu">
@@ -52,26 +52,43 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'HeaderComponent',
-    data(): { message: string, noturne: boolean } {
+    data(): {
+        message: string,
+        noturne: boolean,
+        headerFixed: boolean
+    } {
         return {
-            noturne: false,
-            message: 'the tester automata'
+            noturne: this.$cookies.get('noturne')?true:false,
+            message: 'the tester automata',
+            headerFixed: false
         }
-    } ,
+    },
     methods: {
         setMessage(value: string) {
             this.message = value
-        }
-    },
-    watch: {
-        noturne(newVal) {
-         
-            if (newVal) {
-            this.noturne=true
-            } else {
-          this.noturne=false
+        },
+        handleScroll() {
+            const header = document.querySelector('.header');
+
+            if (header && header.scrollHeight) {
+                const sticky = header.scrollHeight;
+                this.headerFixed = window.scrollY > sticky + header.clientHeight;
             }
+        },
+        toggleDarkMode() {
+            this.noturne = !this.noturne;
+            if(this.noturne==true){
+                document.body.classList.add('dark');
+                this.$cookies.set('noturne', this.noturne,'15d');
+            }else{
+                document.body.classList.remove('dark');
+                this.$cookies.remove('noturne')
+            }
+
+           
         }
+    }, mounted() {
+        window.addEventListener('scroll', this.handleScroll);
     }
 })
 </script>
@@ -83,7 +100,14 @@ export default defineComponent({
     width: 100%;
     grid-template-areas: "logo logo opcoes";
     grid-template-columns: 70% 10%;
-    border-bottom: 2px solid var(--component-two-color)
+    border-bottom: 2px solid var(--component-two-color);
+    transition: 1s linear;
+
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
 }
 
 .logo {
@@ -119,48 +143,53 @@ export default defineComponent({
 }
 
 .mode {
-    display: flex;
-    width: 100px;
-    height: 50px;
-    border-radius: 40px;
+    background: transparent;
     border: none;
-    background-color: var(--component-two-color);
-margin-top: 25px;
-    transition: linear 0.4s;
-}
-
-.mode img,
-.mode input {
-    height: 50px;
-    width: 50px;
-
-}
-
-.mode input {
+    cursor: pointer;
     position: relative;
-    filter: opacity(0);
+    width: 60px;
+    height: 60px;
 }
 
-.mode label {
-    content: "";
-    display: block;
+.mode .moon,
+.mode .sun {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 50px;
     height: 50px;
-    border-radius: 100%;
-    background-color: var(--font-color);
-    transition: linear 0.2s;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
 }
+
+.mode .moon {
+    background-color: #000;
+    transition-delay: 0.1s;
+    transform-origin: left;
+}
+
+.mode .sun {
+    background-color: #ffc107;
+    transition-delay: 0s;
+    transform-origin: right;
+}
+
+
+
+.dark .mode .sun {
+    transform: scale(2);
+    transform: rotate(45deg);
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+
 
 .mode label:hover {
     cursor: pointer;
     filter: invert(40%)
 }
 
-.mode button:hover {
-    cursor: pointer;
-    background-color: var(--component-color);
-}
 
 .menu {
     grid-area: opcoes;
