@@ -4,18 +4,18 @@
     <router-link to="users" class="itens">
       <h4>users</h4>
       <img :src="require('@/assets/icons/users.png')" alt="">
-     
-      
-      </router-link>
 
-    
+
+    </router-link>
+
+
     <router-link to="users" class="itens">
       <h4>flows</h4>
       <img :src="require('@/assets/icons/flow.png')" alt="">
 
-      
-      </router-link>
- 
+
+    </router-link>
+
 
     <router-link to="attendants" class="itens">
       <h4>attendants</h4>
@@ -24,14 +24,16 @@
 
 
     </router-link>
+<admin-card/>
+    
 
-  
-  </div>
-</template>
+</div></template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import AdminCard from '@/components/adminCard.vue';
 export default defineComponent({
-  name: 'HomePage'
+    name: "HomePage",
+    components: { AdminCard }
 })
 </script>
 <style scoped>
@@ -39,7 +41,7 @@ export default defineComponent({
   widows: 100%;
   display: flex;
   justify-content: space-between;
- 
+
   box-sizing: border-box;
   padding: 5px;
   flex-wrap: wrap;
@@ -57,23 +59,31 @@ export default defineComponent({
   box-shadow: 8px 8px #0000002e;
   margin-bottom: 30px;
   transition: linear 0.5s;
-overflow: hidden;
+  overflow: hidden;
 }
-.itens h4,p,a,span{
+
+.itens h4,
+p,
+a,
+span {
   text-decoration: none;
-  color:var(--font-color)
+  color: var(--font-color)
 }
-.itens h4{
+
+.itens h4 {
   font-size: 24px;
   z-index: 999;
 }
-.itens img{
+
+.itens img {
   transition: 0.5s linear;
 }
-.itens:hover img{
+
+.itens:hover img {
   transform: scale(1.2);
   opacity: 0.4;
 }
+
 .itens img {
   width: 60%;
 

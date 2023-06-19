@@ -44,7 +44,7 @@ export default defineComponent({
   /* Verde mais claro */
   --font-color: #404040;
   /* Cinza escuro */
-  --link-color: #ffffff;
+  --link-color: #007b2f;
   /* Verde principal */
 }
 

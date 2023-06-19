@@ -101,7 +101,7 @@ export default defineComponent({
     grid-template-areas: "logo logo opcoes";
     grid-template-columns: 70% 10%;
     border-bottom: 2px solid var(--component-two-color);
-    transition: 1s linear;
+    transition: 0.2s linear;
 
 }
 
@@ -206,6 +206,7 @@ export default defineComponent({
     grid-area: menu;
     position: absolute;
     right: 0;
+    transition: 0.5s linear;
 }
 
 .menu label span {
@@ -218,6 +219,7 @@ export default defineComponent({
     transition: 0.1s linear;
     border-radius: 10px;
     right: 10px;
+    
 }
 
 .menu label:hover span {
@@ -257,6 +259,7 @@ export default defineComponent({
     border-radius: 5px;
     display: none;
     z-index: 1000 !important;
+    transition: linear 0.2s;
 }
 
 .menu ul li {
