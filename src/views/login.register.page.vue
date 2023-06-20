@@ -69,7 +69,11 @@ export default defineComponent({
             } else {
                 if(this.mode=='login' && this.email && this.password){
                    const info= await loginRequest({email:this.email,password:this.password})
-               console.log(info)
+                   const {data, status}=info
+                   if(status==201){
+                    this.$cookies.set('token',data.token)
+                    this.$router.push('/')
+                }
                 }
             }
 
@@ -135,6 +139,11 @@ export default defineComponent({
 
         },toggleLoginResister(){
             this.mode=this.mode=='login'?'register':'login'
+        },
+    
+    },mounted(){
+        if(this.$cookies.get('token')){
+            this.$router.push('/')
         }
     }
 

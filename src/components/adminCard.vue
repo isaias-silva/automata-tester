@@ -1,15 +1,14 @@
 <template>
     <div class="usercard">
-        <div class="profile">
-            <img :src="profile || require('@/assets/icons/load.gif')" alt="">
-
-        </div>
+        <label for="profile" class="profile">
+            <img :src="selectedImage || profile || require('@/assets/icons/load.gif')" alt="">
+            <input type="file" name="picture" id="profile" @change="handleImageChange" />
+        </label>
         <div class="blockinfo">
             <h3 :class="name ? null : 'load'">{{ name }}</h3>
             <ul>
                 <li :class="email ? null : 'load'">{{ email }}</li>
-                <li :class="adm ? null : 'load'">{{ adm }}</li>
-                <li :class="plan ? null : 'load'">{{ plan }}</li>
+
             </ul>
             <p>Este site é exclusivo para uso de administradores autorizados. Se você não possui privilégios de
                 administração, pedimos gentilmente que respeite essa restrição e evite tentar acessar áreas restritas.</p>
@@ -19,44 +18,83 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import getAdm from '@/services/get.adm'
+import uploadProfile from '@/services/upload.profile'
 
 
 export default defineComponent({
     name: 'adminCard',
     data(): {
-        name?: string,
-        email?: string,
+        name: string,
+        email: string,
         adm?: boolean,
-        plan?: string,
-        profile?: string
+        profile: string,
+        selectedImage?: string,
+        profileFile?: File
 
     } {
         return {
-
+            name: '',
+            email: '',
+            adm: undefined,
+            selectedImage: undefined,
+            profile: '',
+            profileFile: undefined
         }
     },
+    methods: {
+
+        handleImageChange(event: Event) {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file) {
+                this.profileFile = file
+                const [name, type] = file.name.split('.')
+                if (!type || (type.toLowerCase() != 'png' && type.toLowerCase() != 'jpg')) {
+                    this.selectedImage = require('@/assets/icons/corrupted.jpg')
+                    return
+                }
+                this.updateProfile()
+                this.selectedImage = URL.createObjectURL(file);
+                console.log(this.selectedImage)
+            }
+        },
+        async updateProfile() {
+            if(!this.profileFile){
+                return
+            }
+            const info = await uploadProfile(this.$cookies.get('token'), this.profileFile)
+          
+            console.log(info)
+        }
+
+    }
+    ,
     async mounted() {
 
-        const info=await getAdm(this.$cookies.get('token'))
-         if(info.status==200){
-           
-            const { name, email, profile, adm} = info.data
-                this.name=name;
-                this.email=email;
-                this.profile=profile;
-                this.adm=adm;
-   
-         }else{
-            this.$router.push('login')        
-         }
-          
-            }
-        
-    
+        const info = await getAdm(this.$cookies.get('token'))
+        if (info.status == 200) {
+
+            const { name, email, profile, adm } = info.data
+            this.name = name;
+            this.email = email;
+            this.profile = profile;
+            this.adm = adm;
+
+
+        } else {
+            this.$router.push('login')
+        }
+
+    }
+
+
 
 })
 </script>
 <style scoped>
+#profile {
+    display: none;
+}
+
 .usercard {
     flex-shrink: 0;
     background-color: var(--modal-color);
@@ -73,15 +111,47 @@ export default defineComponent({
 }
 
 .profile {
+    position: relative;
     border-radius: 100%;
     width: 200px;
     height: 200px;
     border: 4px solid var(--component-two-color);
     grid-area: profile;
+    overflow: hidden;
+    transition: 0.4s linear;
 }
 
+
 .profile img {
+    
     width: 100%;
+    height: 100%;
+    transition: 0.1s linear;
+}
+
+.profile:hover {
+    cursor: pointer;
+}
+
+
+.profile:hover::after {
+    content: " trocar perfil ";
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000a1;
+    color: #fff;
+    backdrop-filter: blur(50%);
+    position: absolute;
+    top: 0;
+    font-weight: bold;
+
+}
+
+.profile:hover img {
+    transform: scale(2);
 }
 
 .blockinfo {

@@ -40,12 +40,16 @@
                 <li>
                     <router-link to="/">documentation</router-link>
                 </li>
+                <li>
+                    <span @click="logout">logout</span>
+                </li>
             </ul>
         </div>
 
     </div>
 </template>
 <script lang="ts">
+
 import { defineComponent } from 'vue'
 
 
@@ -58,7 +62,7 @@ export default defineComponent({
         headerFixed: boolean
     } {
         return {
-            noturne: this.$cookies.get('noturne')?true:false,
+            noturne: this.$cookies.get('noturne') ? true : false,
             message: 'the tester automata',
             headerFixed: false
         }
@@ -77,15 +81,19 @@ export default defineComponent({
         },
         toggleDarkMode() {
             this.noturne = !this.noturne;
-            if(this.noturne==true){
+            if (this.noturne == true) {
                 document.body.classList.add('dark');
-                this.$cookies.set('noturne', this.noturne,'15d');
-            }else{
+                this.$cookies.set('noturne', this.noturne, '15d');
+            } else {
                 document.body.classList.remove('dark');
                 this.$cookies.remove('noturne')
             }
 
-           
+
+        },
+        logout(){
+            this.$cookies.remove('token');
+            this.$router.push('/login')
         }
     }, mounted() {
         window.addEventListener('scroll', this.handleScroll);
@@ -99,7 +107,7 @@ export default defineComponent({
     display: grid;
     width: 100%;
     grid-template-areas: "logo logo opcoes";
-    grid-template-columns: 70% 10%;
+    grid-template-columns: 60% 10%;
     border-bottom: 2px solid var(--component-two-color);
     transition: 0.2s linear;
 
@@ -114,7 +122,8 @@ export default defineComponent({
     grid-area: logo;
     display: grid;
     grid-template-areas: "image title btn" "image legenda btn";
-    grid-template-columns: 10% 15% 35%;
+    grid-template-columns: 10% 20% 30%;
+    
 
 }
 
@@ -139,16 +148,18 @@ export default defineComponent({
 }
 
 .mode {
+    
     grid-area: btn;
 }
 
 .mode {
+   
     background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
 }
 
 .mode .moon,
@@ -219,7 +230,7 @@ export default defineComponent({
     transition: 0.1s linear;
     border-radius: 10px;
     right: 10px;
-    
+
 }
 
 .menu label:hover span {
@@ -263,18 +274,21 @@ export default defineComponent({
 }
 
 .menu ul li {
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid var(--link-color);
     padding-top: 5px;
     padding-bottom: 5px;
 }
 
-.menu ul li a {
+.menu ul li a,
+.menu ul li span {
     color: var(--link-color);
     text-decoration: none;
 }
 
-.menu ul li a:hover {
-    filter: invert(100%)
+.menu ul li a:hover,
+.menu ul li span:hover {
+    filter: invert(100%);
+    cursor: pointer;
 }
 
 .reverse {

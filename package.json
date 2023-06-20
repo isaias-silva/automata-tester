@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/vue-the-mask": "^0.11.1",
     "axios": "^1.4.0",
+    "buffer": "^6.0.3",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-cookies": "^1.8.3",
