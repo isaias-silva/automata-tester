@@ -81,6 +81,7 @@ export default defineComponent({
 
 
         } else {
+            this.$cookies.remove('token')
             this.$router.push('login')
         }
 
