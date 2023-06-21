@@ -6,8 +6,10 @@ import VueCookies  from 'vue-cookies'
 
 
 
-createApp(App)
-.use(VueCookies)
-.use(router)
+const app=createApp(App)
+app.use(VueCookies)
+app.use(router)
 
-.mount('#app')
+ app.config.globalProperties.$swal;
+
+app.mount('#app')

@@ -46,6 +46,7 @@ export default defineComponent({
   /* Cinza escuro */
   --link-color: #007b2f;
   /* Verde principal */
+  --popup-text-color: var(--font-color);
 }
 
 body {
@@ -66,6 +67,7 @@ body.dark {
   --font-color: #f5f5f5;
   /* Branco */
   --link-color: #00f090;
+  --popup-text-color: #fff;
   /* Verde principal escuro */
 
 

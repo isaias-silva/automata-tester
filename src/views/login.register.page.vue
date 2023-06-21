@@ -1,4 +1,10 @@
 <template>
+    <MyPopUp v-if="visiblePopUp == true" :message="messagePopUp || ''" :title="titlePopUp || ''" @close="closePopUp">
+
+    </MyPopUp>
+    <LoadPopUp v-if="visibleLoad == true">
+
+    </LoadPopUp>
     <form @submit.prevent="submitForm">
         <div class="menu">
 
@@ -13,23 +19,25 @@
 
         <img :src="require('@/assets/icons/profile.jpg')" alt="bot" class="icon-profile">
         <div class="inputBlock">
-            <input v-model="name" type="text" placeholder="seu nome"  v-if="mode=='register'">
+            <input v-model="name" type="text" placeholder="seu nome" v-if="mode == 'register'">
             <div class="block">
                 <input v-model="email" type="email" placeholder="E-mail">
-                <input v-model="number" v-mask="'(##) ####-####'" type="number" placeholder="seu número"   v-if="mode=='register'">
+                <input v-model="number" type="text" placeholder="seu número" v-if="mode == 'register'">
                 <input v-model="password" type="password" placeholder="Senha">
-                <input v-model="passwordRepite"  type="password" placeholder="repita a senha"   v-if="mode=='register'">
+                <input v-model="passwordRepite" type="password" placeholder="repita a senha" v-if="mode == 'register'">
             </div>
-           
-         
-              
-            
+
+
+
+
 
 
         </div>
-        <button type="submit">{{ mode=='login'?'Log in':'Register' }}</button>
+        <button type="submit">{{ mode == 'login' ? 'Log in' : 'Register' }}</button>
 
-        <span class="clickspan" @click="toggleLoginResister"> {{ mode=='login'?'não possui conta? registre!':'possui uma conta? entre!' }} </span>
+        <span class="clickspan" @click="toggleLoginResister"> {{ mode == 'login' ? 'não possui conta? registre!' : `possui
+            uma
+            conta ? entre!` }} </span>
         <div class="errorBlock">
 
             <span v-for="error in errors" v-bind:key="errors.indexOf(error)">
@@ -42,39 +50,103 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import loginRequest from '@/services/login'
+import register from '@/services/register'
+import MyPopUp from '@/components/popup.vue'
+import LoadPopUp from '@/components/load.popup.vue'
 export default defineComponent({
     name: "loginPage",
+
     data(): {
 
         email?: string,
         password?: string,
-        passwordRepite?:string,
-        number?:number,
-        name?:string,
+        passwordRepite?: string,
+        number?: string,
+        name?: string,
         noturne: boolean,
         errors: { message: string, value: string }[],
-        mode: 'login' | 'register'
+        mode: 'login' | 'register',
+        visiblePopUp: boolean,
+        visibleLoad: boolean,
+        messagePopUp?: string,
+        titlePopUp?: string;
+
     } {
         return {
             noturne: this.$cookies.get('noturne') ? true : false,
             errors: [],
-            mode: 'login'
+            mode: 'login',
+            visiblePopUp: false,
+            visibleLoad: false
         }
     },
     methods: {
-       async submitForm() {
+        closePopUp() {
+            this.visiblePopUp = false
+        },
+        createPopUp(title: string, message: string) {
+            this.titlePopUp = title;
+            this.messagePopUp = message
+            this.visiblePopUp = true;
+        },
+        closeLoadPopUp() {
+            this.visibleLoad = false
+        },
+        createLoadPopUp() {
+            this.visiblePopUp = true
+        },
+        async submitForm() {
+
             this.validateForm()
             if (this.errors.length > 0) {
                 return
+
             } else {
-                if(this.mode=='login' && this.email && this.password){
-                   const info= await loginRequest({email:this.email,password:this.password})
-                   const {data, status}=info
-                   if(status==201){
-                    this.$cookies.set('token',data.token)
-                    this.$router.push('/')
+
+                switch (this.mode) {
+                    case 'login':
+                        if (this.email && this.password) {
+                            const info = await loginRequest({ email: this.email, password: this.password })
+                            const { data, status } = info
+                            if (status == 201) {
+                                this.$cookies.set('token', data.token)
+                                this.$router.push('/')
+                            }else{
+                                this.createPopUp("erro ao tentar fazer login",`${data.message}`)
+                            }
+
+                            console.log(info)
+                           
+                        }
+
+                        break
+                    case 'register':
+                        this.createLoadPopUp()
+                    if (this.name && this.email && this.password && this.number) {
+                    const info = await register({
+                        email: this.email,
+                        password: this.password,
+                        name: this.name,
+                        phone_number: this.number,
+                    })
+                    const { data, status } = info
+
+                    if (status == 201 || status == 200) {
+                        this.$cookies.set('token', data.token)
+                        this.$router.push('/')
+                    }else{
+                        this.createPopUp("erro ao tentar registrar",`${data.message}`)
+                        
+                    }
+                    console.log(info)
+                  this.closeLoadPopUp()
+                }    
+                    
+                    
+                    break
                 }
-                }
+
+                
             }
 
 
@@ -96,34 +168,34 @@ export default defineComponent({
             if (this.password && this.password.length < 8) {
                 this.errors.push({ message: 'Senha muito curta. Use no mínimo 8 dígitos.', value: 'password' });
             }
-            if(this.mode=='register'){
-                if(!this.name){
+            if (this.mode == 'register') {
+                if (!this.name) {
                     this.errors.push({ message: 'Digite um nome.', value: 'name' });
                 }
-                if(this.name && this.name.length<4){
+                if (this.name && this.name.length < 4) {
                     this.errors.push({ message: 'nome muito curto, no minimo 4 digitos.', value: 'name' });
                 }
-                if(this.name && this.name.length>20){
+                if (this.name && this.name.length > 20) {
                     this.errors.push({ message: 'nome muito longo use no maximo 20 digitos.', value: 'name' });
 
                 }
-                if(this.password!=this.passwordRepite){
+                if (this.password != this.passwordRepite) {
                     this.errors.push({ message: 'senhas não são iguais.', value: 'password' })
                 }
-                if(!this.number){
+                if (!this.number) {
                     this.errors.push({ message: 'numero de telefone é necessário.', value: 'number' })
                 }
-                if(this.number && this.number.toString().length<9){
+                if (this.number && this.number.toString().length < 9) {
                     this.errors.push({ message: 'numero inválido use no minimo 9 digitos', value: 'number' })
 
                 }
 
-                if(this.number && this.number.toString().length>14){
+                if (this.number && this.number.toString().length > 14) {
                     this.errors.push({ message: 'numero inválido use no máximo 14 digitos', value: 'number' })
 
                 }
             }
-            
+
 
 
         }, toggleDarkMode() {
@@ -137,14 +209,17 @@ export default defineComponent({
             }
 
 
-        },toggleLoginResister(){
-            this.mode=this.mode=='login'?'register':'login'
+        }, toggleLoginResister() {
+            this.mode = this.mode == 'login' ? 'register' : 'login'
         },
-    
-    },mounted(){
-        if(this.$cookies.get('token')){
+
+    }, mounted() {
+        if (this.$cookies.get('token')) {
             this.$router.push('/')
         }
+    }, components: {
+        MyPopUp,
+        LoadPopUp
     }
 
 
@@ -169,16 +244,18 @@ form {
     transition: 1s linear;
 }
 
-.clickspan{
+.clickspan {
     color: var(--link-color);
     cursor: pointer;
     margin: 10px;
     transition: linear 1s;
 }
-.clickspan:hover{
-    filter:invert(100%);
+
+.clickspan:hover {
+    filter: invert(100%);
     text-decoration: underline;
 }
+
 .menu {
     display: flex;
     position: absolute;
@@ -213,12 +290,14 @@ form {
     width: 80%;
 
 }
-.block{
-    margin:10px;
+
+.block {
+    margin: 10px;
     display: flex;
     flex-direction: column;
     width: 80%;
 }
+
 .inputBlock input {
     width: 100%;
     height: 30px;
@@ -245,7 +324,7 @@ button[type="submit"] {
     transition: 0.4s linear;
 }
 
- button[type="submit"]:hover {
+button[type="submit"]:hover {
     cursor: pointer;
     background-color: var(--link-color);
 }
@@ -296,4 +375,5 @@ button[type="submit"] {
     transform: translate(-50%, -50%) scale(0.5);
 
 
-}</style>
+}
+</style>
