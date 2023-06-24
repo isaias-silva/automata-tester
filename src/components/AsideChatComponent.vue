@@ -1,28 +1,28 @@
 <template>
-    <div class="aside">
-        <div class="control">
-            <router-link to="/">
-                <button>
-                    <i class="arrow"></i>
-                </button>
-            </router-link>
-            <button class="mode" @click="toggleDarkMode">
-                <span class="moon"></span>
-                <span class="sun"></span>
-            </button>
-        </div>
-        <div class="logo">
-
-
-            <img src="logo.png" alt="logo">
-            <h1>Automata tester</h1>
-
-        </div>
-        <div class="qr">
-            <img :src="qr || require('@/assets/logo.png')" alt="logo">
-        </div>
-       <p>{{ status }}</p> 
+  <div class="aside">
+    <div class="control">
+      <router-link to="/">
+        <button>
+          <i class="arrow"></i>
+        </button>
+      </router-link>
+      <button class="mode" @click="toggleDarkMode">
+        <span class="moon"></span>
+        <span class="sun"></span>
+      </button>
     </div>
+    <div class="logo">
+
+
+      <img src="logo.png" alt="logo">
+      <h1>Automata tester</h1>
+
+    </div>
+    <div class="qr">
+      <img :src="src" alt="logo">
+    </div>
+    <p>{{ status }}</p>
+  </div>
 </template>
 <script lang="ts">
 
@@ -32,68 +32,87 @@ import io from 'socket.io-client'
 
 
 export default defineComponent({
-    name: 'HeaderComponent',
-    data(): {
+  name: 'HeaderComponent',
+  data(): {
 
-        noturne: boolean,
-        qr?: string,
-        status: 'disconnect' | string
-    } {
-        return {
-            noturne: this.$cookies.get('noturne') ? true : false,
-            qr: undefined,
-            status: 'disconnect'
-        }
-    },
-    methods: {
+    noturne: boolean,
+    src: any,
+    status: 'disconnect' | string
 
-        toggleDarkMode() {
-            this.noturne = !this.noturne;
-            if (this.noturne == true) {
-                document.body.classList.add('dark');
-                this.$cookies.set('noturne', this.noturne, '15d');
-            } else {
-                document.body.classList.remove('dark');
-                this.$cookies.remove('noturne')
-            }
+  } {
+    return {
+      noturne: this.$cookies.get('noturne') ? true : false,
 
+      src: require('@/assets/icons/load.gif'),
+      status: 'disconnect'
+    }
+  },
+  methods: {
 
-        },
-        logout() {
-            this.$cookies.remove('token');
-            this.$router.push('/login')
-        }
-    },
-    mounted() {
-        const token = this.$cookies.get('token')
-
-        const socket = io(`https://api.zappchat.com.br?token=${token}`);
-
-        // Evento de conexão
-        socket.on('connect', () => {
-            console.log('connected')
-            socket.emit('start', this.$cookies.get('id') || Math.random().toString(32).replace('0.', ''))
-        });
-
-        socket.on('conn', (data:{status:string,qr:string,id:string}) => {
-            if(data.qr){
-                this.qr=data.qr
-            }
-            if(data.id){
-                this.$cookies.set('id',data.id)
-            }
-            this.status=data.status
-        })
-        socket.on('msg',(obj)=>{
-          alert('messagem')
-            console.log(obj)
-        })
-        socket.on('disconnect', () => {
-            console.log('disconnected')
-        });
+    toggleDarkMode() {
+      this.noturne = !this.noturne;
+      if (this.noturne == true) {
+        document.body.classList.add('dark');
+        this.$cookies.set('noturne', this.noturne, '15d');
+      } else {
+        document.body.classList.remove('dark');
+        this.$cookies.remove('noturne')
+      }
 
 
     },
+    logout() {
+      this.$cookies.remove('token');
+      this.$router.push('/login')
+    }
+  },
+  mounted() {
+    const token = this.$cookies.get('token')
+
+    const socket = io(`https://api.zappchat.com.br?token=${token}`);
+
+    // Evento de conexão
+    socket.on('connect', () => {
+      console.log('connected')
+      socket.emit('start', this.$cookies.get('id') || Math.random().toString(32).replace('0.', ''))
+    });
+
+    socket.on('conn', (data: { status: string, qr: string, id: string }) => {
+
+
+      if (data.id) {
+        this.$cookies.set('id', data.id)
+      }
+      switch (data.status) {
+        case 'connected':
+          this.src = 'https://cdn-icons-png.flaticon.com/512/6569/6569264.png'
+          break
+        case 'disconnected':
+          this.src = 'https://cdn1.iconfinder.com/data/icons/malware-and-threats-1/512/Desktop_Dead-512.png'
+          break
+        case 'loading':
+          this.src = require('@/assets/icons/load.gif')
+          break
+        case 'qrcode':
+          this.src = data.qr
+          break
+        default:
+          this.src = require('@/assets/icons/load.gif')
+
+          break
+      }
+      this.status = data.status
+    })
+    socket.on('msg', (obj) => {
+      alert('messagem')
+      console.log(obj)
+    })
+    socket.on('disconnect', () => {
+      console.log('disconnected')
+    });
+
+
+  },
 
 })
 </script>
@@ -265,23 +284,23 @@ button:hover {
   cursor: pointer;
 }
 
-#checker:checked ~ label span:nth-child(1) {
+#checker:checked~label span:nth-child(1) {
   rotate: 45deg;
   top: 10px;
   right: 5px;
 }
 
-#checker:checked ~ label span:nth-child(3) {
+#checker:checked~label span:nth-child(3) {
   rotate: -45deg;
   right: 7px;
   top: -7px;
 }
 
-#checker:checked ~ label span:nth-child(2) {
+#checker:checked~label span:nth-child(2) {
   opacity: 0;
 }
 
-#checker:checked ~ ul {
+#checker:checked~ul {
   display: block;
 }
 

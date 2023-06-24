@@ -80,7 +80,7 @@ span {
 
 .itens h4 {
   font-size: 24px;
-  z-index: 999;
+  z-index: 99;
 }
 
 .itens img {

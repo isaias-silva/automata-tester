@@ -204,6 +204,7 @@ export default defineComponent({
 
 
 .menu {
+
     grid-area: opcoes;
     position: relative;
 
@@ -261,6 +262,7 @@ export default defineComponent({
 }
 
 .menu ul {
+    z-index: 998 !important;
     grid-area: list;
     list-style: none;
     position: absolute;
