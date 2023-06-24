@@ -2,9 +2,7 @@
     <MyPopUp v-if="visiblePopUp == true" :message="messagePopUp || ''" :title="titlePopUp || ''" @close="closePopUp">
 
     </MyPopUp>
-    <LoadPopUp v-if="visibleLoad == true">
-
-    </LoadPopUp>
+ 
     <form @submit.prevent="submitForm">
         <div class="menu">
 
@@ -52,7 +50,7 @@ import { defineComponent } from 'vue'
 import loginRequest from '@/services/login'
 import register from '@/services/register'
 import MyPopUp from '@/components/popup.vue'
-import LoadPopUp from '@/components/load.popup.vue'
+
 export default defineComponent({
     name: "loginPage",
 
@@ -67,7 +65,6 @@ export default defineComponent({
         errors: { message: string, value: string }[],
         mode: 'login' | 'register',
         visiblePopUp: boolean,
-        visibleLoad: boolean,
         messagePopUp?: string,
         titlePopUp?: string;
 
@@ -77,7 +74,7 @@ export default defineComponent({
             errors: [],
             mode: 'login',
             visiblePopUp: false,
-            visibleLoad: false
+    
         }
     },
     methods: {
@@ -89,12 +86,7 @@ export default defineComponent({
             this.messagePopUp = message
             this.visiblePopUp = true;
         },
-        closeLoadPopUp() {
-            this.visibleLoad = false
-        },
-        createLoadPopUp() {
-            this.visiblePopUp = true
-        },
+       
         async submitForm() {
 
             this.validateForm()
@@ -121,7 +113,7 @@ export default defineComponent({
 
                         break
                     case 'register':
-                        this.createLoadPopUp()
+                       
                     if (this.name && this.email && this.password && this.number) {
                     const info = await register({
                         email: this.email,
@@ -139,7 +131,6 @@ export default defineComponent({
                         
                     }
                     console.log(info)
-                  this.closeLoadPopUp()
                 }    
                     
                     
@@ -219,7 +210,7 @@ export default defineComponent({
         }
     }, components: {
         MyPopUp,
-        LoadPopUp
+       
     }
 
 

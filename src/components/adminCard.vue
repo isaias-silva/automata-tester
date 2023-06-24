@@ -101,6 +101,7 @@ export default defineComponent({
     background-color: var(--modal-color);
     width: 90%;
     margin: auto;
+  margin-bottom: 30px ;
     border-radius: 30px;
     box-sizing: border-box;
     padding: 5px;
@@ -109,6 +110,7 @@ export default defineComponent({
     display: grid;
     grid-template-columns: 20% 20% 60%;
     grid-template-areas: 'profile info info';
+
 }
 
 .profile {

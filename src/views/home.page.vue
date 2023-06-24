@@ -1,6 +1,6 @@
 <template>
   <div class="allboard">
-
+    <admin-card />
     <router-link to="users" class="itens">
       <h4>users</h4>
       <img :src="require('@/assets/icons/users.png')" alt="">
@@ -24,16 +24,24 @@
 
 
     </router-link>
-<admin-card/>
-    
 
-</div></template>
+    <router-link to="chat" class="itens">
+      <h4>chat</h4>
+      <img :src="require('@/assets/icons/chat.png')" alt="">
+
+
+
+    </router-link>
+
+
+  </div>
+</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AdminCard from '@/components/adminCard.vue';
 export default defineComponent({
-    name: "HomePage",
-    components: { AdminCard }
+  name: "HomePage",
+  components: { AdminCard }
 })
 </script>
 <style scoped>

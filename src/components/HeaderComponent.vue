@@ -76,7 +76,7 @@ export default defineComponent({
 
             if (header && header.scrollHeight) {
                 const sticky = header.scrollHeight;
-                this.headerFixed = window.scrollY > sticky + header.clientHeight;
+                this.headerFixed = window.scrollY > sticky + header.clientHeight-(header.clientHeight/2);
             }
         },
         toggleDarkMode() {
@@ -102,6 +102,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .header {
+    z-index: 999!important;
     color: var(--font-color);
     background: var(--component-color);
     display: grid;
@@ -114,7 +115,7 @@ export default defineComponent({
 }
 
 .fixed {
-    position: fixed;
+    position: sticky;
     top: 0;
 }
 

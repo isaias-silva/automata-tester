@@ -14,8 +14,7 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "node",
-      "vue-sweetalert2"
+      "node"
     ],
     "paths": {
       "@/*": [

@@ -82,4 +82,7 @@ export default defineComponent({
     color: var(--popup-text-color);
     transition: 0.5s linear;
 }
+.popup h3{
+    margin-bottom: 20px;
+}
 </style>
