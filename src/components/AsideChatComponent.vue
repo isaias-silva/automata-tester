@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="aside">
     <div class="control">
@@ -13,7 +15,6 @@
     </div>
     <div class="logo">
 
-
       <img src="logo.png" alt="logo">
       <h1>Automata tester</h1>
 
@@ -22,12 +23,17 @@
       <img :src="src" alt="logo">
     </div>
     <p>{{ status }}</p>
+    <div class="messages">
+
+    </div>
   </div>
 </template>
 <script lang="ts">
 
-import { defineComponent } from 'vue'
-import io from 'socket.io-client'
+import { defineComponent, inject, watch } from 'vue'
+import { useCookies } from "vue3-cookies";
+import { socketState, messagesState } from '@/socket'
+const { cookies } = useCookies();
 
 
 
@@ -37,82 +43,71 @@ export default defineComponent({
 
     noturne: boolean,
     src: any,
-    status: 'disconnect' | string
+    status: string,
+
+
 
   } {
     return {
-      noturne: this.$cookies.get('noturne') ? true : false,
-
+      noturne: cookies.get('noturne') ? true : false,
       src: require('@/assets/icons/load.gif'),
-      status: 'disconnect'
+      status: 'disconnected'
     }
   },
+  mounted() {
+    watch(messagesState, (newMessage => {
+      console.log(newMessage)
+    }))
+    watch(socketState, (newSocketState => {
+      if (!newSocketState.WAconnect) {
+        return
+      }
+      const { status, qr } = newSocketState.WAconnect
+      this.status = status
+      switch (status) {
+        case 'qrcode':
+          this.src = qr
+          console.log(qr)
+        break
+        case 'connected':
+          this.src = require('@/assets/icons/bot.gif')
+        break
+        case 'disconnected':
+          this.src = 'https://cdn2.iconfinder.com/data/icons/malware-and-threats-2/512/Dead_Desktop-512.png'
+        break
+        case 'loading':
+          this.src = require('@/assets/icons/load.gif')
+        break
+        case 'phone closed session':
+          this.src = 'https://cdn2.iconfinder.com/data/icons/malware-and-threats-2/512/Dead_Desktop-512.png'
+
+        break
+        default:
+          this.src = require('@/assets/icons/load.gif')
+        break
+      }
+    }))
+  },
+
   methods: {
 
     toggleDarkMode() {
       this.noturne = !this.noturne;
       if (this.noturne == true) {
         document.body.classList.add('dark');
-        this.$cookies.set('noturne', this.noturne, '15d');
+        cookies.set('noturne', this.noturne ? 'true' : 'false', '15d');
       } else {
         document.body.classList.remove('dark');
-        this.$cookies.remove('noturne')
+        cookies.remove('noturne')
       }
 
 
     },
     logout() {
-      this.$cookies.remove('token');
+      cookies.remove('token');
       this.$router.push('/login')
     }
-  },
-  mounted() {
-    const token = this.$cookies.get('token')
-
-    const socket = io(`https://api.zappchat.com.br?token=${token}`);
-
-    // Evento de conexão
-    socket.on('connect', () => {
-      console.log('connected')
-      socket.emit('start', this.$cookies.get('id') || Math.random().toString(32).replace('0.', ''))
-    });
-
-    socket.on('conn', (data: { status: string, qr: string, id: string }) => {
-
-
-      if (data.id) {
-        this.$cookies.set('id', data.id)
-      }
-      switch (data.status) {
-        case 'connected':
-          this.src = 'https://cdn-icons-png.flaticon.com/512/6569/6569264.png'
-          break
-        case 'disconnected':
-          this.src = 'https://cdn1.iconfinder.com/data/icons/malware-and-threats-1/512/Desktop_Dead-512.png'
-          break
-        case 'loading':
-          this.src = require('@/assets/icons/load.gif')
-          break
-        case 'qrcode':
-          this.src = data.qr
-          break
-        default:
-          this.src = require('@/assets/icons/load.gif')
-
-          break
-      }
-      this.status = data.status
-    })
-    socket.on('msg', (obj) => {
-      alert('messagem')
-      console.log(obj)
-    })
-    socket.on('disconnect', () => {
-      console.log('disconnected')
-    });
-
-
-  },
+  }
 
 })
 </script>
@@ -124,7 +119,7 @@ export default defineComponent({
 .qr {
   width: 80%;
   margin: auto;
-  border: 1px solid var(--font-color);
+  background: #0000003d;
   margin-top: 10px;
   overflow: hidden;
   border-radius: 20px;
@@ -185,7 +180,7 @@ export default defineComponent({
   display: flex;
   width: 100%;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--font-color);
+
 }
 
 button {
@@ -195,7 +190,7 @@ button {
   color: var(--font-color);
   font-size: 24px;
   font-weight: bold;
-  border: 1px solid var(--font-color);
+  border: none;
   transition: 0.5s linear;
   border-radius: 10px;
   display: flex;

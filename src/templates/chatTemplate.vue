@@ -10,13 +10,25 @@
 <script lang="ts">
 
 import AsideComponent from "@/components/AsideChatComponent.vue"
-import io from 'socket.io-client'
-export default {
+import { socket, socketState } from "@/socket";
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
+
+import { defineComponent } from 'vue'
+export default defineComponent({
     components: {
         AsideComponent
+    }, mounted() {
+        if (socketState.connected == true) {
+            
+            socket.emit('start',cookies.get('idWa') || Math.random().toString(32).replace('0.', 'X'))
+
+        }
+
     }
-    // ...
-};
+
+
+});
 
 </script>
   

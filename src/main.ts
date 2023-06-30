@@ -1,15 +1,16 @@
-import { createApp } from 'vue'
+import { createApp} from 'vue'
 import App from './App.vue'
 import router from './route'
-import VueCookies  from 'vue-cookies'
+import VueCookies from 'vue3-cookies'
+import { messagesState, socketState } from './socket'
 
 
 
 
-const app=createApp(App)
-app.use(VueCookies)
+const app = createApp(App)
 app.use(router)
+app.use(VueCookies)
 
- app.config.globalProperties.$swal;
+
 
 app.mount('#app')

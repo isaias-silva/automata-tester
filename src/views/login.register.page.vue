@@ -50,6 +50,8 @@ import { defineComponent } from 'vue'
 import loginRequest from '@/services/login'
 import register from '@/services/register'
 import MyPopUp from '@/components/popup.vue'
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 
 export default defineComponent({
     name: "loginPage",
@@ -70,7 +72,7 @@ export default defineComponent({
 
     } {
         return {
-            noturne: this.$cookies.get('noturne') ? true : false,
+            noturne: cookies.get('noturne') ? true : false,
             errors: [],
             mode: 'login',
             visiblePopUp: false,
@@ -101,7 +103,7 @@ export default defineComponent({
                             const info = await loginRequest({ email: this.email, password: this.password })
                             const { data, status } = info
                             if (status == 201) {
-                                this.$cookies.set('token', data.token)
+                                cookies.set('token', data.token)
                                 this.$router.push('/')
                             }else{
                                 this.createPopUp("erro ao tentar fazer login",`${data.message}`)
@@ -124,7 +126,7 @@ export default defineComponent({
                     const { data, status } = info
 
                     if (status == 201 || status == 200) {
-                        this.$cookies.set('token', data.token)
+                        cookies.set('token', data.token)
                         this.$router.push('/')
                     }else{
                         this.createPopUp("erro ao tentar registrar",`${data.message}`)
@@ -193,10 +195,10 @@ export default defineComponent({
             this.noturne = !this.noturne;
             if (this.noturne == true) {
                 document.body.classList.add('dark');
-                this.$cookies.set('noturne', this.noturne, '15d');
+                cookies.set('noturne', this.noturne?"true":"false", '15d');
             } else {
                 document.body.classList.remove('dark');
-                this.$cookies.remove('noturne')
+                cookies.remove('noturne')
             }
 
 
@@ -205,7 +207,7 @@ export default defineComponent({
         },
 
     }, mounted() {
-        if (this.$cookies.get('token')) {
+        if (cookies.get('token')) {
             this.$router.push('/')
         }
     }, components: {
