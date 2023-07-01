@@ -65,7 +65,7 @@
 
 import { defineComponent, watch } from 'vue'
 import { useCookies } from "vue3-cookies";
-import { socketState, messagesState } from '@/socket'
+import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
 const { cookies } = useCookies();
 
@@ -127,6 +127,9 @@ export default defineComponent({
   },
 
   methods: {
+    killBot(){
+      socket.emit('kill')
+    },
     resumeText(text?: string | null) {
       if (!text) {
         return
