@@ -5,12 +5,29 @@
     <div class="control">
       <router-link to="/">
         <button>
-          <i class="arrow"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
         </button>
       </router-link>
       <button class="mode" @click="toggleDarkMode">
-        <span class="moon"></span>
-        <span class="sun"></span>
+        <span class="moon">&#127769;</span>
+        <span class="sun">&#9728;</span>
+      </button>
+      <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg></button>
+
+      <button>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" class="feather feather-power">
+          <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"></path>
+        </svg>
       </button>
     </div>
     <div class="logo">
@@ -24,15 +41,32 @@
     </div>
     <p>{{ status }}</p>
     <div class="messages">
-
+      <router-link :to="'chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
+        <img
+          :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
+          alt="profile">
+        <div class="blockchat">
+          <h5>{{ value.name }}:</h5>
+       
+          <p>   <span class="user-title" v-if="value.isGroup ">{{ value.msgs?value.msgs[(value.msgs?.length || 1) - 1].name:'member' }}: </span>
+           {{ value.msgs ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
+            || 1) - 1].type : null }}</p>
+        </div>
+        <div class="count">
+          <span v-if="value.newMessages && value.newMessages>0">
+            {{ value.newMessages }}
+          </span>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>
 <script lang="ts">
 
-import { defineComponent, inject, watch } from 'vue'
+import { defineComponent, watch } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { socketState, messagesState } from '@/socket'
+import { Icontact } from '@/interfaces/interface.bot.contact';
 const { cookies } = useCookies();
 
 
@@ -42,23 +76,26 @@ export default defineComponent({
   data(): {
 
     noturne: boolean,
-    src: any,
+    src?: string,
     status: string,
-
+    messages: Icontact[]
 
 
   } {
     return {
       noturne: cookies.get('noturne') ? true : false,
       src: require('@/assets/icons/load.gif'),
-      status: 'disconnected'
+      status: 'disconnected',
+      messages: []
     }
   },
   mounted() {
+
     watch(messagesState, (newMessage => {
-      console.log(newMessage)
+      this.messages = newMessage.messages
     }))
     watch(socketState, (newSocketState => {
+
       if (!newSocketState.WAconnect) {
         return
       }
@@ -68,29 +105,38 @@ export default defineComponent({
         case 'qrcode':
           this.src = qr
           console.log(qr)
-        break
+          break
         case 'connected':
           this.src = require('@/assets/icons/bot.gif')
-        break
+          break
         case 'disconnected':
           this.src = 'https://cdn2.iconfinder.com/data/icons/malware-and-threats-2/512/Dead_Desktop-512.png'
-        break
+          break
         case 'loading':
           this.src = require('@/assets/icons/load.gif')
-        break
+          break
         case 'phone closed session':
           this.src = 'https://cdn2.iconfinder.com/data/icons/malware-and-threats-2/512/Dead_Desktop-512.png'
 
-        break
+          break
         default:
           this.src = require('@/assets/icons/load.gif')
-        break
+          break
       }
     }))
   },
 
   methods: {
-
+    resumeText(text?: string | null) {
+      if (!text) {
+        return
+      }
+      let newText = text
+      if (newText.length > 25) {
+        newText = newText.substring(0, 25) + "..."
+      }
+      return newText
+    },
     toggleDarkMode() {
       this.noturne = !this.noturne;
       if (this.noturne == true) {
@@ -128,7 +174,9 @@ export default defineComponent({
 .qr img {
   width: 100%;
 }
-
+.user-title{
+font-weight: bold;
+}
 .arrow {
   width: 0;
   height: 0;
@@ -147,6 +195,12 @@ export default defineComponent({
   left: 0;
   width: 20%;
   height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.aside::-webkit-scrollbar {
+  display: none;
 }
 
 .logo {
@@ -155,6 +209,7 @@ export default defineComponent({
   align-items: center;
   width: 80%;
   margin: auto;
+  margin-top: 100px;
 }
 
 .logo h1 {
@@ -178,10 +233,18 @@ export default defineComponent({
 
 .control {
   display: flex;
-  width: 100%;
+  width: 20%;
   margin-bottom: 20px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--font-color);
+  box-shadow: -2px 1px 1px var(--font-color);
+  background-color: #0000002f;
+  position: fixed;
+  backdrop-filter: blur(3px);
+
 
 }
+
 
 button {
   width: 40px;
@@ -198,6 +261,7 @@ button {
   justify-content: center;
   box-sizing: border-box;
   margin: 5px;
+  padding: 10px;
 }
 
 button:hover {
@@ -221,7 +285,11 @@ button:hover {
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: transform 0.3s ease;
+  color: #fff;
 }
 
 .mode .moon {
@@ -331,7 +399,71 @@ button:hover {
   cursor: pointer;
 }
 
-.reverse {
-  flex-direction: row-reverse;
+.messages {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
-</style>
+
+.contact {
+  width: 100%;
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  color: var(--font-color);
+  border-bottom: 1px solid var(--component-two-color);
+  box-sizing: border-box;
+  padding: 5px;
+  transition: 0.5s linear;
+}
+
+.count {
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10%;
+
+}
+
+.count span {
+  background-color: #00000057;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+}
+
+.contact:hover {
+  background-color: #00000060;
+  color: #fff;
+}
+
+.contact img {
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  flex-shrink: 1;
+  box-sizing: border-box;
+  border: 4px solid var(--component-two-color)
+}
+
+.blockchat {
+  flex-shrink: 1;
+  width: 90%;
+  margin-left: 5px;
+
+}
+
+.blockchat p,
+.blockchat h5 {
+  text-align: left;
+
+}
+
+.blockchat h5 {
+  margin-bottom: 10px;
+}</style>

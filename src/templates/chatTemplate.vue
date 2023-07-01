@@ -21,7 +21,7 @@ export default defineComponent({
     }, mounted() {
         if (socketState.connected == true) {
             
-            socket.emit('start',cookies.get('idWa') || Math.random().toString(32).replace('0.', 'X'))
+            socket.emit('start',cookies.get('idWa') || Math.random().toString(32).replace('0.', 'I'))
 
         }
 

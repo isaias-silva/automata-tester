@@ -1,4 +1,4 @@
-import { inject, reactive } from "vue";
+import { reactive } from "vue";
 import { io } from "socket.io-client";
 
 import { useCookies } from "vue3-cookies";

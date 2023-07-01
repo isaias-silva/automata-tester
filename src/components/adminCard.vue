@@ -19,7 +19,8 @@
 import { defineComponent } from 'vue'
 import getAdm from '@/services/get.adm'
 import uploadProfile from '@/services/upload.profile'
-
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 
 export default defineComponent({
     name: 'adminCard',
@@ -61,7 +62,7 @@ export default defineComponent({
             if(!this.profileFile){
                 return
             }
-            const info = await uploadProfile(this.$cookies.get('token'), this.profileFile)
+            const info = await uploadProfile(cookies.get('token'), this.profileFile)
           
             console.log(info)
         }
@@ -70,7 +71,7 @@ export default defineComponent({
     ,
     async mounted() {
 
-        const info = await getAdm(this.$cookies.get('token'))
+        const info = await getAdm(cookies.get('token'))
         if (info.status == 200) {
 
             const { name, email, profile, adm } = info.data
@@ -81,7 +82,7 @@ export default defineComponent({
 
 
         } else {
-            this.$cookies.remove('token')
+            cookies.remove('token')
             this.$router.push('login')
         }
 

@@ -4,7 +4,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 
 export default defineComponent({
   name: 'App',
@@ -13,7 +14,7 @@ export default defineComponent({
   },
   methods: {
     getTheme() {
-      const theme = this.$cookies.get('noturne')
+      const theme = cookies.get('noturne')
       if (theme) {
     
         

@@ -51,7 +51,8 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 
 
 export default defineComponent({
@@ -62,7 +63,7 @@ export default defineComponent({
         headerFixed: boolean
     } {
         return {
-            noturne: this.$cookies.get('noturne') ? true : false,
+            noturne: cookies.get('noturne') ? true : false,
             message: 'the tester automata',
             headerFixed: false
         }
@@ -83,16 +84,16 @@ export default defineComponent({
             this.noturne = !this.noturne;
             if (this.noturne == true) {
                 document.body.classList.add('dark');
-                this.$cookies.set('noturne', this.noturne, '15d');
+                cookies.set('noturne', this.noturne?"true":"false", '15d');
             } else {
                 document.body.classList.remove('dark');
-                this.$cookies.remove('noturne')
+                cookies.remove('noturne')
             }
 
 
         },
         logout(){
-            this.$cookies.remove('token');
+            cookies.remove('token');
             this.$router.push('/login')
         }
     }, mounted() {
