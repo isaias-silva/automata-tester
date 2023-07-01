@@ -23,6 +23,7 @@ export default defineComponent({
         watchEffect(() => {
             const { connected } = socketState
             if (connected) {
+             
                 socket.emit('start', cookies.get('idWa') || Math.random().toString(32).replace('0.', 'I'))
 
             }else{

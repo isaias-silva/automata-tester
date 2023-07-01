@@ -38,8 +38,8 @@
     </div>
     <div class="qr">
       <img :src="src" alt="logo">
+      <p>{{ status }}</p>
     </div>
-    <p>{{ status }}</p>
     <div class="messages">
       <router-link :to="'chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
         <img
@@ -170,6 +170,7 @@ export default defineComponent({
   margin: auto;
   background: #0000003d;
   margin-top: 10px;
+ margin-bottom: 20px;
   overflow: hidden;
   border-radius: 20px;
 }
