@@ -46,7 +46,9 @@ export default defineComponent({
     position: absolute;
     right: 0;
     width: 80%;
-    box-sizing: border-box;
+    background-size: cover;
+    background-attachment: fixed;
+
     
 }
 </style>
