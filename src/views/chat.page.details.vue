@@ -4,9 +4,9 @@
         <h2> {{ chatInfo ? chatInfo?.name : '' }}</h2>
     </div>
 
-    <p>
-
-    </p>
+ <div class="section-chat">
+   
+ </div>
 </template>
 <script lang="ts">
 import { Icontact } from '@/interfaces/interface.bot.contact';
