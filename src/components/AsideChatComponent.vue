@@ -30,18 +30,13 @@
         </svg>
       </button>
     </div>
-    <div class="logo">
-
-      <img src="logo.png" alt="logo">
-      <h1>Automata tester</h1>
-
-    </div>
+    
     <div class="qr">
       <img :src="src" alt="logo">
       <p>{{ status }}</p>
     </div>
     <div class="messages">
-      <router-link :to="'chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
+      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
         <img
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
           alt="profile">
@@ -50,7 +45,7 @@
        
           <p>   <span class="user-title" v-if="value.isGroup ">{{ value.msgs?value.msgs[(value.msgs?.length || 1) - 1].name:'member' }}: </span>
            {{ value.msgs ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
-            || 1) - 1].type : null }}</p>
+            || 1) - 1].type || '[]' : null }}</p>
         </div>
         <div class="count">
           <span v-if="value.newMessages && value.newMessages>0">
@@ -169,7 +164,8 @@ export default defineComponent({
   width: 80%;
   margin: auto;
   background: #0000003d;
-  margin-top: 10px;
+  margin-top: 80px;
+
  margin-bottom: 20px;
   overflow: hidden;
   border-radius: 20px;
@@ -245,7 +241,7 @@ font-weight: bold;
   background-color: #0000002f;
   position: fixed;
   backdrop-filter: blur(3px);
-
+z-index: 999!important;
 
 }
 

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import home from '@/views/home.page.vue'
 import login from '@/views/login.register.page.vue'
 import chatPage from '@/views/chat.page.vue'
+import chatPageDetails from '@/views/chat.page.details.vue'
 import hometemplate from '@/templates/HomeTemplate.vue'
 import chatTemplate from '@/templates/chatTemplate.vue'
 const routes = [{
@@ -29,7 +30,10 @@ const routes = [{
   children:[
     {path:'',
     component: chatPage
-  }
+  },
+  {path:':id',
+  component: chatPageDetails
+}
   ]
 }
 ]

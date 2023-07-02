@@ -47,6 +47,6 @@ export default defineComponent({
     right: 0;
     width: 80%;
     box-sizing: border-box;
-    padding: 20px;
+    
 }
 </style>
