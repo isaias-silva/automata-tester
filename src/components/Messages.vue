@@ -9,12 +9,25 @@
         <video v-if="message.media && message.type == 'video'" controls>
             <source :src="generateBase64()" :type="message.media.mimetype || 'video/mp4'">
         </video>
-        
+
         <div v-if="message.quoted == true && message.msgQuoted" class="replace">
-            <p>{{ message.msgQuoted.text || "["+ message.msgQuoted.type+"]" }}</p>
+            <p>{{ message.msgQuoted.text || "[" + message.msgQuoted.type + "]" }}</p>
         </div>
-        
-        <p v-if="message?.text"> <span v-if="$props.isGroup==true" class="userchat">{{ message.name }}: </span> {{ message?.text }}</p>
+        <div class="doc" v-if="message.type == 'doc'">
+            <a :href="generateBase64()" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 17l4 4 4-4m-4-5v9" />
+                </svg>
+            </a>
+            <i>clique no icone para baixar o arquivo.</i>
+        </div>
+        <p v-if="message?.text"> <span v-if="$props.isGroup == true" class="userchat">{{ message.name }}: </span> {{
+            message?.text }}</p>
+
+        <div class="time">
+            <span>{{ getDate() }}</span>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -32,7 +45,7 @@ export default defineComponent({
             type: Object as () => Imessage,
             required: false
         },
-        isGroup:{
+        isGroup: {
             type: Boolean
         }
     },
@@ -42,6 +55,35 @@ export default defineComponent({
                 return
             }
             return `data:${this.message.media.mimetype};base64,` + this.message.media.data
+        },
+        getDate() {
+            if (this.message?.date) {
+
+                console.log(this.message.date)
+
+                const date = new Date(this.message?.date);
+                const now = new Date();
+
+                const diffMilliseconds = now.getTime() - date.getTime();
+                const diffSeconds = Math.floor(diffMilliseconds / 1000);
+                const diffMinutes = Math.floor(diffSeconds / 60);
+                const diffHours = Math.floor(diffMinutes / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                let diffString = "";
+
+                if (diffDays > 0) {
+                    diffString = `${diffDays} dia(s) atrás`;
+                } else if (diffHours > 0) {
+                    diffString = `${diffHours} hora(s) atrás`;
+                } else if (diffMinutes > 0) {
+                    diffString = `${diffMinutes} minuto(s) atrás`;
+                } else {
+                    diffString = `${diffSeconds} segundo(s) atrás`;
+                }
+
+                return diffString;
+            }
+
         }
     }, mounted() {
         console.log(this.$props.message)
@@ -49,9 +91,10 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-.userchat{
+.userchat {
     font-weight: bold;
 }
+
 .message {
 
     display: block;
@@ -65,12 +108,14 @@ export default defineComponent({
 
     box-sizing: border-box;
 }
-.replace{
+
+.replace {
     background-color: #00000028;
     border-radius: 5px;
     box-sizing: border-box;
     padding: 5px;
 }
+
 .message p {
     width: 90%;
     margin: 5px;
@@ -88,14 +133,41 @@ export default defineComponent({
     background-color: var(--component-two-color);
     margin-left: 70%;
 }
-.me audio::-webkit-media-controls-panel{
+
+.me audio::-webkit-media-controls-panel {
     background-color: var(--component-two-color);
 }
+
 audio::-webkit-media-controls-panel {
-    color:var(--font-color);
+    color: var(--font-color);
     background-color: var(--modal-color);
 
 }
 
+.doc {
+    width: 100%;
+    display: flex;
+
+    align-items: center;
+}
+
+.doc a {
+    width: 30px;
+    margin: 10px;
+    margin-right: 10px;
+    height: 30px;
+    color: var(--font-color);
+    border-bottom: 2px solid var(--font-color);
+    border-radius: 5px;
+}
+
+.doc i {
+    font-size: 18px;
+}
+
+a svg {
+    width: 100%;
+
+}
 </style>
     

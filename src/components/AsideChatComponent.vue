@@ -23,7 +23,7 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg></button>
 
-      <button>
+      <button @click="logout()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" class="feather feather-power">
           <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"></path>
@@ -68,6 +68,7 @@ import { defineComponent, watch } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
+import router from '@/route';
 const { cookies } = useCookies();
 
 
@@ -158,8 +159,10 @@ export default defineComponent({
 
     },
     logout() {
-      cookies.remove('token');
-      this.$router.push('/login')
+    socket.emit('kill')
+    },
+    showMenu(){
+      alert('show menu')
     }
   }
 

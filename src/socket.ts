@@ -14,7 +14,7 @@ export const socketState = reactive<{ connected: boolean, WAconnect?: WAconnectT
   connected: false,
 
   WAconnect: {
-    status: 'disconnected'
+    status: 'loading'
   }
 });
 export const messagesState = reactive<{ messages: Icontact[] }>({ messages: [] })
@@ -48,5 +48,5 @@ socket.on('msg', (data: { id: string, payload: string }[]) => {
     
    return object
    
-  })
+  }).filter(value=>value!=undefined)
 })
