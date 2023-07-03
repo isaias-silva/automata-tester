@@ -36,6 +36,12 @@
       <p>{{ status }}</p>
     </div>
     <div class="messages">
+      <div class="load" v-if="loading">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
         <img
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
@@ -69,7 +75,7 @@ const { cookies } = useCookies();
 export default defineComponent({
   name: 'HeaderComponent',
   data(): {
-
+    loading:boolean,
     noturne: boolean,
     src?: string,
     status: string,
@@ -81,12 +87,14 @@ export default defineComponent({
       noturne: cookies.get('noturne') ? true : false,
       src: require('@/assets/icons/load.gif'),
       status: 'disconnected',
+      loading:true,
       messages: []
     }
   },
   mounted() {
 
     watch(messagesState, (newMessage => {
+      this.loading=false
       this.messages = newMessage.messages
     }))
     watch(socketState, (newSocketState => {
@@ -102,6 +110,7 @@ export default defineComponent({
           console.log(qr)
           break
         case 'connected':
+         
           this.src = require('@/assets/icons/bot.gif')
           break
         case 'disconnected':
@@ -111,6 +120,7 @@ export default defineComponent({
           this.src = require('@/assets/icons/load.gif')
           break
         case 'phone closed session':
+          cookies.remove('idWa')
           this.src = 'https://cdn2.iconfinder.com/data/icons/malware-and-threats-2/512/Dead_Desktop-512.png'
 
           break
@@ -197,6 +207,7 @@ font-weight: bold;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  box-sizing: border-box;
   border-right: 1px solid #0000003c;
 }
 
@@ -468,4 +479,48 @@ button:hover {
 
 .blockchat h5 {
   margin-bottom: 10px;
-}</style>
+}
+
+.load{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.load span{
+  width: 90%;
+  height: 60px;
+  display: block;
+  margin: 5px;
+  margin-top: 10px;
+  background-color: #00000044;
+  border-radius: 10px;
+
+}
+.load span:nth-child(1){
+animation: loadchat 1s infinite;
+}
+
+.load span:nth-child(2){
+  animation: loadchat 1.5s infinite;
+}
+
+.load span:nth-child(3){
+  animation: loadchat 1.8s infinite;
+}
+
+.load span:nth-child(4){
+  animation: loadchat 2s infinite;
+}
+@keyframes loadchat {
+  0%{
+    opacity: 1;
+  
+  }
+  100%{
+    opacity: 0.5;
+   
+  }
+  
+}
+</style>

@@ -298,4 +298,35 @@ export default defineComponent({
 .reverse {
     flex-direction: row-reverse;
 }
+@media screen and (max-width: 768px) {
+  .header {
+   display: flex;
+  }
+
+  .logo {
+display: flex;
+flex-direction: column;
+  }
+  .mode{
+    position: absolute;
+    top:0;
+    left:20%  
+}
+
+  .logo h1 {
+    text-align: center;
+   
+  }
+
+  .menu {
+    position: static;
+    margin-top: 20px;
+  }
+
+
+  .menu ul li {
+    border-bottom: none;
+    padding: 0;
+  }
+}
 </style>

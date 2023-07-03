@@ -88,12 +88,14 @@ export default defineComponent({
     background-color: var(--component-two-color);
     margin-left: 70%;
 }
-
-audio::-webkit-media-controls-panel {
-
-    border: 20px solid #000;
+.me audio::-webkit-media-controls-panel{
     background-color: var(--component-two-color);
+}
+audio::-webkit-media-controls-panel {
+    color:var(--font-color);
+    background-color: var(--modal-color);
 
 }
+
 </style>
     

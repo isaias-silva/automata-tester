@@ -6,7 +6,7 @@ import { Icontact } from "./interfaces/interface.bot.contact";
 const { cookies } = useCookies();
 
 type WAconnectType = {
-  status: 'qrcode'| 'connected' | 'disconnected' | 'loading' | "phone closed session",
+  status: 'qrcode' | 'connected' | 'disconnected' | 'loading' | "phone closed session",
   qr?: string, id?: string
 }
 
@@ -39,6 +39,6 @@ socket.on('conn', (data: WAconnectType) => {
     cookies.set('idWa', data.id)
   }
 })
-socket.on('msg', (data: Icontact[]) => {
-  messagesState.messages = data
+socket.on('msg', (data: { id: string, payload: string }) => {
+  messagesState.messages = JSON.parse(data.payload)
 })
