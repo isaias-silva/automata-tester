@@ -7,7 +7,9 @@
         <div class="blockinfo">
             <h3 :class="name ? null : 'load'">{{ name }}</h3>
             <ul>
-                <li :class="email ? null : 'load'">{{ email }}</li>
+                <li :class="email ? null : 'load'">
+                    
+                    {{ email }}</li>
 
             </ul>
             <p>Este site é exclusivo para uso de administradores autorizados. Se você não possui privilégios de
@@ -59,11 +61,11 @@ export default defineComponent({
             }
         },
         async updateProfile() {
-            if(!this.profileFile){
+            if (!this.profileFile) {
                 return
             }
             const info = await uploadProfile(cookies.get('token'), this.profileFile)
-          
+
             console.log(info)
         }
 
@@ -102,7 +104,7 @@ export default defineComponent({
     background-color: var(--modal-color);
     width: 90%;
     margin: auto;
-  margin-bottom: 30px ;
+    margin-bottom: 30px;
     border-radius: 30px;
     box-sizing: border-box;
     padding: 5px;
@@ -127,7 +129,7 @@ export default defineComponent({
 
 
 .profile img {
-    
+
     width: 100%;
     height: 100%;
     transition: 0.1s linear;
@@ -183,6 +185,25 @@ export default defineComponent({
     height: 25px;
     border-radius: 40px;
     animation: load 1s infinite;
+}
+
+@media screen and (max-width: 768px) {
+    .usercard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .usercard h3,.usercard ul{
+        width: 100%;
+        text-align: center;
+    }
+    .usercard ul{
+        padding: 0;
+        margin: 0;
+    }
+
 }
 
 @keyframes load {

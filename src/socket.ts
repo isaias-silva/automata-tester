@@ -39,6 +39,14 @@ socket.on('conn', (data: WAconnectType) => {
     cookies.set('idWa', data.id)
   }
 })
-socket.on('msg', (data: { id: string, payload: string }) => {
-  messagesState.messages = JSON.parse(data.payload)
+
+socket.on('msg', (data: { id: string, payload: string }[]) => {
+
+ messagesState.messages= data.map(value => {
+
+    const object: Icontact = JSON.parse(value.payload)
+    
+   return object
+   
+  })
 })

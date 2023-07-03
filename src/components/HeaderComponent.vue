@@ -323,7 +323,9 @@ flex-direction: column;
     margin-top: 20px;
   }
 
-
+.menu ul{
+    top:10%;
+}
   .menu ul li {
     border-bottom: none;
     padding: 0;
