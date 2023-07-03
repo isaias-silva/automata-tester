@@ -58,30 +58,11 @@ export default defineComponent({
         },
         getDate() {
             if (this.message?.date) {
+                const [date, hours] = this.message.date.split(' ')
+                const [day, mouth, year] = date.split('/')
 
-                console.log(this.message.date)
+                return hours
 
-                const date = new Date(this.message?.date);
-                const now = new Date();
-
-                const diffMilliseconds = now.getTime() - date.getTime();
-                const diffSeconds = Math.floor(diffMilliseconds / 1000);
-                const diffMinutes = Math.floor(diffSeconds / 60);
-                const diffHours = Math.floor(diffMinutes / 60);
-                const diffDays = Math.floor(diffHours / 24);
-                let diffString = "";
-
-                if (diffDays > 0) {
-                    diffString = `${diffDays} dia(s) atrás`;
-                } else if (diffHours > 0) {
-                    diffString = `${diffHours} hora(s) atrás`;
-                } else if (diffMinutes > 0) {
-                    diffString = `${diffMinutes} minuto(s) atrás`;
-                } else {
-                    diffString = `${diffSeconds} segundo(s) atrás`;
-                }
-
-                return diffString;
             }
 
         }
@@ -168,6 +149,11 @@ audio::-webkit-media-controls-panel {
 a svg {
     width: 100%;
 
+}
+.time{
+    font-size: 12px;
+    text-align: right;
+    margin:4px;
 }
 </style>
     

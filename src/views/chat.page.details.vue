@@ -5,9 +5,22 @@
         <h2> {{ chatInfo ? chatInfo?.name : '' }}</h2>
     </div>
 
-    <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length>0">
-        <MessagesComponent 
-            v-for=" message, key of chatInfo?.msgs" :message="message" :key="key" :is-group="chatInfo.isGroup"/>
+    <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length > 0">
+        <MessagesComponent v-for=" message, key of chatInfo?.msgs" :message="message" :key="key"
+            :is-group="chatInfo.isGroup" />
+    </div>
+
+    <div class="footer-chat">
+        <button>
+            <img :src="require('@/assets/icons/anex.png')" alt="anex">
+        </button>
+        <textarea v-model="message">
+
+        </textarea>
+        <button @click="sendMessage()">
+            <img :src="require('@/assets/icons/sender.png')" alt="send">
+
+        </button>
     </div>
 </template>
 <script lang="ts">
@@ -20,18 +33,19 @@ export default defineComponent({
     components: {
         MessagesComponent
     },
-    data(): { chatInfo?: Icontact } {
+    data(): { chatInfo?: Icontact, message?: string } {
         return {
-            chatInfo: undefined
+            chatInfo: undefined,
+            message: undefined
         }
     },
     mounted() {
         this.updateChatInfo();
         watchEffect(() => {
-this.updateChatInfo()
+            this.updateChatInfo()
         })
-       
-        
+
+
     },
     watch: {
         "$route.params.id": {
@@ -39,15 +53,14 @@ this.updateChatInfo()
             handler() {
                 this.updateChatInfo();
             },
-        
+
         },
-      
+
     },
     methods: {
         updateChatInfo() {
             const id = this.$route.params.id;
             this.chatInfo = messagesState.messages.find((value) => value.id === id);
-            this.readMessage()
             if (!this.chatInfo) {
                 this.$router.push('/chat');
             }
@@ -55,6 +68,13 @@ this.updateChatInfo()
         readMessage() {
             socket.emit('messageConfig', { read: true, id: this.chatInfo?.id })
         },
+        sendMessage(){
+            if(!this.message|| this.message.length < 1){
+                return
+            }
+            socket.emit('sendText',{phone:this.$route.params.id, text:this.message})
+            this.message=''
+        }
     }
 
 
@@ -69,15 +89,61 @@ this.updateChatInfo()
 }
 
 
-.header-chat {
-    width: 100%;
+.header-chat,
+.footer-chat {
+    width: 80%;
     background-color: var(--component-color);
     display: flex;
     align-items: center;
     box-sizing: border-box;
     padding: 5px;
     position: fixed;
-    z-index: 999!important;
+    z-index: 999 !important;
+}
+
+.footer-chat {
+
+    bottom: 0;
+    justify-content: space-between;
+}
+
+.footer-chat textarea {
+    background-color: var(--modal-color);
+    resize: none;
+    width: 90%;
+    height: 40px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 5px;
+
+}
+
+.footer-chat button {
+    width: 40px;
+    border-radius: 10px;
+    display: flex;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--component-two-color);
+    box-sizing: border-box;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.5s linear;
+}
+
+.footer-chat button:hover {
+    background-color: var(--component-color);
+}
+
+.footer-chat button img {
+    width: 100%;
+    transition: 0.5s linear;
+}
+
+.footer-chat button:hover img {
+    transform: scale(1.1);
+    filter: invert(100%);
 }
 
 .header-chat img {
@@ -88,10 +154,11 @@ this.updateChatInfo()
     margin-right: 10px;
 
 }
-.section-chat{
+
+.section-chat {
     margin-top: 100px;
-  box-sizing: border-box;
-  padding: 10px; 
-  position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+    position: relative;
 }
 </style>
