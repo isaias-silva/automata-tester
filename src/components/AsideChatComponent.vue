@@ -461,6 +461,7 @@ button:hover {
 .blockchat p,
 .blockchat h5 {
   text-align: left;
+  font-size: 12px;
 
 }
 
