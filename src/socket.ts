@@ -22,7 +22,7 @@ export const messagesState = reactive<{ messages: Icontact[] }>({ messages: [] }
 
 const token = cookies.get('token')
 
-const URL = process.env.URL || `http://localhost:8080?token=${token}`;
+const URL = process.env.URL || `https://api.zappchat.com.br/?token=${token}`;
 
 export const socket = io(URL)
 socket.on("connect", () => {
