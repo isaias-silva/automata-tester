@@ -197,6 +197,7 @@ font-weight: bold;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-right: 1px solid #0000003c;
 }
 
 .aside::-webkit-scrollbar {
@@ -236,12 +237,12 @@ font-weight: bold;
   width: 20%;
   margin-bottom: 20px;
   justify-content: space-between;
-  border-bottom: 1px solid var(--font-color);
-  box-shadow: -2px 1px 1px var(--font-color);
+  border-bottom: 1px solid var(--component-two-color);
   background-color: #0000002f;
   position: fixed;
   backdrop-filter: blur(3px);
 z-index: 999!important;
+height: 60px;
 
 }
 

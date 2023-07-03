@@ -7,7 +7,7 @@
 
     <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length>0">
         <MessagesComponent 
-            v-for=" message, key of chatInfo?.msgs" :message="message" :key="key" />
+            v-for=" message, key of chatInfo?.msgs" :message="message" :key="key" :is-group="chatInfo.isGroup"/>
     </div>
 </template>
 <script lang="ts">

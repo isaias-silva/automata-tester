@@ -14,4 +14,8 @@ export default defineComponent({
 *{
   color: var(--font-color)
 }
+p{
+  box-sizing: border-box;
+  padding: 10px;
+}
 </style>

@@ -6,7 +6,15 @@
 
         <audio v-if="message.media && message.type == 'audio'" :src="generateBase64()" controls></audio>
 
-        <p v-if="message?.text"> {{ message?.text }}</p>
+        <video v-if="message.media && message.type == 'video'" controls>
+            <source :src="generateBase64()" :type="message.media.mimetype || 'video/mp4'">
+        </video>
+        
+        <div v-if="message.quoted == true && message.msgQuoted" class="replace">
+            <p>{{ message.msgQuoted.text || "["+ message.msgQuoted.type+"]" }}</p>
+        </div>
+        
+        <p v-if="message?.text"> <span v-if="$props.isGroup==true" class="userchat">{{ message.name }}: </span> {{ message?.text }}</p>
     </div>
 </template>
 <script lang="ts">
@@ -23,6 +31,9 @@ export default defineComponent({
         message: {
             type: Object as () => Imessage,
             required: false
+        },
+        isGroup:{
+            type: Boolean
         }
     },
     methods: {
@@ -32,10 +43,15 @@ export default defineComponent({
             }
             return `data:${this.message.media.mimetype};base64,` + this.message.media.data
         }
+    }, mounted() {
+        console.log(this.$props.message)
     }
 })
 </script>
 <style scoped>
+.userchat{
+    font-weight: bold;
+}
 .message {
 
     display: block;
@@ -49,14 +65,20 @@ export default defineComponent({
 
     box-sizing: border-box;
 }
-
+.replace{
+    background-color: #00000028;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 5px;
+}
 .message p {
     width: 90%;
     margin: 5px;
     word-wrap: break-word;
 }
 
-.message img {
+.message img,
+.message video {
     width: 100%;
 
     border-radius: 10px;
@@ -66,11 +88,12 @@ export default defineComponent({
     background-color: var(--component-two-color);
     margin-left: 70%;
 }
-audio::-webkit-media-controls-panel{
 
-    border:20px solid #000;
+audio::-webkit-media-controls-panel {
+
+    border: 20px solid #000;
     background-color: var(--component-two-color);
-    
+
 }
 </style>
     
