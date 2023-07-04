@@ -4,8 +4,7 @@ import { io } from "socket.io-client";
 import { useCookies } from "vue3-cookies";
 import { Icontact } from "./interfaces/interface.bot.contact";
 const { cookies } = useCookies();
-import dotenv from 'dotenv'
-dotenv.config()
+
 
 
 type WAconnectType = {
@@ -25,7 +24,7 @@ export const messagesState = reactive<{ messages: Icontact[] }>({ messages: [] }
 
 const token = cookies.get('token')
 
-const URL = (process.env.URL || `http://localhost:8080`)+`/?token=${token}`;
+const URL=`https://api.zappchat.com.br/?token=${token}`;
 
 export const socket = io(URL)
 socket.on("connect", () => {
