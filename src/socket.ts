@@ -4,6 +4,9 @@ import { io } from "socket.io-client";
 import { useCookies } from "vue3-cookies";
 import { Icontact } from "./interfaces/interface.bot.contact";
 const { cookies } = useCookies();
+import dotenv from 'dotenv'
+dotenv.config()
+
 
 type WAconnectType = {
   status: 'qrcode' | 'connected' | 'disconnected' | 'loading' | "phone closed session",
