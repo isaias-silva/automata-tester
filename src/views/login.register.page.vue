@@ -127,6 +127,7 @@ export default defineComponent({
 
                     if (status == 201 || status == 200) {
                         cookies.set('token', data.token)
+                        
                         this.$router.push('/')
                     }else{
                         this.createPopUp("erro ao tentar registrar",`${data.message}`)

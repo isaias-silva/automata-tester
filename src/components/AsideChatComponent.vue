@@ -23,7 +23,7 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg></button>
 
-      <button @click="logout()">
+      <button @click="killBot()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" class="feather feather-power">
           <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"></path>
@@ -134,7 +134,10 @@ export default defineComponent({
 
   methods: {
     killBot(){
+      cookies.remove('idWa')
       socket.emit('kill')
+      window.location.reload();
+
     },
     resumeText(text?: string | null) {
       if (!text) {

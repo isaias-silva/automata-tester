@@ -50,6 +50,7 @@
 </template>
 <script lang="ts">
 
+import { socket } from '@/socket';
 import { defineComponent } from 'vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
@@ -85,15 +86,17 @@ export default defineComponent({
             if (this.noturne == true) {
                 document.body.classList.add('dark');
                 cookies.set('noturne', this.noturne?"true":"false", '15d');
+           
             } else {
+
                 document.body.classList.remove('dark');
                 cookies.remove('noturne')
             }
-
-
         },
         logout(){
+           
             cookies.remove('token');
+            socket.disconnect()
             this.$router.push('/login')
         }
     }, mounted() {

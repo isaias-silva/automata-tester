@@ -81,7 +81,7 @@ export default defineComponent({
             this.email = email;
             this.profile = profile;
             this.adm = adm;
-
+        
 
         } else {
             cookies.remove('token')

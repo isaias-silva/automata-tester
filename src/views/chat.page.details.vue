@@ -102,7 +102,7 @@ export default defineComponent({
 }
 
 .footer-chat {
-
+  
     bottom: 0;
     justify-content: space-between;
 }
@@ -157,6 +157,7 @@ export default defineComponent({
 
 .section-chat {
     margin-top: 100px;
+    margin-bottom: 50px;
     box-sizing: border-box;
     padding: 10px;
     position: relative;

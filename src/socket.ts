@@ -22,7 +22,7 @@ export const messagesState = reactive<{ messages: Icontact[] }>({ messages: [] }
 
 const token = cookies.get('token')
 
-const URL = process.env.URL || `https://api.zappchat.com.br/?token=${token}`;
+const URL = (process.env.URL || `http://localhost:8080`)+`/?token=${token}`;
 
 export const socket = io(URL)
 socket.on("connect", () => {
@@ -34,7 +34,7 @@ socket.on("disconnect", () => {
 });
 socket.on('conn', (data: WAconnectType) => {
   socketState.WAconnect = data
-
+  
   if (data.status == 'connected' && data.id) {
     cookies.set('idWa', data.id)
   }
