@@ -14,6 +14,10 @@
         <button>
             <img :src="require('@/assets/icons/anex.png')" alt="anex">
         </button>
+        <div>
+       
+     
+        </div>
         <textarea v-model="message">
 
         </textarea>
@@ -25,13 +29,17 @@
 </template>
 <script lang="ts">
 import { Icontact } from '@/interfaces/interface.bot.contact';
-import { messagesState, socket, socketState } from '@/socket';
+import { messagesState, socket} from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
-import { defineComponent, watch, watchEffect } from 'vue'
+import { defineComponent, watchEffect } from 'vue'
+
+
+
 export default defineComponent({
     name: "ChatPageDetails",
     components: {
-        MessagesComponent
+        MessagesComponent,
+        
     },
     data(): { chatInfo?: Icontact, message?: string } {
         return {
@@ -58,6 +66,9 @@ export default defineComponent({
 
     },
     methods: {
+        onEmojiSelect(emoji:any){
+           alert('aaaaaaaaaaaa')
+        },
         updateChatInfo() {
             const id = this.$route.params.id;
             this.chatInfo = messagesState.messages.find((value) => value.id === id);
@@ -88,7 +99,11 @@ export default defineComponent({
 
 }
 
-
+.emojiModal{
+    width: 200px;
+    height: 300px;
+    display: flex;
+}
 .header-chat,
 .footer-chat {
     width: 80%;
