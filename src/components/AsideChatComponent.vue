@@ -529,4 +529,14 @@ animation: loadchat 1s infinite;
   }
   
 }
+@media screen and (max-width: 768px) {
+ .aside{
+  width: 100%;
+  z-index: 9997!important;
+
+}
+ .control{
+  width: 100%;
+ }
+}
 </style>

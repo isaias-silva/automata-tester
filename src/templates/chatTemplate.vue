@@ -48,7 +48,16 @@ export default defineComponent({
     width: 80%;
     background-size: cover;
     background-attachment: fixed;
+    
 
     
+}
+@media screen and (max-width: 768px) {
+  
+   .content{
+    width: 100%;
+    z-index: 99999!important;
+   }
+ 
 }
 </style>

@@ -96,4 +96,13 @@ span {
   width: 60%;
 
 }
+@media screen and (max-width: 768px) {
+  .allboard{
+    flex-direction: column;
+    align-items: center;
+  }
+  .itens{
+    width: 90%;
+  }
+}
 </style>

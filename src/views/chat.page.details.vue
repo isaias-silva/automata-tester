@@ -177,4 +177,19 @@ export default defineComponent({
     padding: 10px;
     position: relative;
 }
+@media screen and (max-width: 768px) {
+  
+   .section-chat{
+    width: 100%;
+    background-color: var(--main-color);
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding-top: 70px;
+    padding-bottom: 50px;
+   }
+ .header-chat,.footer-chat{
+    width: 100%;
+ }
+}
 </style>

@@ -59,8 +59,6 @@ export default defineComponent({
         getDate() {
             if (this.message?.date) {
                 const [date, hours] = this.message.date.split(' ')
-                const [day, mouth, year] = date.split('/')
-
                 return hours
 
             }
@@ -154,6 +152,14 @@ a svg {
     font-size: 12px;
     text-align: right;
     margin:4px;
+}
+@media screen and (max-width: 768px) {
+    .message{
+        width: 70%;
+    }
+    .message.me{
+        margin-left: 30%;
+    }
 }
 </style>
     
