@@ -11,6 +11,7 @@
         </video>
 
         <div v-if="message.quoted == true && message.msgQuoted" class="replace">
+            <p>{{ message.msgQuoted.name}}</p>
             <p>{{ message.msgQuoted.text || "[" + message.msgQuoted.type + "]" }}</p>
         </div>
         <div class="doc" v-if="message.type == 'doc'">

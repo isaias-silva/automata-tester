@@ -3,6 +3,13 @@
         <img :src="chatInfo?.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
             alt="profile">
         <h2> {{ chatInfo ? chatInfo?.name : '' }}</h2>
+       <div class="control">
+           <router-link to="/chat"> 
+       <img :src="require('@/assets/icons/return.png')" alt="return">
+   
+           </router-link>
+
+       </div>
     </div>
 
     <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length > 0">
@@ -176,6 +183,22 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 10px;
     position: relative;
+}
+.control{
+    position: absolute;
+    top:0;
+    right: 0;
+    display: flex;
+    max-width: 40px;
+    align-items: center;
+    justify-content: space-between
+}
+.control img{
+    width: 100%;
+    border: none;
+}
+.dark .control img{
+    filter:invert(100%);
 }
 @media screen and (max-width: 768px) {
   
