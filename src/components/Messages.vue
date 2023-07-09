@@ -1,6 +1,7 @@
 
 <template>
-    <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'}`">
+    <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text?'invis':''}` ">
+        <p v-if="isGroup && message.type!='text' && !message.text"><strong>{{ message.name }}</strong></p>
         <img v-if="message?.media && (message.type == 'image' || message.type == 'sticker') && message.media.data"
             :src="generateBase64()" />
 
@@ -153,6 +154,9 @@ a svg {
     font-size: 12px;
     text-align: right;
     margin:4px;
+}
+.invis{
+    background-color: #00000000;
 }
 @media screen and (max-width: 768px) {
     .message{

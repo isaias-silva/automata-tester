@@ -30,7 +30,7 @@
         </svg>
       </button>
     </div>
-    
+
     <div class="qr">
       <img :src="src" alt="logo">
       <p>{{ status }}</p>
@@ -42,23 +42,31 @@
         <span></span>
         <span></span>
       </div>
-      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key">
+      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key" @click="readMessage(value.id)">
         <img
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
           alt="profile">
         <div class="blockchat">
           <h5>{{ value.name }}:</h5>
-       
-          <p>   <span class="user-title" v-if="value.isGroup ">{{ value.msgs?value.msgs[(value.msgs?.length || 1) - 1].name:'member' }}: </span>
-           {{ value.msgs ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
-            || 1) - 1].type || '[]' : null }}</p>
+
+          <p> <span class="user-title" v-if="value.isGroup">{{ value.msgs ? value.msgs[(value.msgs?.length || 1) -
+            1].name : 'member' }}: </span>
+            {{ value.msgs ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
+              || 1) - 1].type || '[]' : null }}</p>
         </div>
         <div class="count">
-          <span v-if="value.newMessages && value.newMessages>0">
+          <span v-if="value.newMessages && value.newMessages > 0">
             {{ value.newMessages }}
           </span>
         </div>
       </router-link>
+      <div>
+        <button class="btn-view">
+
+          mais conversas
+        </button>
+
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +84,7 @@ const { cookies } = useCookies();
 export default defineComponent({
   name: 'HeaderComponent',
   data(): {
-    loading:boolean,
+    loading: boolean,
     noturne: boolean,
     src?: string,
     status: string,
@@ -88,14 +96,14 @@ export default defineComponent({
       noturne: cookies.get('noturne') ? true : false,
       src: require('@/assets/icons/load.gif'),
       status: 'disconnected',
-      loading:true,
+      loading: true,
       messages: []
     }
   },
   mounted() {
 
     watch(messagesState, (newMessage => {
-      this.loading=false
+      this.loading = false
       this.messages = newMessage.messages
     }))
     watch(socketState, (newSocketState => {
@@ -111,7 +119,7 @@ export default defineComponent({
           console.log(qr)
           break
         case 'connected':
-         
+
           this.src = require('@/assets/icons/bot.gif')
           break
         case 'disconnected':
@@ -133,12 +141,13 @@ export default defineComponent({
   },
 
   methods: {
-    killBot(){
+    killBot() {
       cookies.remove('idWa')
       socket.emit('kill')
       window.location.reload();
 
     },
+
     resumeText(text?: string | null) {
       if (!text) {
         return
@@ -161,10 +170,16 @@ export default defineComponent({
 
 
     },
-    logout() {
-    socket.emit('kill')
+    readMessage(jid?: string|null) {
+      if(!jid){
+        return
+      }
+      socket.emit('messageConfig', { read: true, id: jid })
     },
-    showMenu(){
+    logout() {
+      socket.emit('kill')
+    },
+    showMenu() {
       alert('show menu')
     }
   }
@@ -182,7 +197,7 @@ export default defineComponent({
   background: #0000003d;
   margin-top: 80px;
 
- margin-bottom: 20px;
+  margin-bottom: 20px;
   overflow: hidden;
   border-radius: 20px;
 }
@@ -190,9 +205,11 @@ export default defineComponent({
 .qr img {
   width: 100%;
 }
-.user-title{
-font-weight: bold;
+
+.user-title {
+  font-weight: bold;
 }
+
 .arrow {
   width: 0;
   height: 0;
@@ -258,8 +275,8 @@ font-weight: bold;
   background-color: #0000002f;
   position: fixed;
   backdrop-filter: blur(3px);
-z-index: 999!important;
-height: 60px;
+  z-index: 999 !important;
+  height: 60px;
 
 }
 
@@ -385,6 +402,14 @@ button:hover {
   display: block;
 }
 
+.btn-view {
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  font-size: 18px;
+}
+
+
 .menu ul {
   grid-area: list;
   list-style: none;
@@ -487,13 +512,14 @@ button:hover {
   margin-bottom: 10px;
 }
 
-.load{
+.load {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.load span{
+
+.load span {
   width: 90%;
   height: 60px;
   display: block;
@@ -503,40 +529,45 @@ button:hover {
   border-radius: 10px;
 
 }
-.load span:nth-child(1){
-animation: loadchat 1s infinite;
+
+.load span:nth-child(1) {
+  animation: loadchat 1s infinite;
 }
 
-.load span:nth-child(2){
+.load span:nth-child(2) {
   animation: loadchat 1.5s infinite;
 }
 
-.load span:nth-child(3){
+.load span:nth-child(3) {
   animation: loadchat 1.8s infinite;
 }
 
-.load span:nth-child(4){
+.load span:nth-child(4) {
   animation: loadchat 2s infinite;
 }
+
 @keyframes loadchat {
-  0%{
+  0% {
     opacity: 1;
-  
+
   }
-  100%{
+
+  100% {
     opacity: 0.5;
-   
+
   }
-  
-}
-@media screen and (max-width: 768px) {
- .aside{
-  width: 100%;
-  z-index: 9997!important;
 
 }
- .control{
-  width: 100%;
- }
+
+@media screen and (max-width: 768px) {
+  .aside {
+    width: 100%;
+    z-index: 9997 !important;
+
+  }
+
+  .control {
+    width: 100%;
+  }
 }
 </style>

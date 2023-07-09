@@ -3,27 +3,29 @@
         <img :src="chatInfo?.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
             alt="profile">
         <h2> {{ chatInfo ? chatInfo?.name : '' }}</h2>
-       <div class="control">
-           <router-link to="/chat"> 
-       <img :src="require('@/assets/icons/return.png')" alt="return">
-   
-           </router-link>
+        <div class="control">
+            <router-link to="/chat">
+                <img :src="require('@/assets/icons/return.png')" alt="return">
 
-       </div>
+            </router-link>
+
+        </div>
     </div>
 
     <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length > 0">
-        <MessagesComponent v-for=" message, key of chatInfo?.msgs" :message="message" :key="key"
-            :is-group="chatInfo.isGroup" />
+
+        <MessagesComponent v-for=" message, key of chatInfo?.msgs.filter(v => v != undefined && v != null)"
+            :message="message" :key="key" :is-group="chatInfo.isGroup" />
     </div>
+
 
     <div class="footer-chat">
         <button>
             <img :src="require('@/assets/icons/anex.png')" alt="anex">
         </button>
         <div>
-       
-     
+
+
         </div>
         <textarea v-model="message">
 
@@ -36,17 +38,18 @@
 </template>
 <script lang="ts">
 import { Icontact } from '@/interfaces/interface.bot.contact';
-import { messagesState, socket} from '@/socket';
+import { messagesState, socket } from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
 import { defineComponent, watchEffect } from 'vue'
 
 
 
 export default defineComponent({
+
     name: "ChatPageDetails",
     components: {
         MessagesComponent,
-        
+
     },
     data(): { chatInfo?: Icontact, message?: string } {
         return {
@@ -60,7 +63,6 @@ export default defineComponent({
             this.updateChatInfo()
         })
 
-
     },
     watch: {
         "$route.params.id": {
@@ -73,8 +75,14 @@ export default defineComponent({
 
     },
     methods: {
-        onEmojiSelect(emoji:any){
-           alert('aaaaaaaaaaaa')
+        scrollToBottom() {
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth' 
+            });
+        },
+        onEmojiSelect(emoji: any) {
+            alert('aaaaaaaaaaaa')
         },
         updateChatInfo() {
             const id = this.$route.params.id;
@@ -82,16 +90,17 @@ export default defineComponent({
             if (!this.chatInfo) {
                 this.$router.push('/chat');
             }
+           
+
         },
-        readMessage() {
-            socket.emit('messageConfig', { read: true, id: this.chatInfo?.id })
-        },
-        sendMessage(){
-            if(!this.message|| this.message.length < 1){
+
+        sendMessage() {
+            if (!this.message || this.message.length < 1) {
                 return
             }
-            socket.emit('sendText',{phone:this.$route.params.id, text:this.message})
-            this.message=''
+            socket.emit('sendText', { phone: this.$route.params.id, text: this.message })
+            this.message = ''
+            this.scrollToBottom()
         }
     }
 
@@ -106,11 +115,12 @@ export default defineComponent({
 
 }
 
-.emojiModal{
+.emojiModal {
     width: 200px;
     height: 300px;
     display: flex;
 }
+
 .header-chat,
 .footer-chat {
     width: 80%;
@@ -124,7 +134,7 @@ export default defineComponent({
 }
 
 .footer-chat {
-  
+
     bottom: 0;
     justify-content: space-between;
 }
@@ -184,35 +194,41 @@ export default defineComponent({
     padding: 10px;
     position: relative;
 }
-.control{
+
+.control {
     position: absolute;
-    top:0;
+    top: 0;
     right: 0;
     display: flex;
     max-width: 40px;
     align-items: center;
     justify-content: space-between
 }
-.control img{
+
+.control img {
     width: 100%;
     border: none;
 }
-.dark .control img{
-    filter:invert(100%);
+
+.dark .control img {
+    filter: invert(100%);
 }
+
 @media screen and (max-width: 768px) {
-  
-   .section-chat{
-    width: 100%;
-    background-color: var(--main-color);
-    height: 100%;
-    margin: 0;
-    box-sizing: border-box;
-    padding-top: 70px;
-    padding-bottom: 50px;
-   }
- .header-chat,.footer-chat{
-    width: 100%;
- }
+
+    .section-chat {
+        width: 100%;
+        background-color: var(--main-color);
+        height: 100%;
+        margin: 0;
+        box-sizing: border-box;
+        padding-top: 70px;
+        padding-bottom: 50px;
+    }
+
+    .header-chat,
+    .footer-chat {
+        width: 100%;
+    }
 }
 </style>

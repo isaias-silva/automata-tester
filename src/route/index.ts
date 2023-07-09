@@ -31,8 +31,9 @@ const routes = [{
     {path:'',
     component: chatPage
   },
+
   {path:':id',
-  component: chatPageDetails
+    component: chatPageDetails
 }
   ]
 }
