@@ -1,7 +1,7 @@
 
 <template>
-    <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text?'invis':''}` ">
-        <p v-if="isGroup && message.type!='text' && !message.text"><strong>{{ message.name }}</strong></p>
+    <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
+        <p v-if="isGroup && message.type != 'text' && !message.text"><strong>{{ message.name }}</strong></p>
         <img v-if="message?.media && (message.type == 'image' || message.type == 'sticker') && message.media.data"
             :src="generateBase64()" />
 
@@ -12,8 +12,11 @@
         </video>
 
         <div v-if="message.quoted == true && message.msgQuoted" class="replace">
-            <p>{{ message.msgQuoted.name}}</p>
-            <p>{{ message.msgQuoted.text || "[" + message.msgQuoted.type + "]" }}</p>
+            <p><strong>{{ message.msgQuoted.name|| message.msgQuoted.number || " " }}: </strong></p>
+
+            <p>{{ message.msgQuoted.text || "["
+                +
+                message.msgQuoted.type + "]" }}</p>
         </div>
         <div class="doc" v-if="message.type == 'doc'">
             <a :href="generateBase64()" download>
@@ -150,19 +153,23 @@ a svg {
     width: 100%;
 
 }
-.time{
+
+.time {
     font-size: 12px;
     text-align: right;
-    margin:4px;
+    margin: 4px;
 }
-.invis{
+
+.invis {
     background-color: #00000000;
 }
+
 @media screen and (max-width: 768px) {
-    .message{
+    .message {
         width: 70%;
     }
-    .message.me{
+
+    .message.me {
         margin-left: 30%;
     }
 }

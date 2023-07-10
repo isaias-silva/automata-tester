@@ -90,7 +90,7 @@ export default defineComponent({
             if (!this.chatInfo) {
                 this.$router.push('/chat');
             }
-           
+           this.scrollToBottom()
 
         },
 

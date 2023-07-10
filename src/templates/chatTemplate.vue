@@ -10,7 +10,7 @@
 <script lang="ts">
 
 import AsideComponent from "@/components/AsideChatComponent.vue"
-import { socket, socketState } from "@/socket";
+import { connectSocket, socket, socketState,disconnecteSocket} from "@/socket";
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
@@ -33,6 +33,10 @@ export default defineComponent({
             }
         })
 
+    },mounted(){
+        connectSocket()
+    },beforeUnmount(){
+        disconnecteSocket()
     }
 
 

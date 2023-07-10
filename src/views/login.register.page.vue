@@ -2,7 +2,7 @@
     <MyPopUp v-if="visiblePopUp == true" :message="messagePopUp || ''" :title="titlePopUp || ''" @close="closePopUp">
 
     </MyPopUp>
- 
+
     <form @submit.prevent="submitForm">
         <div class="menu">
 
@@ -76,7 +76,7 @@ export default defineComponent({
             errors: [],
             mode: 'login',
             visiblePopUp: false,
-    
+
         }
     },
     methods: {
@@ -88,7 +88,7 @@ export default defineComponent({
             this.messagePopUp = message
             this.visiblePopUp = true;
         },
-       
+
         async submitForm() {
 
             this.validateForm()
@@ -101,46 +101,52 @@ export default defineComponent({
                     case 'login':
                         if (this.email && this.password) {
                             const info = await loginRequest({ email: this.email, password: this.password })
-                            const { data, status } = info
-                            if (status == 201) {
-                                cookies.set('token', data.token)
-                                this.$router.push('/')
-                            }else{
-                                this.createPopUp("erro ao tentar fazer login",`${data.message}`)
-                            }
+                            try {
 
+
+                                const { data, status } = info
+
+                                if (status == 201) {
+                                    cookies.set('token', data.token)
+                                    this.$router.push('/')
+                                } else {
+                                    throw new Error(data.message)
+                                }
+                            } catch (err: any) {
+                                this.createPopUp("erro ao tentar fazer login", `${err.message || ''}`)
+                            }
                             console.log(info)
-                           
+
                         }
 
                         break
                     case 'register':
-                       
-                    if (this.name && this.email && this.password && this.number) {
-                    const info = await register({
-                        email: this.email,
-                        password: this.password,
-                        name: this.name,
-                        phone_number: this.number,
-                    })
-                    const { data, status } = info
 
-                    if (status == 201 || status == 200) {
-                        cookies.set('token', data.token)
-                        
-                        this.$router.push('/')
-                    }else{
-                        this.createPopUp("erro ao tentar registrar",`${data.message}`)
-                        
-                    }
-                    console.log(info)
-                }    
-                    
-                    
-                    break
+                        if (this.name && this.email && this.password && this.number) {
+                            const info = await register({
+                                email: this.email,
+                                password: this.password,
+                                name: this.name,
+                                phone_number: this.number,
+                            })
+                            const { data, status } = info
+
+                            if (status == 201 || status == 200) {
+                                cookies.set('token', data.token)
+
+                                this.$router.push('/')
+                            } else {
+                                this.createPopUp("erro ao tentar registrar", `${data.message}`)
+
+                            }
+                            console.log(info)
+                        }
+
+
+                        break
                 }
 
-                
+
             }
 
 
@@ -196,7 +202,7 @@ export default defineComponent({
             this.noturne = !this.noturne;
             if (this.noturne == true) {
                 document.body.classList.add('dark');
-                cookies.set('noturne', this.noturne?"true":"false", '15d');
+                cookies.set('noturne', this.noturne ? "true" : "false", '15d');
             } else {
                 document.body.classList.remove('dark');
                 cookies.remove('noturne')
@@ -213,7 +219,7 @@ export default defineComponent({
         }
     }, components: {
         MyPopUp,
-       
+
     }
 
 
@@ -370,8 +376,9 @@ button[type="submit"]:hover {
 
 
 }
+
 @media screen and (max-width: 768px) {
-    form{
+    form {
         width: 90%;
     }
 }
