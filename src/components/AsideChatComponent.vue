@@ -153,8 +153,8 @@ export default defineComponent({
         return
       }
       let newText = text
-      if (newText.length > 25) {
-        newText = newText.substring(0, 25) + "..."
+      if (newText.length > 17) {
+        newText = newText.substring(0, 17) + "..."
       }
       return newText
     },
@@ -459,7 +459,11 @@ button:hover {
   padding: 5px;
   transition: 0.5s linear;
 }
-
+.contact p{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+}
 .count {
 
   display: flex;

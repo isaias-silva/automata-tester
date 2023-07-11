@@ -5,9 +5,8 @@
             <h1>Automata tester</h1>
             <span>{{ message }}</span>
             <button class="mode" @click="toggleDarkMode">
-
-                <span class="moon"></span>
-                <span class="sun"></span>
+                <span class="moon">&#127769;</span>
+                <span class="sun">&#9728;</span>
             </button>
         </div>
 
@@ -78,23 +77,23 @@ export default defineComponent({
 
             if (header && header.scrollHeight) {
                 const sticky = header.scrollHeight;
-                this.headerFixed = window.scrollY > sticky + header.clientHeight-(header.clientHeight/2);
+                this.headerFixed = window.scrollY > sticky + header.clientHeight - (header.clientHeight / 2);
             }
         },
         toggleDarkMode() {
             this.noturne = !this.noturne;
             if (this.noturne == true) {
                 document.body.classList.add('dark');
-                cookies.set('noturne', this.noturne?"true":"false", '15d');
-           
+                cookies.set('noturne', this.noturne ? "true" : "false", '15d');
+
             } else {
 
                 document.body.classList.remove('dark');
                 cookies.remove('noturne')
             }
         },
-        logout(){
-           
+        logout() {
+
             cookies.remove('token');
             socket.disconnect()
             this.$router.push('/login')
@@ -106,7 +105,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .header {
-    z-index: 999!important;
+    z-index: 999 !important;
     color: var(--font-color);
     background: var(--component-color);
     display: grid;
@@ -128,7 +127,7 @@ export default defineComponent({
     display: grid;
     grid-template-areas: "image title btn" "image legenda btn";
     grid-template-columns: 10% 20% 30%;
-    
+
 
 }
 
@@ -153,18 +152,19 @@ export default defineComponent({
 }
 
 .mode {
-    
+
     grid-area: btn;
 }
 
 .mode {
-   
     background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 100%;
 }
 
 .mode .moon,
@@ -175,6 +175,10 @@ export default defineComponent({
     transform: translate(-50%, -50%);
     width: 50px;
     height: 50px;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     transition: transform 0.3s ease;
 }
@@ -192,18 +196,8 @@ export default defineComponent({
 }
 
 
-
 .dark .mode .sun {
-    transform: scale(2);
-    transform: rotate(45deg);
-    transform: translate(-50%, -50%) scale(0.5);
-}
-
-
-
-.mode label:hover {
-    cursor: pointer;
-    filter: invert(40%)
+    transform: rotate(45deg) translateX(45%);
 }
 
 
@@ -301,37 +295,39 @@ export default defineComponent({
 .reverse {
     flex-direction: row-reverse;
 }
+
 @media screen and (max-width: 768px) {
-  .header {
-   display: flex;
-  }
+    .header {
+        display: flex;
+    }
 
-  .logo {
-display: flex;
-flex-direction: column;
-  }
-  .mode{
-    position: absolute;
-    top:0;
-    left:20%  
-}
+    .logo {
+        display: flex;
+        flex-direction: column;
+    }
 
-  .logo h1 {
-    text-align: center;
-   
-  }
+    .mode {
+        position: absolute;
+        top: 0;
+        left: 20%
+    }
 
-  .menu {
-    position: static;
-    margin-top: 20px;
-  }
+    .logo h1 {
+        text-align: center;
 
-.menu ul{
-    top:10%;
-}
-  .menu ul li {
-    border-bottom: none;
-    padding: 0;
-  }
-}
-</style>
+    }
+
+    .menu {
+        position: static;
+        margin-top: 20px;
+    }
+
+    .menu ul {
+        top: 10%;
+    }
+
+    .menu ul li {
+        border-bottom: none;
+        padding: 0;
+    }
+}</style>

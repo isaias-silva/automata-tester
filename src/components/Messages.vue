@@ -1,7 +1,32 @@
 
 <template>
     <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
+
+        <div v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
+            <p v-if="isGroup"><strong>{{ message.msgQuoted.name || message.msgQuoted.number || " " }}: </strong></p>
+            <div v-if="message.msgQuoted" class="block-replace">
+                <img v-if="message.msgQuoted && message?.msgQuoted.media && (message.msgQuoted.type === 'image' || message.type == 'sticker') && message.msgQuoted.media.data"
+                    :src="generateBase64Quoted()" />
+
+                <audio v-if="message.msgQuoted && message.msgQuoted.media && message.msgQuoted.type == 'audio'"
+                    :src="generateBase64Quoted()"></audio>
+
+                <video v-if="message.msgQuoted && message.msgQuoted.media && message.msgQuoted.type == 'video'">
+                    <source :src="generateBase64Quoted()" :type="message.msgObject.media.mimetype || 'video/mp4'">
+                </video>
+
+                <div class="doc" v-if="message.msgQuoted && message.msgQuoted.type == 'doc'">
+                    Doc
+                </div>
+                <p v-if="message.msgQuoted && message.msgQuoted.text">{{ message.msgQuoted.text }}</p>
+
+            </div>
+        </div>
+
         <p v-if="isGroup && message.type != 'text' && !message.text"><strong>{{ message.name }}</strong></p>
+
+
+
         <img v-if="message?.media && (message.type == 'image' || message.type == 'sticker') && message.media.data"
             :src="generateBase64()" />
 
@@ -11,24 +36,11 @@
             <source :src="generateBase64()" :type="message.media.mimetype || 'video/mp4'">
         </video>
 
-        <div v-if="message.quoted == true && message.msgQuoted" class="replace">
-            <p><strong>{{ message.msgQuoted.name|| message.msgQuoted.number || " " }}: </strong></p>
 
-            <p>{{ message.msgQuoted.text || "["
-                +
-                message.msgQuoted.type + "]" }}</p>
-        </div>
-        <div class="doc" v-if="message.type == 'doc'">
-            <a :href="generateBase64()" download>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 17l4 4 4-4m-4-5v9" />
-                </svg>
-            </a>
-            <i>clique no icone para baixar o arquivo.</i>
-        </div>
+
         <p v-if="message?.text"> <span v-if="$props.isGroup == true" class="userchat">{{ message.name }}: </span> {{
             message?.text }}</p>
+
 
         <div class="time">
             <span>{{ getDate() }}</span>
@@ -56,10 +68,26 @@ export default defineComponent({
     },
     methods: {
         generateBase64() {
+            try{
             if (!this.message || !this.message.media) {
                 return
             }
             return `data:${this.message.media.mimetype};base64,` + this.message.media.data
+        }catch(err){
+            console.log(err)
+        }
+        },
+        generateBase64Quoted() {
+            try {
+                if (!this.message?.msgQuoted || !this.message.msgQuoted.media) {
+                    return
+                }
+                return `data:${this.message.msgQuoted.media.mimetype};base64,` + this.message.msgQuoted.media.data
+
+
+            } catch (err) {
+                console.log(err)
+            }
         },
         getDate() {
             if (this.message?.date) {
@@ -158,6 +186,19 @@ a svg {
     font-size: 12px;
     text-align: right;
     margin: 4px;
+}
+
+.block-replace {
+    display: flex;
+}
+
+.block-replace img {
+    width: 40%;
+}
+
+.block-replace p {
+    width: 90%;
+    font-size: 14px;
 }
 
 .invis {

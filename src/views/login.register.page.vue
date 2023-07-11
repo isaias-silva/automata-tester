@@ -8,8 +8,8 @@
 
             <button type="button" class="mode" @click="toggleDarkMode">
 
-                <span class="moon"></span>
-                <span class="sun"></span>
+                <span class="moon">&#127769;</span>
+                <span class="sun">&#9728;</span>
             </button>
 
         </div>
@@ -339,8 +339,10 @@ button[type="submit"]:hover {
     border: none;
     cursor: pointer;
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 100%;
 }
 
 .mode .moon,
@@ -351,6 +353,10 @@ button[type="submit"]:hover {
     transform: translate(-50%, -50%);
     width: 50px;
     height: 50px;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     transition: transform 0.3s ease;
 }
@@ -368,14 +374,10 @@ button[type="submit"]:hover {
 }
 
 
-
 .dark .mode .sun {
-    transform: scale(2);
-    transform: rotate(45deg);
-    transform: translate(-50%, -50%) scale(0.5);
-
-
+    transform: rotate(45deg) translateX(45%);
 }
+
 
 @media screen and (max-width: 768px) {
     form {
