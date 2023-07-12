@@ -102,27 +102,27 @@ span:nth-child(1) {
 
 span:nth-child(2) {
 
-    animation: rotate 1.2s infinite;
+    animation: rotate 1.1s infinite;
 }
 
 span:nth-child(3) {
 
-    animation: rotate 1.5s infinite;
+    animation: rotate 1.2s infinite;
 }
 
 span:nth-child(4) {
 
-    animation: rotate 1.8s infinite;
+    animation: rotate 1.3s infinite;
 }
 
 span:nth-child(5) {
 
-    animation: rotate 2s infinite;
+    animation: rotate 1.4s infinite;
 }
 
 span:nth-child(6) {
 
-    animation: rotate 2.3s infinite;
+    animation: rotate 1.5s infinite;
 }
 
 @keyframes rotate {

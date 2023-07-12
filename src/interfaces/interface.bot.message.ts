@@ -1,6 +1,7 @@
 
 
 export interface Imessage {
+    _id:number,
     text?: string | null,
     type?: 'text' | 'warking' | 'image' | 'sticker' | 'video' | 'audio' | 'doc' | 'quoted'
     name?: string | null

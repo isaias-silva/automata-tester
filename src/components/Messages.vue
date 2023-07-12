@@ -3,21 +3,12 @@
     <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
 
         <div v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
-            <p v-if="isGroup"><strong>{{ message.msgQuoted.name || message.msgQuoted.number || " " }}: </strong></p>
+            <p v-if="isGroup"><strong>{{ message.msgQuoted.name || message.msgQuoted.number || "user" }}: </strong></p>
             <div v-if="message.msgQuoted" class="block-replace">
-                <img v-if="message.msgQuoted && message?.msgQuoted.media && (message.msgQuoted.type === 'image' || message.type == 'sticker') && message.msgQuoted.media.data"
+                <img v-if="message.msgQuoted && message?.msgQuoted.media && (message.msgQuoted.type == 'image' || message.type == 'sticker') && message.msgQuoted.media.data"
                     :src="generateBase64Quoted()" />
 
-                <audio v-if="message.msgQuoted && message.msgQuoted.media && message.msgQuoted.type == 'audio'"
-                    :src="generateBase64Quoted()"></audio>
-
-                <video v-if="message.msgQuoted && message.msgQuoted.media && message.msgQuoted.type == 'video'">
-                    <source :src="generateBase64Quoted()" :type="message.msgObject.media.mimetype || 'video/mp4'">
-                </video>
-
-                <div class="doc" v-if="message.msgQuoted && message.msgQuoted.type == 'doc'">
-                    Doc
-                </div>
+                <p v-if="message.msgQuoted && message?.msgQuoted.media && message.msgQuoted.type!='image' && message.msgQuoted.type!='sticker'">{{ message.msgQuoted.type }}</p>
                 <p v-if="message.msgQuoted && message.msgQuoted.text">{{ message.msgQuoted.text }}</p>
 
             </div>
@@ -38,7 +29,7 @@
 
 
 
-        <p v-if="message?.text"> <span v-if="$props.isGroup == true" class="userchat">{{ message.name }}: </span> {{
+        <p v-if="message?.text"> <span v-if="$props.isGroup == true" class="userchat">{{ message?.name || message.number}}: </span> {{
             message?.text }}</p>
 
 

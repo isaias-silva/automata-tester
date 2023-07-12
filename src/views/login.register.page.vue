@@ -1,4 +1,5 @@
 <template>
+    <loadPopup v-if="inLoading == true" />
     <MyPopUp v-if="visiblePopUp == true" :message="messagePopUp || ''" :title="titlePopUp || ''" @close="closePopUp">
 
     </MyPopUp>
@@ -50,6 +51,7 @@ import { defineComponent } from 'vue'
 import loginRequest from '@/services/login'
 import register from '@/services/register'
 import MyPopUp from '@/components/popup.vue'
+import loadPopup from '@/components/load.popup.vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
@@ -67,8 +69,10 @@ export default defineComponent({
         errors: { message: string, value: string }[],
         mode: 'login' | 'register',
         visiblePopUp: boolean,
+        inLoading: boolean,
         messagePopUp?: string,
         titlePopUp?: string;
+
 
     } {
         return {
@@ -76,7 +80,7 @@ export default defineComponent({
             errors: [],
             mode: 'login',
             visiblePopUp: false,
-
+            inLoading: false
         }
     },
     methods: {
@@ -96,56 +100,60 @@ export default defineComponent({
                 return
 
             } else {
+                this.inLoading = true
+                setTimeout(async () => {
+                    switch (this.mode) {
+                        case 'login':
+                            if (this.email && this.password) {
+                                const info = await loginRequest({ email: this.email, password: this.password })
+                                try {
 
-                switch (this.mode) {
-                    case 'login':
-                        if (this.email && this.password) {
-                            const info = await loginRequest({ email: this.email, password: this.password })
-                            try {
 
+                                    const { data, status } = info
 
+                                    if (status == 201) {
+                                        cookies.set('token', data.token)
+                                        this.$router.push('/')
+                                    } else {
+                                        throw new Error(data.message)
+                                    }
+                                } catch (err: any) {
+                                    
+                                    this.createPopUp("erro ao tentar fazer login", `${info?err.message:'erro interno, contate o suporte.'}.`)
+                                }
+                                console.log(info)
+
+                            }
+
+                            break
+                        case 'register':
+
+                            if (this.name && this.email && this.password && this.number) {
+                                const info = await register({
+                                    email: this.email,
+                                    password: this.password,
+                                    name: this.name,
+                                    phone_number: this.number,
+                                })
                                 const { data, status } = info
 
-                                if (status == 201) {
+                                if (status == 201 || status == 200) {
                                     cookies.set('token', data.token)
-                                    this.$router.push('/')
+
+                                    this.$router.push('/buy')
                                 } else {
-                                    throw new Error(data.message)
+                                    this.createPopUp("erro ao tentar registrar", `${data.message}`)
+
                                 }
-                            } catch (err: any) {
-                                this.createPopUp("erro ao tentar fazer login", `${err.message || ''}`)
+                                console.log(info)
                             }
-                            console.log(info)
-
-                        }
-
-                        break
-                    case 'register':
-
-                        if (this.name && this.email && this.password && this.number) {
-                            const info = await register({
-                                email: this.email,
-                                password: this.password,
-                                name: this.name,
-                                phone_number: this.number,
-                            })
-                            const { data, status } = info
-
-                            if (status == 201 || status == 200) {
-                                cookies.set('token', data.token)
-
-                                this.$router.push('/')
-                            } else {
-                                this.createPopUp("erro ao tentar registrar", `${data.message}`)
-
-                            }
-                            console.log(info)
-                        }
 
 
-                        break
-                }
+                            break
+                    }
 
+                    this.inLoading = false
+                }, 5000)
 
             }
 
@@ -219,6 +227,7 @@ export default defineComponent({
         }
     }, components: {
         MyPopUp,
+        loadPopup
 
     }
 

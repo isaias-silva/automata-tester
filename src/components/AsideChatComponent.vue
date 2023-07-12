@@ -35,31 +35,36 @@
       <img :src="src" alt="logo">
       <p>{{ status }}</p>
     </div>
-    <div class="messages">
+  
+   
+    <div class="messages" >
       <div class="load" v-if="loading">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key" @click="readMessage(value.id)">
-        <img
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+      <router-link  :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key" @click="readMessage(value.id)">
+      
+        <img  v-if="value"
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
           alt="profile">
         <div class="blockchat">
-          <h5>{{ value.name }}:</h5>
+          <h5 v-if="value">{{ value.name }}:</h5>
 
-          <p> <span class="user-title" v-if="value.isGroup">{{ value.msgs ? value.msgs[(value.msgs?.length || 1) -
+          <p> <span  class="user-title" v-if="value && value.isGroup">{{value && value.msgs && value.msgs.length>0 ? value.msgs[(value.msgs?.length || 1) -
             1].name : 'member' }}: </span>
-            {{ value.msgs ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
+            {{value && value.msgs && value.msgs.length>0 ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
               || 1) - 1].type || '[]' : null }}</p>
         </div>
         <div class="count">
-          <span v-if="value.newMessages && value.newMessages > 0">
-            {{ value.newMessages }}
+          <span v-if="value && value.newMessages && value.newMessages > 0">
+            {{value && value.newMessages }}
           </span>
         </div>
-      </router-link>
+      
+  
+        </router-link>
       <div>
         <button class="btn-view">
 
@@ -77,6 +82,7 @@ import { useCookies } from "vue3-cookies";
 import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
 import router from '@/route';
+import getContacts from '@/services/get.contacts';
 const { cookies } = useCookies();
 
 
@@ -100,11 +106,16 @@ export default defineComponent({
       messages: []
     }
   },
-  mounted() {
+  async mounted() {
+
 
     watch(messagesState, (newMessage => {
       this.loading = false
+      
+     
       this.messages = newMessage.messages
+  
+  
     }))
     watch(socketState, (newSocketState => {
 
