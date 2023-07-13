@@ -1,14 +1,14 @@
 
 <template>
-    <div v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
+    <div :id="message._id.toString()" v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
 
-        <div v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
+        <div  v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
             <p v-if="isGroup"><strong>{{ message.msgQuoted.name || message.msgQuoted.number || "user" }}: </strong></p>
             <div v-if="message.msgQuoted" class="block-replace">
                 <img v-if="message.msgQuoted && message?.msgQuoted.media && (message.msgQuoted.type == 'image' || message.type == 'sticker') && message.msgQuoted.media.data"
                     :src="generateBase64Quoted()" />
 
-                <p v-if="message.msgQuoted && message?.msgQuoted.media && message.msgQuoted.type!='image' && message.msgQuoted.type!='sticker'">{{ message.msgQuoted.type }}</p>
+                <p v-if="message.msgQuoted && message?.msgQuoted.media && message.msgQuoted.type!='image' && message.msgQuoted.type!='sticker'&& message.msgQuoted.type!='text' && message.msgQuoted.type!='quoted' " >{{ message.msgQuoted.type }}</p>
                 <p v-if="message.msgQuoted && message.msgQuoted.text">{{ message.msgQuoted.text }}</p>
 
             </div>

@@ -51,14 +51,14 @@ export function connectSocket() {
 
     if (data.status == 'connected' && data.id) {
       cookies.set('idWa', data.id)
-     
+
       const messages = await getContacts(cookies.get('token'))
 
       if (messages) {
 
         messagesState.messages = messages
         messagesState.messages.map(async (contact) => {
-          const chats = await getChats(cookies.get('token'), contact._id,10,1)
+          const chats = await getChats(cookies.get('token'), contact._id, 10, 1)
           if (chats) {
             contact.msgs = chats
           }
@@ -69,7 +69,7 @@ export function connectSocket() {
   })
 
 
-  socket.on('msg-no', (data: { id: string, payload: string }) => {
+  socket.on('msg-now', (data: { id: string, payload: string }) => {
 
     const contact: Icontact = JSON.parse(data.payload)
     if (!contact) {
@@ -77,11 +77,13 @@ export function connectSocket() {
     }
     console.log(contact)
     const contactExisting = messagesState.messages.find(contact => contact.id == data.id)
-    if (contactExisting) {
+    if (contactExisting && contactExisting.msgs && contact.msgs) {
 
       messagesState.messages.splice(messagesState.messages.indexOf(contactExisting), 1)
 
-      contactExisting.msgs = contact.msgs
+      const [newMessage] = contact.msgs
+
+      contactExisting.msgs.push(newMessage)
       messagesState.messages.unshift(contactExisting)
 
     } else {
