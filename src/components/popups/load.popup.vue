@@ -57,8 +57,8 @@ export default defineComponent({
 }
 
 .popup {
-    width: 40%;
-    min-height: 200px;
+    width: 50%;
+    min-height: 300px;
     border-radius: 20px;
     background-color: var(--modal-color);
     display: flex;

@@ -1,6 +1,6 @@
 
 <template >
-    <div class="widow">
+    <div class="widow"  @click="close">
         <button class="close-btn" @click="close">x</button>
         <div class="popup">
             <h3>{{ title }}</h3>
@@ -84,5 +84,10 @@ export default defineComponent({
 }
 .popup h3{
     margin-bottom: 20px;
+}
+@media screen and (max-width: 768px) {
+    .popup{
+        width: 80%;
+    }
 }
 </style>

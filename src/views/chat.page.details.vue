@@ -1,8 +1,8 @@
 <template>
     <div class="header-chat">
-        <img :src="chatInfo?.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
+        <img :src="chatInfo.value?.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
             alt="profile">
-        <h2> {{ chatInfo ? chatInfo?.name : '' }}</h2>
+        <h2> {{ chatInfo ? chatInfo?.value?.name : '' }}</h2>
         <div class="control">
             <router-link to="/chat">
                 <img :src="require('@/assets/icons/return.png')" alt="return">
@@ -12,10 +12,25 @@
         </div>
     </div>
 
-    <div class="section-chat" v-if="chatInfo?.msgs && chatInfo.msgs.length > 0">
 
-        <MessagesComponent v-for=" message, key of chatInfo?.msgs.filter(v => v != undefined && v != null)"
-            :message="message" :key="key" :is-group="chatInfo.isGroup" />
+    <div class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
+
+        <div class="load-messages">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+        <MessagesComponent v-for=" message, key of chatInfo.value?.msgs.filter(v => v != undefined && v != null)"
+            :message="message" :key="key" :is-group="chatInfo.value?.isGroup" />
     </div>
 
 
@@ -40,7 +55,8 @@
 import { Icontact } from '@/interfaces/interface.bot.contact';
 import { messagesState, socket } from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
-import { defineComponent, watchEffect } from 'vue'
+import { defineComponent, reactive, watch, watchEffect } from 'vue'
+
 
 
 
@@ -51,47 +67,34 @@ export default defineComponent({
         MessagesComponent,
 
     },
-    data(): { chatInfo?: Icontact, message?: string } {
+    data(): { message?: string } {
         return {
-            chatInfo: undefined,
+
             message: undefined
         }
     },
     mounted() {
-        this.updateChatInfo();
-        watchEffect(() => {
+
+        watchEffect((update) => {
             this.updateChatInfo()
+
         })
 
-    },
-    watch: {
-        "$route.params.id": {
-            immediate: true,
-            handler() {
-                this.updateChatInfo();
-            },
-
-        },
 
     },
+
     methods: {
-        scrollToBottom() {
-            window.scrollTo({
-                top: document.documentElement.scrollHeight,
-                behavior: 'smooth' 
-            });
-        },
+    
         onEmojiSelect(emoji: any) {
             alert('aaaaaaaaaaaa')
         },
         updateChatInfo() {
             const id = this.$route.params.id;
-            this.chatInfo = messagesState.messages.find((value) => value.id === id);
-            if (!this.chatInfo) {
-                this.$router.push('/chat');
+            const value = messagesState.messages.find(value => value.id == id)
+            if (value) {
+                this.setChatInfo(value)
             }
-           this.scrollToBottom()
-
+            
         },
 
         sendMessage() {
@@ -100,14 +103,44 @@ export default defineComponent({
             }
             socket.emit('sendText', { phone: this.$route.params.id, text: this.message })
             this.message = ''
-            this.scrollToBottom()
+
         }
+    },
+    setup() {
+        const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
+
+        function setChatInfo(info: Icontact) {
+            chatInfo.value = info
+        }
+      
+      
+        function  scrollToBottom() {
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+
+        watch(
+      () => chatInfo,
+      (novoValor, valorAnterior) => {
+    
+       scrollToBottom()        
+      },
+      { deep: true }
+    );
+
+        return {
+            chatInfo,
+            setChatInfo,
+            scrollToBottom
+        };
     }
+}
 
 
-
-
-})
+)
 </script>
 <style scoped>
 * {
@@ -212,6 +245,96 @@ export default defineComponent({
 
 .dark .control img {
     filter: invert(100%);
+}
+
+.load-messages {
+    margin: auto;
+    width: 50px;
+    position: relative;
+    margin-bottom: 100px;
+}
+
+.load-messages span {
+    position: absolute;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: 10px;
+    margin: auto;
+    margin: 4px;
+    border-radius: 10px;
+
+
+}
+
+.load-messages span::after {
+    content: " ";
+    height: 10px;
+    width: 10px;
+    border-radius: 100%;
+    display: block;
+    background-color: var(--component-two-color);
+}
+
+.load-messages span:nth-child(1) {
+
+    animation: rotate 1s infinite;
+}
+
+.load-messages span:nth-child(2) {
+
+    animation: rotate 1.1s infinite;
+}
+
+.load-messages span:nth-child(3) {
+
+    animation: rotate 1.2s infinite;
+}
+
+.load-messages span:nth-child(4) {
+
+    animation: rotate 1.3s infinite;
+}
+
+.load-messages span:nth-child(5) {
+
+    animation: rotate 1.4s infinite;
+}
+
+.load-messages span:nth-child(6) {
+
+    animation: rotate 1.5s infinite;
+}
+
+.load-messages span:nth-child(7) {
+
+    animation: rotate 1.6s infinite;
+}
+
+.load-messages span:nth-child(8) {
+
+    animation: rotate 1.7s infinite;
+}
+
+.load-messages span:nth-child(9) {
+
+    animation: rotate 1.8s infinite;
+}
+
+.load-messages span:nth-child(10) {
+
+    animation: rotate 1.9s infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+
+        transform: rotate(360deg);
+    }
 }
 
 @media screen and (max-width: 768px) {

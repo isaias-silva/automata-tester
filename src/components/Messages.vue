@@ -2,8 +2,8 @@
 <template>
     <div :id="message._id.toString()" v-if="message" :class="`message ${message?.isMe ? 'me' : 'you'} ${!message.text ? 'invis' : ''}`">
 
-        <div  v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
-            <p v-if="isGroup"><strong>{{ message.msgQuoted.name || message.msgQuoted.number || "user" }}: </strong></p>
+        <div :href="'#'+message.msgQuoted._id" v-if="message.quoted == true && message.msgQuoted != undefined" class="replace">
+            <p v-if="isGroup"><strong>{{ (message.msgQuoted.name || message.msgQuoted.number)}} </strong></p>
             <div v-if="message.msgQuoted" class="block-replace">
                 <img v-if="message.msgQuoted && message?.msgQuoted.media && (message.msgQuoted.type == 'image' || message.type == 'sticker') && message.msgQuoted.media.data"
                     :src="generateBase64Quoted()" />
@@ -13,6 +13,7 @@
 
             </div>
         </div>
+        
 
         <p v-if="isGroup && message.type != 'text' && !message.text"><strong>{{ message.name }}</strong></p>
 
@@ -27,12 +28,22 @@
             <source :src="generateBase64()" :type="message.media.mimetype || 'video/mp4'">
         </video>
 
-
+        <div class="doc" v-if="message.type == 'doc'">
+            <a :href="generateBase64()" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 17l4 4 4-4m-4-5v9" />
+                </svg>
+            </a>
+            <i>clique no icone para baixar o arquivo.</i>
+        </div>
 
         <p v-if="message?.text"> <span v-if="$props.isGroup == true" class="userchat">{{ message?.name || message.number}}: </span> {{
             message?.text }}</p>
 
+        <div v-if="message.media && !message.media.data" :class="`null ${message.type}`">
 
+        </div>
         <div class="time">
             <span>{{ getDate() }}</span>
         </div>
@@ -93,7 +104,18 @@ export default defineComponent({
     }
 })
 </script>
+
 <style scoped>
+.null{
+    display: none;
+}
+.null.sticker{
+    display: block;
+    width:200px;
+    height: 200px;
+    background-color: rgba(215, 215, 215, 0.238);
+    border-radius: 10px;
+}
 .userchat {
     font-weight: bold;
 }
@@ -113,6 +135,9 @@ export default defineComponent({
 }
 
 .replace {
+    text-decoration: none;
+    color:var(--font-color);
+    display: block;
     background-color: #00000028;
     border-radius: 5px;
     box-sizing: border-box;

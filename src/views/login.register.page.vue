@@ -50,8 +50,8 @@
 import { defineComponent } from 'vue'
 import loginRequest from '@/services/login'
 import register from '@/services/register'
-import MyPopUp from '@/components/popup.vue'
-import loadPopup from '@/components/load.popup.vue'
+import MyPopUp from '@/components/popups/popup.vue'
+import loadPopup from '@/components/popups/load.popup.vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
