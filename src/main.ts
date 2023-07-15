@@ -6,6 +6,7 @@ import VueCookies from 'vue3-cookies'
 
 
 
+
 const app = createApp(App)
 app.use(router)
 app.use(VueCookies)

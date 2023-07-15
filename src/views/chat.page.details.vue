@@ -8,14 +8,22 @@
                 <img :src="require('@/assets/icons/return.png')" alt="return">
 
             </router-link>
+            <button>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
 
         </div>
     </div>
 
 
-    <div class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
+    <div id="observer-chat" class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
 
-        <div class="load-messages">
+        <div class="load-messages" ref="contentRef">
             <span></span>
             <span></span>
             <span></span>
@@ -26,7 +34,6 @@
             <span></span>
             <span></span>
             <span></span>
-
         </div>
 
         <MessagesComponent v-for=" message, key of chatInfo.value?.msgs.filter(v => v != undefined && v != null)"
@@ -55,7 +62,12 @@
 import { Icontact } from '@/interfaces/interface.bot.contact';
 import { messagesState, socket } from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
-import { defineComponent, reactive, watch, watchEffect } from 'vue'
+import { defineComponent, onMounted, reactive, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router';
+import getChats from '@/services/get.chats';
+import { useCookies } from 'vue3-cookies';
+import { Imessage } from '@/interfaces/interface.bot.message';
+import { parse, compareAsc } from 'date-fns';
 
 
 
@@ -75,27 +87,22 @@ export default defineComponent({
     },
     mounted() {
 
-        watchEffect((update) => {
-            this.updateChatInfo()
+        watchEffect(() => {
+            this.updateChatInfo(this.$route.params.id)
 
         })
+
+
+
+
+
+
 
 
     },
 
     methods: {
-    
-        onEmojiSelect(emoji: any) {
-            alert('aaaaaaaaaaaa')
-        },
-        updateChatInfo() {
-            const id = this.$route.params.id;
-            const value = messagesState.messages.find(value => value.id == id)
-            if (value) {
-                this.setChatInfo(value)
-            }
-            
-        },
+
 
         sendMessage() {
             if (!this.message || this.message.length < 1) {
@@ -104,37 +111,107 @@ export default defineComponent({
             socket.emit('sendText', { phone: this.$route.params.id, text: this.message })
             this.message = ''
 
+
         }
     },
     setup() {
+        const Cookies = useCookies()
+        const { cookies } = Cookies
+        let reqObj = { page: 2 }
+
+        const contentRef = ref(null);
+
+        const route = useRoute()
+
         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
         function setChatInfo(info: Icontact) {
             chatInfo.value = info
         }
-      
-      
-        function  scrollToBottom() {
+
+        function updateChatInfo(id: string | string[]) {
+
+            const value = messagesState.messages.find(value => value.id == id)
+            if (value) {
+                setChatInfo(value)
+            }
+
+
+        }
+
+        function scrollToBottom(speed?: number) {
             window.scrollTo({
-                top: document.documentElement.scrollHeight,
+                top: document.documentElement.scrollHeight * (speed || 2),
                 behavior: 'smooth'
             });
         }
 
+        watch(
+            () => route.params.id,
+            (newId) => {
+                if (newId && typeof newId == 'string') {
+
+                    updateChatInfo(newId)
+                }
+            },
+            { immediate: true }
+        );
 
         watch(
-      () => chatInfo,
-      (novoValor, valorAnterior) => {
-    
-       scrollToBottom()        
-      },
-      { deep: true }
-    );
+            () => chatInfo,
+            (novoValor) => {
+                if (novoValor) {
+
+                    scrollToBottom()
+
+                }
+            },
+            { deep: true }
+        );
+
+
+        // Função de comparação para ordenar com base em uma data no formato "dd/mm/aaaa hh:mm:ss"
+        function sortByDate(a: Imessage, b: Imessage) {
+
+            const dateA = parse(a.date || new Date().toString(), 'dd/MM/yyyy HH:mm:ss', new Date());
+            const dateB = parse(b.date || new Date().toString(), 'dd/MM/yyyy HH:mm:ss', new Date());
+            return compareAsc(dateA, dateB);
+
+
+        }
+        onMounted(() => {
+            const observer = new IntersectionObserver(async (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting) {
+
+                    if (chatInfo.value?._id && chatInfo.value.msgs) {
+                        alert(reqObj.page)
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 5, reqObj.page)
+                        if (pastMessages && pastMessages.length > 0) {
+                            reqObj.page += 1
+                            pastMessages.forEach(value => {
+                                chatInfo.value?.msgs?.push(value)
+                            })
+
+                            chatInfo.value.msgs.sort(sortByDate)
+                            
+                        }
+                    } else {
+                        alert('else')
+                    }
+                }
+            });
+            if (contentRef.value)
+                observer.observe(contentRef.value);
+        });
+
 
         return {
             chatInfo,
             setChatInfo,
-            scrollToBottom
+            scrollToBottom,
+            updateChatInfo,
+            contentRef
         };
     }
 }
@@ -164,6 +241,10 @@ export default defineComponent({
     padding: 5px;
     position: fixed;
     z-index: 999 !important;
+}
+
+h2 {
+    font-size: 16px;
 }
 
 .footer-chat {
@@ -221,11 +302,30 @@ export default defineComponent({
 }
 
 .section-chat {
-    margin-top: 100px;
-    margin-bottom: 50px;
+
+
+
     box-sizing: border-box;
     padding: 10px;
+    padding-bottom: 100px;
+    padding-top: 100px;
     position: relative;
+    min-height: 100vh;
+
+}
+
+.section-chat::after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 99%;
+    background-image: url('../../public/background.png');
+    background-attachment: fixed;
+    background-size: cover;
+    z-index: -1;
+    background-position: center;
+    filter: opacity(0.1);
 }
 
 .control {
@@ -233,17 +333,43 @@ export default defineComponent({
     top: 0;
     right: 0;
     display: flex;
-    max-width: 40px;
+    width: 10%;
+    height: 50px;
     align-items: center;
-    justify-content: space-between
+    justify-content: space-around;
 }
 
-.control img {
-    width: 100%;
+.control a {
+    width: 30%;
     border: none;
 }
 
-.dark .control img {
+.control button {
+    width: 30%;
+    background-color: var(--component-color);
+    border: none;
+}
+
+.control a img {
+    border: none;
+    width: 100%;
+}
+
+.control a,
+.control button {
+    box-sizing: border-box;
+    padding: 5px;
+    border-radius: 5px;
+    transition: 1s linear;
+}
+
+.control a:hover,
+.control button:hover {
+    cursor: pointer;
+    background-color: var(--component-two-color);
+}
+
+.dark .control a img {
     filter: invert(100%);
 }
 
@@ -263,6 +389,7 @@ export default defineComponent({
     margin: auto;
     margin: 4px;
     border-radius: 10px;
+
 
 
 }
@@ -313,17 +440,17 @@ export default defineComponent({
 
 .load-messages span:nth-child(8) {
 
-    animation: rotate 1.7s infinite;
+    animation: rotate 0.7s infinite;
 }
 
 .load-messages span:nth-child(9) {
 
-    animation: rotate 1.8s infinite;
+    animation: rotate 0.8s infinite;
 }
 
 .load-messages span:nth-child(10) {
 
-    animation: rotate 1.9s infinite;
+    animation: rotate 0.9s infinite;
 }
 
 @keyframes rotate {
