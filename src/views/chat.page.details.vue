@@ -150,7 +150,7 @@ export default defineComponent({
             () => route.params.id,
             (newId) => {
                 if (newId && typeof newId == 'string') {
-
+                    reqObj.page = 2
                     updateChatInfo(newId)
                 }
             },
@@ -185,16 +185,17 @@ export default defineComponent({
                 if (entry.isIntersecting) {
 
                     if (chatInfo.value?._id && chatInfo.value.msgs) {
-                        alert(reqObj.page)
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 5, reqObj.page)
+
+
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, reqObj.page)
                         if (pastMessages && pastMessages.length > 0) {
                             reqObj.page += 1
                             pastMessages.forEach(value => {
                                 chatInfo.value?.msgs?.push(value)
                             })
 
-                            chatInfo.value.msgs.sort(sortByDate)
-                            
+                            chatInfo.value.msgs.sort(sortByDate).filter((item, index, array) => array[index] == item)
+
                         }
                     } else {
                         alert('else')
