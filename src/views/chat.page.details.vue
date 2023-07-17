@@ -54,7 +54,9 @@
 
     <div class="footer-chat">
         <button>
-            <img :src="require('@/assets/icons/anex.png')" alt="anex">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 2v20M2 12h20" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
         </button>
         <div>
 
@@ -123,15 +125,15 @@ export default defineComponent({
 
         const { cookies } = Cookies
 
-        let reqObj: { page: number, messagesListen: number[] } = { page: 2, messagesListen: [] }
+        let reqObj: { page: number, messagesInfo: { id: number, page: number }[] } = { page: 2, messagesInfo: [] }
 
         const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[] }> }>({ value: [] })
 
         const contentRef = ref(undefined);
-        const chatRef=ref(undefined)
+        const chatRef = ref(undefined)
         const showRef = ref(true);
         const inviRef = ref(false)
-        
+
 
 
 
@@ -196,11 +198,11 @@ export default defineComponent({
 
         watch(() => forDateMessages, (update) => {
             if (update) {
-                inviRef.value=true
-              scrollToBottom()
-                setTimeout(()=>{
-                    inviRef.value=false
-                },2000)
+                inviRef.value = true
+                scrollToBottom()
+                setTimeout(() => {
+                    inviRef.value = false
+                }, 2000)
             }
         }, { deep: true })
 
@@ -281,23 +283,27 @@ export default defineComponent({
                 if (entry.intersectionRatio) {
 
                     if (chatInfo.value?._id && chatInfo.value.msgs) {
-                        if (reqObj.messagesListen.find(value => value == chatInfo.value?._id)) {
-                            showRef.value = false
 
-                            return
-                        }
 
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, reqObj.page)
+                        const existsId = reqObj.messagesInfo.find(value => value.id == chatInfo.value?._id)
+
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, existsId?.page || reqObj.page)
 
                         if (pastMessages && pastMessages.length > 0) {
+                            if (existsId) {
+                                existsId.page += 1
+                            }
                             reqObj.page += 1
+
+                            reqObj.messagesInfo.push({ id: chatInfo.value._id, page: reqObj.page })
+
                             pastMessages.forEach(value => {
                                 clearForDate()
                                 chatInfo.value?.msgs?.push(value)
                             })
 
                         } else {
-                            reqObj.messagesListen.push(chatInfo.value._id)
+
                             showRef.value = false
                         }
                     } else {
@@ -317,7 +323,7 @@ export default defineComponent({
             scrollToBottom,
             updateChatInfo,
             contentRef,
-            showRef, 
+            showRef,
             inviRef,
             chatRef
         };
