@@ -36,17 +36,17 @@ export default defineComponent({
 
 :root {
   --main-color: #e9eee4;
-  /* Verde principal */
+
   --modal-color: #ffffff;
-  /* Branco */
+  
   --component-color: #539d72;
-  /* Verde claro */
+ 
   --component-two-color: #a6e7a3;
-  /* Verde mais claro */
+
   --font-color: #404040;
-  /* Cinza escuro */
+
   --link-color: #007b2f;
-  /* Verde principal */
+
   --popup-text-color: var(--font-color);
 }
 
@@ -58,18 +58,49 @@ body.dark {
 
 
   --main-color: #2a2a2a;
-  /* Verde principal escuro */
+ 
   --modal-color: #1c1c1c;
-  /* Preto */
+ 
   --component-color: #181b19;
-  /* Verde escuro */
+ 
   --component-two-color: #638c6a;
-  /* Verde mais escuro */
+ 
   --font-color: #f5f5f5;
-  /* Branco */
+  
   --link-color: #00f090;
   --popup-text-color: #fff;
-  /* Verde principal escuro */
+ 
 
 
-}</style>
+}
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+::-webkit-scrollbar-track {
+  background-color: var(--component-color);
+}
+
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--link-color)
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color:var(--main-color);
+}
+
+
+*::-webkit-scrollbar-track {
+  background-color: var(--component-color)
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color:var(--link-color)
+}
+
+</style>

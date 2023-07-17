@@ -21,9 +21,9 @@
     </div>
 
 
-    <div id="observer-chat" class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
+    <div ref="chatRef" class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
 
-        <div class="load-messages" ref="contentRef" v-show="showRef">
+        <div class="load-messages" ref="contentRef" v-show="!inviRef && showRef">
             <span></span>
             <span></span>
             <span></span>
@@ -37,11 +37,11 @@
         </div>
 
         <div class="warking" v-show="!showRef">
-            <p>mensagens anteriores a está não estão disponíveis.</p>
+            <p>mensagens anteriores a esta não estão disponíveis.</p>
         </div>
-        <div v-for=" messageDate, key of forDateMessages.filter(v => v != undefined && v != null)" :key="key">
+        <div v-for=" messageDate, key of forDateMessages.value?.filter(v => v != undefined && v != null)" :key="key">
 
-            <div class="warking">
+            <div class="warking min">
                 <p>{{ messageDate.date }}</p>
             </div>
             <MessagesComponent v-for="message, key of messageDate.messages" :key="key" :message="message"
@@ -125,11 +125,13 @@ export default defineComponent({
 
         let reqObj: { page: number, messagesListen: number[] } = { page: 2, messagesListen: [] }
 
-        const forDateMessages: { date: string, messages: Imessage[] }[] = []
+        const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[] }> }>({ value: [] })
 
         const contentRef = ref(undefined);
+        const chatRef=ref(undefined)
         const showRef = ref(true);
-
+        const inviRef = ref(false)
+        
 
 
 
@@ -157,7 +159,7 @@ export default defineComponent({
 
         function scrollToBottom(speed?: number) {
             window.scrollTo({
-                top: document.documentElement.scrollHeight * (speed || 2),
+                top: document.documentElement.scrollHeight,
                 behavior: 'smooth'
             });
         }
@@ -186,14 +188,21 @@ export default defineComponent({
                 if (novoValor) {
                     clearForDate()
                     organize()
-                    scrollToBottom()
-
                 }
             },
             { deep: true }
+
         );
 
-
+        watch(() => forDateMessages, (update) => {
+            if (update) {
+                inviRef.value=true
+              scrollToBottom()
+                setTimeout(()=>{
+                    inviRef.value=false
+                },2000)
+            }
+        }, { deep: true })
 
         function sortByDate(a: Imessage, b: Imessage) {
 
@@ -210,8 +219,8 @@ export default defineComponent({
             }
         }
         function clearForDate() {
-            forDateMessages.map(value => value.messages = [])
-            forDateMessages.filter(value=> value.messages.length>0)
+            forDateMessages.value = []
+            console.log(forDateMessages)
         }
         function organize() {
 
@@ -219,60 +228,67 @@ export default defineComponent({
 
             if (chatInfo && chatInfo.value && chatInfo.value.msgs) {
                 chatInfo.value.msgs.forEach(value => {
-                    const exists = forDateMessages.find(item => {
-                        const formatDate = value.date?.split(' ')[0]
 
-                        return formatDate == item.date
-                    })
-                    if (exists) {
-                        const existMessage = exists.messages.find(msg => msg == value)
-                        if (!existMessage) {
-                            exists.messages.push(value)
+                    if (forDateMessages.value) {
+                        const exists = forDateMessages.value.find(item => {
+                            const formatDate = value.date?.split(' ')[0]
 
-                        }
-                        exists.messages.filter((item, index, array) => array[index] == item)
-                        exists.messages.sort(sortByDate)
-                    } else {
-                        if (value.date) {
-                            const chatData: {
-                                date: string,
-                                messages: Imessage[]
-                            } = {
-                                date: value.date?.split(" ")[0],
-                                messages: [value]
+                            return formatDate == item.date
+                        })
+                        if (exists) {
+                            const existMessage = exists.messages.find(msg => msg == value)
+                            if (!existMessage) {
+                                exists.messages.push(value)
+
                             }
-                            forDateMessages.push(chatData)
+                            exists.messages.filter((item, index, array) => array[index] == item)
+                            exists.messages.sort(sortByDate)
+                        } else {
+                            if (value.date) {
+                                const chatData: {
+                                    date: string,
+                                    messages: Imessage[]
+                                } = {
+                                    date: value.date?.split(" ")[0],
+                                    messages: [value]
+                                }
+                                forDateMessages.value.push(chatData)
 
+                            }
                         }
                     }
 
 
 
+
                 })
             }
-            forDateMessages.sort((a, b) => {
-                const dateA = parse(a.date || new Date().toString(), 'dd/MM/yyyy', new Date());
-                const dateB = parse(b.date || new Date().toString(), 'dd/MM/yyyy', new Date());
-                return compareAsc(dateA, dateB);
-            })
-            console.log(forDateMessages)
+            if (forDateMessages.value) {
+                forDateMessages.value.sort((a, b) => {
+                    const dateA = parse(a.date || new Date().toString(), 'dd/MM/yyyy', new Date());
+                    const dateB = parse(b.date || new Date().toString(), 'dd/MM/yyyy', new Date());
+                    return compareAsc(dateA, dateB);
+                })
+                console.log(forDateMessages)
+
+            }
         }
 
         onMounted(() => {
+
             const observer = new IntersectionObserver(async (entries) => {
                 const entry = entries[0];
                 if (entry.intersectionRatio) {
 
                     if (chatInfo.value?._id && chatInfo.value.msgs) {
-
                         if (reqObj.messagesListen.find(value => value == chatInfo.value?._id)) {
                             showRef.value = false
-                            scrollToBottom()
+
                             return
                         }
-                        
+
                         const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, reqObj.page)
-                     
+
                         if (pastMessages && pastMessages.length > 0) {
                             reqObj.page += 1
                             pastMessages.forEach(value => {
@@ -296,12 +312,14 @@ export default defineComponent({
 
         return {
             chatInfo,
+            forDateMessages,
             setChatInfo,
             scrollToBottom,
             updateChatInfo,
-            forDateMessages,
             contentRef,
-            showRef
+            showRef, 
+            inviRef,
+            chatRef
         };
     }
 }
@@ -318,12 +336,16 @@ export default defineComponent({
 .warking {
     margin: auto;
     background-color: #0000003d;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     box-sizing: border-box;
     padding: 10px;
     border-radius: 10px;
     text-align: center;
     width: 50%;
+}
+
+.min {
+    width: 20%;
 }
 
 .emojiModal {
