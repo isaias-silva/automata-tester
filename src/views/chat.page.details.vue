@@ -55,7 +55,8 @@
     <div class="footer-chat">
         <button>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path d="M12 2v20M2 12h20" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
             </svg>
         </button>
         <div>
@@ -81,8 +82,8 @@ import getChats from '@/services/get.chats';
 import { useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
 import { parse, compareAsc } from 'date-fns';
-
-
+import useSound from "vue-use-sound"
+import audioMessage from '../assets/sounds/message.mp3'
 
 
 export default defineComponent({
@@ -125,8 +126,8 @@ export default defineComponent({
 
         const { cookies } = Cookies
 
-        let reqObj: { page: number, messagesInfo: { id: number, page: number }[] } = { page: 2, messagesInfo: [] }
-
+        let reqObj = reactive<{ messagesInfo: { id: number, page: number }[] }>({ messagesInfo: [] }
+        )
         const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[] }> }>({ value: [] })
 
         const contentRef = ref(undefined);
@@ -134,9 +135,7 @@ export default defineComponent({
         const showRef = ref(true);
         const inviRef = ref(false)
 
-
-
-
+       
 
 
         const route = useRoute()
@@ -178,8 +177,9 @@ export default defineComponent({
         );
 
         watch(() => route.params, () => {
-            reqObj.page = 2
+
             showRef.value = true
+
 
 
         })
@@ -203,6 +203,7 @@ export default defineComponent({
                 setTimeout(() => {
                     inviRef.value = false
                 }, 2000)
+              
             }
         }, { deep: true })
 
@@ -287,15 +288,14 @@ export default defineComponent({
 
                         const existsId = reqObj.messagesInfo.find(value => value.id == chatInfo.value?._id)
 
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, existsId?.page || reqObj.page)
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, existsId?.page || 2)
 
                         if (pastMessages && pastMessages.length > 0) {
                             if (existsId) {
                                 existsId.page += 1
                             }
-                            reqObj.page += 1
 
-                            reqObj.messagesInfo.push({ id: chatInfo.value._id, page: reqObj.page })
+                            reqObj.messagesInfo.push({ id: chatInfo.value._id, page: 3 })
 
                             pastMessages.forEach(value => {
                                 clearForDate()

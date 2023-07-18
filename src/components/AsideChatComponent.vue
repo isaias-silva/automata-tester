@@ -16,8 +16,9 @@
         <span class="moon">&#127769;</span>
         <span class="sun">&#9728;</span>
       </button>
-      <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+      <button @click="showMenu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-menu">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -35,36 +36,40 @@
       <img :src="src" alt="logo">
       <p>{{ status }}</p>
     </div>
-  
-   
-    <div class="messages" >
+
+
+    <div class="messages">
       <div class="load" v-if="loading">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-      <router-link  :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key" @click="readMessage(value.id)">
-      
-        <img  v-if="value"
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key"
+        @click="readMessage(value.id)">
+
+        <img v-if="value"
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
           alt="profile">
         <div class="blockchat">
           <h5 v-if="value">{{ value.name }}:</h5>
 
-          <p> <span  class="user-title" v-if="value && value.isGroup">{{value && value.msgs && value.msgs.length>0 ? value.msgs[(value.msgs?.length || 1) -
-            1].name : 'member' }}: </span>
-            {{value && value.msgs && value.msgs.length>0 ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text) || value.msgs[(value.msgs?.length
-              || 1) - 1].type || '[]' : null }}</p>
+          <p> <span class="user-title" v-if="value && value.isGroup">{{ value && value.msgs && value.msgs.length > 0 ?
+            value.msgs[(value.msgs?.length || 1) -
+              1].name : 'member' }}: </span>
+            {{ value && value.msgs && value.msgs.length > 0 ? resumeText(value.msgs[(value.msgs?.length || 1) - 1].text)
+              ||
+              value.msgs[(value.msgs?.length
+                || 1) - 1].type || '[]' : null }}</p>
         </div>
         <div class="count">
           <span v-if="value && value.newMessages && value.newMessages > 0">
-            {{value && value.newMessages }}
+            {{ value.newMessages > 999 ? 999 : value.newMessages }}
           </span>
         </div>
-      
-  
-        </router-link>
+
+
+      </router-link>
       <div>
         <button class="btn-view">
 
@@ -81,9 +86,9 @@ import { defineComponent, watch } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
-import router from '@/route';
-import getContacts from '@/services/get.contacts';
 const { cookies } = useCookies();
+import audioMessage from '../assets/sounds/message.mp3'
+import useSound from "vue-use-sound"
 
 
 
@@ -103,19 +108,20 @@ export default defineComponent({
       src: require('@/assets/icons/load.gif'),
       status: 'disconnected',
       loading: true,
+
       messages: []
     }
   },
   async mounted() {
 
-
     watch(messagesState, (newMessage => {
+
       this.loading = false
-      
-     
+
+
       this.messages = newMessage.messages
-  
-  
+      
+
     }))
     watch(socketState, (newSocketState => {
 
@@ -181,8 +187,8 @@ export default defineComponent({
 
 
     },
-    readMessage(jid?: string|null) {
-      if(!jid){
+    readMessage(jid?: string | null) {
+      if (!jid) {
         return
       }
       socket.emit('messageConfig', { read: true, id: jid })
@@ -191,9 +197,11 @@ export default defineComponent({
       socket.emit('kill')
     },
     showMenu() {
+
       alert('show menu')
     }
   }
+  
 
 })
 </script>
@@ -470,17 +478,22 @@ button:hover {
   padding: 5px;
   transition: 0.5s linear;
 }
-.contact p{
+
+.contact p {
   word-wrap: break-word;
   overflow-wrap: break-word;
-  width: 100%;
+  width: 90%;
 }
+
 .count {
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 10%;
+
+  width: 20%;
+  box-sizing: border-box;
+
 
 }
 
@@ -490,8 +503,9 @@ button:hover {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
   border-radius: 100%;
 }
 

@@ -6,7 +6,7 @@ import chatPage from '@/views/chat.page.vue'
 import chatPageDetails from '@/views/chat.page.details.vue'
 import hometemplate from '@/templates/HomeTemplate.vue'
 import chatTemplate from '@/templates/chatTemplate.vue'
-import testPage from '@/views/test.page.vue'
+
 const routes = [
 
   {

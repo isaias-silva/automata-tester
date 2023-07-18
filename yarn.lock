@@ -1820,6 +1820,11 @@
   optionalDependencies:
     prettier "^1.18.2 || ^2.0.0"
 
+"@vue/composition-api@^1.0.0-beta.25":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.7.1.tgz#aa6831be5a12817d93e89e247460c310dd7a3a32"
+  integrity sha512-xDWoEtxGXhH9Ku3ROYX/rzhcpt4v31hpPU5zF3UeVC/qxA3dChmqU8zvTUYoKh3j7rzpNsoFOwqsWG7XPMlaFA==
+
 "@vue/devtools-api@^6.5.0":
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.5.0.tgz#98b99425edee70b4c992692628fa1ea2c1e57d07"
@@ -3818,6 +3823,11 @@ hosted-git-info@^2.1.4:
   version "2.8.9"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz#dffc0bf9a21c02209090f2aa69429e1414daf3f9"
   integrity sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==
+
+howler@^2.2.1:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/howler/-/howler-2.2.3.tgz#a2eff9b08b586798e7a2ee17a602a90df28715da"
+  integrity sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==
 
 hpack.js@^2.1.6:
   version "2.1.6"
@@ -6199,6 +6209,11 @@ vue-cookies@^1.8.3:
   resolved "https://registry.yarnpkg.com/vue-cookies/-/vue-cookies-1.8.3.tgz#0c7ce26d150f7ac50356ae17cb4ead1122013b82"
   integrity sha512-VBRsyRMVdahBgFfh389TMHPmDdr4URDJNMk4FKSCfuNITs7+jitBDhwyL4RJd3WUsfOYNNjPAkfbehyH9AFuoA==
 
+vue-demi@^0.6.0:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.6.2.tgz#ed9633eaa69b7409cc6e8328e8a6c3d31ab39319"
+  integrity sha512-4KfwxbqsZcDz7UryD11oHa6FLK9Gzx4MIwAEcP37IbUdXuF6DHg2w9L5Zv5t+FNqsuAjEQ2NnGVIZ3u71y435Q==
+
 vue-eslint-parser@^8.0.0, vue-eslint-parser@^8.0.1:
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-8.3.0.tgz#5d31129a1b3dd89c0069ca0a1c88f970c360bd0d"
@@ -6257,6 +6272,16 @@ vue-the-mask@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/vue-the-mask/-/vue-the-mask-0.11.1.tgz#91ee01008354ae57bccc79bb61b65f32d971d9d5"
   integrity sha512-UquSfnSWejD0zAfcD+3jJ1chUAkOAyoxya9Lxh9acCRtrlmGcAIvd0cQYraWqKenbuZJUdum+S174atv2AuEHQ==
+
+vue-use-sound@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vue-use-sound/-/vue-use-sound-1.1.1.tgz#7f60b3eb7c4a408ae8ee913d3b9d8f14dbe7061d"
+  integrity sha512-UEW061trZVkLZIt5YJLDb16Lcho8aLj+ZhIzA6Fk66kEYtlxEinoE1NI0L+duk/DscwIzyXi8L2qDpiXtXJOjw==
+  dependencies:
+    howler "^2.2.1"
+    vue-demi "^0.6.0"
+  optionalDependencies:
+    "@vue/composition-api" "^1.0.0-beta.25"
 
 vue3-cookies@^1.0.6:
   version "1.0.6"

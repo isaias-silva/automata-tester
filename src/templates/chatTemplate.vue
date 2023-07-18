@@ -15,18 +15,36 @@ import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
 import { defineComponent, watch, watchEffect } from 'vue'
-import getContacts from "@/services/get.contacts";
-
+import soundMsg from '../assets/sounds/message.mp3'
+import useSound from "vue-use-sound"
+import { Icontact } from "@/interfaces/interface.bot.contact";
 export default defineComponent({
     components: {
         AsideComponent
     }, setup() {
+        const [play, audio] = useSound(soundMsg.toString())
         watchEffect(() => {
             const { connected } = socketState
             if (connected) {
 
                 socket.emit('start', cookies.get('idWa') || Math.random().toString(32).replace('0.', 'I'))
 
+                socket.on('msg.now', async (data: { id: string, payload: string }) => {
+
+                    const contact: Icontact = JSON.parse(data.payload)
+                    if (!contact) {
+                        return
+                    }
+                    if (contact.msgs && contact.msgs[0]) {
+
+                        const message = contact.msgs[0]
+                        if (!message.isMe) {
+                            play()
+                        }
+                    }
+
+                    console.log('tocou?')
+                })
             } else {
                 if (socketState.WAconnect) {
                     socketState.WAconnect.status = 'disconnected'
@@ -36,7 +54,7 @@ export default defineComponent({
 
     }, mounted() {
         connectSocket()
-     
+
     }, beforeUnmount() {
         disconnecteSocket()
     }

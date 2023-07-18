@@ -8,7 +8,6 @@ import getChats from "./services/get.chats";
 const { cookies } = useCookies();
 
 
-
 type WAconnectType = {
   status: 'qrcode' | 'connected' | 'disconnected' | 'loading' | "phone closed session",
   qr?: string, id?: string
@@ -69,8 +68,8 @@ export function connectSocket() {
   })
 
 
-  socket.on('msg-now', (data: { id: string, payload: string }) => {
-
+  socket.on('msg.now', (data: { id: string, payload: string }) => {
+    
     const contact: Icontact = JSON.parse(data.payload)
     if (!contact) {
       return
@@ -84,12 +83,26 @@ export function connectSocket() {
       const [newMessage] = contact.msgs
 
       contactExisting.msgs.push(newMessage)
+      if (contactExisting.newMessages) {
+        contactExisting.newMessages += 1
+      }else{
+        contactExisting['newMessages']=1
+      }
       messagesState.messages.unshift(contactExisting)
 
     } else {
+
       messagesState.messages.unshift(contact)
     }
 
+  })
+  socket.on('msg.read', (data:{id:string}) => {
+    const contactExisting = messagesState.messages.find(contact => contact.id == data.id)
+  
+    if (contactExisting && contactExisting.newMessages) {
+    
+      contactExisting.newMessages = 0
+    }
   })
 }
 export function disconnecteSocket() {
