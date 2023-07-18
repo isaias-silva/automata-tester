@@ -4,16 +4,13 @@
             <img :src="selectedImage || profile || require('@/assets/icons/load.gif')" alt="">
             <input type="file" name="picture" id="profile" @change="handleImageChange" />
         </label>
-        <div class="blockinfo">
+        <div  class="blockinfo">
+          
             <h3 :class="name ? null : 'load'">{{ name }}</h3>
-            <ul>
-                <li :class="email ? null : 'load'">
-                    
-                    {{ email }}</li>
+            <p>{{ email }}</p>
 
-            </ul>
-            <p>Este site é exclusivo para uso de administradores autorizados. Se você não possui privilégios de
-                administração, pedimos gentilmente que respeite essa restrição e evite tentar acessar áreas restritas.</p>
+
+
         </div>
     </div>
 </template>
@@ -81,7 +78,7 @@ export default defineComponent({
             this.email = email;
             this.profile = profile;
             this.adm = adm;
-        
+
 
         } else {
             cookies.remove('token')
@@ -100,38 +97,38 @@ export default defineComponent({
 }
 
 .usercard {
+   
+
     flex-shrink: 0;
-    background-color: var(--modal-color);
-    width: 90%;
+    width: 100%;
     margin: auto;
+   
     margin-bottom: 30px;
     border-radius: 30px;
     box-sizing: border-box;
     padding: 5px;
-    box-shadow: 8px 8px #0000002e;
+display: flex;
+flex-direction: column;
+align-items: center;
     color: var(--font-color);
-    display: grid;
-    grid-template-columns: 20% 20% 60%;
-    grid-template-areas: 'profile info info';
 
+    text-align: center;
 }
 
 .profile {
     position: relative;
     border-radius: 100%;
-    width: 200px;
-    height: 200px;
+    width: 60%;
+  
     border: 4px solid var(--component-two-color);
-    grid-area: profile;
     overflow: hidden;
     transition: 0.4s linear;
 }
 
 
 .profile img {
-
     width: 100%;
-    height: 100%;
+    transform: scale(1.1);
     transition: 0.1s linear;
 }
 
@@ -161,24 +158,28 @@ export default defineComponent({
 }
 
 .blockinfo {
-    grid-area: info;
+  
+    display: flex;
+    background-color: #0000001b;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 10px;
 
 }
 
-.blockinfo ul {
-    width: 20%;
-    list-style: none;
-    margin: 20px 20px;
+
+
+.blockinfo h3{
+    margin-top: 10px;
+    width: 100%;
 }
 
-.blockinfo h3 {
-    width: 30%;
-}
 
-.blockinfo ul li {
-    margin: 4px;
+.min .blockinfo{
+    display: none;
 }
-
 .load {
     background-color: #00000048;
     min-width: 50px;
@@ -187,24 +188,6 @@ export default defineComponent({
     animation: load 1s infinite;
 }
 
-@media screen and (max-width: 768px) {
-    .usercard {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-    .usercard h3,.usercard ul{
-        width: 100%;
-        text-align: center;
-    }
-    .usercard ul{
-        padding: 0;
-        margin: 0;
-    }
-
-}
 
 @keyframes load {
     0% {

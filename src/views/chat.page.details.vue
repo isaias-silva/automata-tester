@@ -77,7 +77,7 @@ import { Icontact } from '@/interfaces/interface.bot.contact';
 import { messagesState, socket } from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
 import { defineComponent, onMounted, reactive, ref, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import getChats from '@/services/get.chats';
 import { useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
@@ -123,7 +123,7 @@ export default defineComponent({
     },
     setup() {
         const Cookies = useCookies()
-
+       
         const { cookies } = Cookies
 
         let reqObj = reactive<{ messagesInfo: { id: number, page: number }[] }>({ messagesInfo: [] }
@@ -139,7 +139,7 @@ export default defineComponent({
 
 
         const route = useRoute()
-
+        const router=useRouter()
         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
         function setChatInfo(info: Icontact) {
@@ -153,6 +153,8 @@ export default defineComponent({
             if (value) {
                 setChatInfo(value)
 
+            }else{
+                router.push('/chat')
             }
 
 

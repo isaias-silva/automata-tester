@@ -1,6 +1,9 @@
 <template>
     <HeaderComponent/>
+   <div class="content">
     <router-view></router-view>
+   </div>
+  
     <div class="footer"></div>
 </template>
   
@@ -15,4 +18,10 @@ export default {
 }
 </script>
   
-<style scoped></style>
+<style scoped>
+.content{
+    width: 80%;
+    position: absolute;
+    right: 0;
+}
+</style>

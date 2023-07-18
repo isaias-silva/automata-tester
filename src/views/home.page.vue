@@ -1,6 +1,6 @@
 <template>
   <div class="allboard">
-    <admin-card />
+   
     <router-link to="users" class="itens">
       <h4>users</h4>
       <img :src="require('@/assets/icons/users.png')" alt="">
@@ -41,12 +41,12 @@ import { defineComponent } from 'vue'
 import AdminCard from '@/components/adminCard.vue';
 export default defineComponent({
   name: "HomePage",
-  components: { AdminCard }
+
 })
 </script>
 <style scoped>
 .allboard {
-  widows: 100%;
+ width: 100%;
   display: flex;
   justify-content: space-between;
 

@@ -1,49 +1,28 @@
 <template>
-    <div :class="headerFixed ? 'header fixed' : 'header'">
-        <div class="logo">
-            <img src="logo.png" alt="logo">
-            <h1>Automata tester</h1>
-            <span>{{ message }}</span>
+    <div :class="min ? 'min header' : 'header'">
+        <div class="control">
+
             <button class="mode" @click="toggleDarkMode">
                 <span class="moon">&#127769;</span>
                 <span class="sun">&#9728;</span>
             </button>
-        </div>
+            <button @click="toogleMin()">
 
-        <div class="menu">
-            <input type="checkbox" id="checker">
-            <label for="checker">
-                <span></span>
-                <span></span>
-                <span></span>
-            </label>
-            <ul>
-                <li>
-                    <router-link to="/">create flow</router-link>
-                </li>
-                <li>
-                    <router-link to="/">create attendants</router-link>
-                </li>
-                <li>
-                    <router-link to="/">create users</router-link>
-                </li>
-                <li>
-                    <router-link to="/">get users</router-link>
-                </li>
-                <li>
-                    <router-link to="/">get attendants</router-link>
-                </li>
-                <li>
-                    <router-link to="/">get chat</router-link>
-                </li>
-                <li>
-                    <router-link to="/">documentation</router-link>
-                </li>
-                <li>
-                    <span @click="logout">logout</span>
-                </li>
-            </ul>
+                <svg v-if="min==false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+
+                <svg v-if="min==true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </button>
+
+
         </div>
+        <AdminCard />
+
 
     </div>
 </template>
@@ -52,34 +31,31 @@
 import { socket } from '@/socket';
 import { defineComponent } from 'vue'
 import { useCookies } from "vue3-cookies";
+import AdminCard from './adminCard.vue';
 const { cookies } = useCookies();
 
 
 export default defineComponent({
+    components: {
+        AdminCard
+    },
     name: 'HeaderComponent',
     data(): {
         message: string,
         noturne: boolean,
-        headerFixed: boolean
+        min: boolean
     } {
         return {
             noturne: cookies.get('noturne') ? true : false,
             message: 'the tester automata',
-            headerFixed: false
+            min: false
         }
     },
     methods: {
         setMessage(value: string) {
             this.message = value
         },
-        handleScroll() {
-            const header = document.querySelector('.header');
 
-            if (header && header.scrollHeight) {
-                const sticky = header.scrollHeight;
-                this.headerFixed = window.scrollY > sticky + header.clientHeight - (header.clientHeight / 2);
-            }
-        },
         toggleDarkMode() {
             this.noturne = !this.noturne;
             if (this.noturne == true) {
@@ -92,14 +68,15 @@ export default defineComponent({
                 cookies.remove('noturne')
             }
         },
+        toogleMin() {
+            this.min = !this.min
+        },
         logout() {
 
             cookies.remove('token');
             socket.disconnect()
             this.$router.push('/login')
         }
-    }, mounted() {
-        window.addEventListener('scroll', this.handleScroll);
     }
 })
 </script>
@@ -108,53 +85,89 @@ export default defineComponent({
     z-index: 999 !important;
     color: var(--font-color);
     background: var(--component-color);
-    display: grid;
-    width: 100%;
-    grid-template-areas: "logo logo opcoes";
-    grid-template-columns: 60% 10%;
-    border-bottom: 2px solid var(--component-two-color);
+
+    width: 20%;
+    height: 100%;
+
+    border-right: 2px solid var(--component-two-color);
     transition: 0.2s linear;
+    position: fixed;
 
 }
 
-.fixed {
+.min {
+    width: 10%;
+}
+
+
+.control {
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--component-two-color);
+    background-color: #0000002f;
     position: sticky;
-    top: 0;
+    backdrop-filter: blur(3px);
+    z-index: 999 !important;
+    height: 60px;
+
+}
+
+.control button {
+
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    color: var(--font-color);
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    transition: 0.5s linear;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 5px;
+    padding: 10px;
+
+}
+
+.control button:hover {
+    cursor: pointer;
+    background-color: var(--link-color);
 }
 
 .logo {
-    grid-area: logo;
-    display: grid;
-    grid-template-areas: "image title btn" "image legenda btn";
-    grid-template-columns: 10% 20% 30%;
 
-
+    display: flex;
+    justify-content: space-between;
 }
 
 .logo h1 {
-    grid-area: title;
+    font-size: 24px;
     text-shadow: 2px 2px var(--component-two-color)
 }
 
 .logo img {
-    grid-area: image;
-    width: 70px;
+
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
     background-color: var(--component-two-color);
     box-sizing: border-box;
+    margin: 10px;
 
 }
 
 .logo span {
-    grid-area: legenda;
+
     width: 100%;
     display: block;
 }
 
-.mode {
 
-    grid-area: btn;
-}
 
 .mode {
     background: transparent;
@@ -165,6 +178,7 @@ export default defineComponent({
     height: 50px;
     overflow: hidden;
     border-radius: 100%;
+    flex-shrink: 0;
 }
 
 .mode .moon,
