@@ -93,7 +93,11 @@ export default defineComponent({
     transition: 0.2s linear;
     position: fixed;
     overflow-y: scroll;
+    box-shadow: 4px 4px 5px #000000;
 
+}
+.header::-webkit-scrollbar {
+    display: none;
 }
 
 .min {
@@ -171,6 +175,7 @@ export default defineComponent({
 
 
 .mode {
+   
     background: transparent;
     border: none;
     cursor: pointer;
@@ -196,6 +201,7 @@ export default defineComponent({
     align-items: center;
     border-radius: 50%;
     transition: transform 0.3s ease;
+    color:#fff;
 }
 
 .mode .moon {

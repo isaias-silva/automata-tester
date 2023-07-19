@@ -1,47 +1,42 @@
 <template>
     <div class="usercard">
-        <label for="profile" class="profile">
-            <img :src="selectedImage || profile || require('@/assets/icons/load.gif')" alt="">
-            <input type="file" name="picture" id="profile" @change="handleImageChange" />
-        </label>
-        <div  class="blockinfo">
-          
-            <h3 :class="name ? null : 'load'">{{ name }}</h3>
-            <p>{{ email }}</p>
+        <router-link to="/profile" for="profile" class="profile">
+            <img :src="profile || require('@/assets/icons/load.gif')" alt="">
+        </router-link>
 
-        </div>
-       <ul>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-        <li>
-            <router-link to="/">click</router-link>
-        </li>
-       </ul>
+        <ul>
+
+            <li>
+                <router-link to="/">&#128264; <span>fluxos</span></router-link>
+            </li>
+            <li v-if="adm">
+                <router-link to="/"> &#128101; <span>usuários</span></router-link>
+            </li>
+            <li>
+                <router-link to="/">&#128079; <span>atendentes</span></router-link>
+            </li>
+            <li>
+                <router-link to="/"> &#128241; <span>contatos</span></router-link>
+            </li>
+            <li>
+                <router-link to="/"> &#129302; <span>bot</span></router-link>
+            </li>
+            <li>
+                <router-link to="/"> &#128190; <span>base de dados</span></router-link>
+            </li>
+            <li>
+                <router-link to="/">&#128279; <span>integrações</span></router-link>
+            </li>
+            <li>
+                <router-link to="/">&#8505;<span> sobre</span></router-link>
+            </li>
+            <li>
+                <router-link to="/">&#128200; <span>dashboard</span></router-link>
+            </li>
+            <li>
+                <router-link to="/login" @click="logout">&#128682; <span>sair</span></router-link>
+            </li>
+        </ul>
     </div>
 </template>
 <script lang="ts">
@@ -70,32 +65,6 @@ export default defineComponent({
             profile: '',
             profileFile: undefined
         }
-    },
-    methods: {
-
-        handleImageChange(event: Event) {
-            const file = (event.target as HTMLInputElement).files?.[0];
-            if (file) {
-                this.profileFile = file
-                const [name, type] = file.name.split('.')
-                if (!type || (type.toLowerCase() != 'png' && type.toLowerCase() != 'jpg')) {
-                    this.selectedImage = require('@/assets/icons/corrupted.jpg')
-                    return
-                }
-                this.updateProfile()
-                this.selectedImage = URL.createObjectURL(file);
-                console.log(this.selectedImage)
-            }
-        },
-        async updateProfile() {
-            if (!this.profileFile) {
-                return
-            }
-            const info = await uploadProfile(cookies.get('token'), this.profileFile)
-
-            console.log(info)
-        }
-
     }
     ,
     async mounted() {
@@ -115,6 +84,10 @@ export default defineComponent({
             this.$router.push('login')
         }
 
+    },methods:{
+        logout(){
+            cookies.remove('token')
+        }
     }
 
 
@@ -122,46 +95,56 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-
-ul{
+ul {
     list-style-type: none;
     width: 100%;
     margin-top: 20px;
 }
-li{
+
+li {
     width: 100%;
     background-color: var(--component-color);
     border-bottom: 1px solid var(--component-two-color);
     height: 50px;
+
+    transition: 0.2s linear;
+}
+
+li:hover {
+    background-color: #00000061;
+}
+
+li a {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-li a {
     text-decoration: none;
     font-weight: bold;
     color: var(--font-color);
     width: 100%;
- 
+    height: 100%;
+
 }
-#profile {
+
+.min li a span {
     display: none;
 }
 
 .usercard {
-   
+
 
     flex-shrink: 0;
     width: 100%;
     margin: auto;
-   
+
     margin-bottom: 30px;
     border-radius: 30px;
     box-sizing: border-box;
     padding: 5px;
-display: flex;
-flex-direction: column;
-align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     color: var(--font-color);
 
     text-align: center;
@@ -170,8 +153,8 @@ align-items: center;
 .profile {
     position: relative;
     border-radius: 100%;
-    width: 60%;
-  
+    width: 70%;
+    margin: auto;
     border: 4px solid var(--component-two-color);
     overflow: hidden;
     transition: 0.4s linear;
@@ -181,7 +164,7 @@ align-items: center;
 .profile img {
     width: 100%;
     transform: scale(1.1);
-    transition: 0.1s linear;
+    transition: 0.5s linear;
 }
 
 .profile:hover {
@@ -190,7 +173,7 @@ align-items: center;
 
 
 .profile:hover::after {
-    content: " trocar perfil ";
+    content: " ver perfil ";
     display: flex;
     width: 100%;
     height: 100%;
@@ -210,7 +193,7 @@ align-items: center;
 }
 
 .blockinfo {
-  
+
     display: flex;
     background-color: #0000001b;
     flex-direction: column;
@@ -218,20 +201,21 @@ align-items: center;
     padding: 5px;
     margin-top: 10px;
     border-radius: 10px;
-box-shadow: 5px 5px #0000004d;
+    box-shadow: 5px 5px #0000004d;
 }
 
 
 
-.blockinfo h3{
+.blockinfo h3 {
     margin-top: 10px;
     width: 100%;
 }
 
 
-.min .blockinfo{
+.min .blockinfo {
     display: none;
 }
+
 .load {
     background-color: #00000048;
     min-width: 50px;

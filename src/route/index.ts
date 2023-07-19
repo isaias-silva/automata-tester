@@ -1,6 +1,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import home from '@/views/home.page.vue'
+import userPage from '@/views/user.page.vue'
 import login from '@/views/login.register.page.vue'
 import chatPage from '@/views/chat.page.vue'
 import chatPageDetails from '@/views/chat.page.details.vue'
@@ -18,6 +19,11 @@ const routes = [
     {
       path: '',
       component: home
+    },
+    {
+      name:'profile',
+      path: '/profile',
+      component: userPage
     }
   ]
 },

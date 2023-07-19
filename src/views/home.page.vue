@@ -1,108 +1,123 @@
 <template>
   <div class="allboard">
-   
-    <router-link to="users" class="itens">
-      <h4>users</h4>
-      <img :src="require('@/assets/icons/users.png')" alt="">
+    <div class="banner">
+      <h1>Seja bem-vindo ao Autómata Tester!</h1>
+      <p>{{ word }}</p>
 
-
-    </router-link>
-
-
-    <router-link to="users" class="itens">
-      <h4>flows</h4>
-      <img :src="require('@/assets/icons/flow.png')" alt="">
-
-
-    </router-link>
-
-
-    <router-link to="attendants" class="itens">
-      <h4>attendants</h4>
-      <img :src="require('@/assets/icons/attendant.png')" alt="">
+    </div>
 
 
 
-    </router-link>
-
-    <router-link to="chat" class="itens">
-      <h4>chat</h4>
-      <img :src="require('@/assets/icons/chat.png')" alt="">
-
-
-
-    </router-link>
 
 
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import AdminCard from '@/components/adminCard.vue';
+import { defineComponent, ref } from 'vue'
+
 export default defineComponent({
   name: "HomePage",
+  setup() {
+    const words: string[] = [
+      "O Autómata Tester é uma plataforma de testes e validação para a versão final do Autómata, nossa solução de automação de WhatsApp com fluxos de conversas e disparos em massa.",
+      "Com um sistema robusto integrado a inteligência artificial, o Autómata oferece recursos avançados para automatizar processos de comunicação no WhatsApp.",
+      "Além disso, o Autómata permite a integração com diversas plataformas, facilitando a interação com seus clientes em diferentes canais.",
+      "A plataforma é constantemente aprimorada para oferecer a melhor experiência possível, com atualizações regulares e novos recursos sendo adicionados.",
+      "O Autómata simplifica a automação de fluxos de conversas, permitindo interações personalizadas e automatizadas com seus clientes.",
+      "Com disparos em massa, você pode alcançar um grande número de contatos de uma só vez, economizando tempo e esforço.",
+      "Nossa solução foi desenvolvida com foco na eficiência e no desempenho, garantindo um processo de automação de WhatsApp ágil e confiável.",
+      "A integração do Autómata com inteligência artificial proporciona uma comunicação mais inteligente e personalizada com seus clientes.",
+      "Estamos comprometidos com o aprimoramento contínuo da plataforma, ouvindo o feedback dos usuários e implementando melhorias constantes.",
+      "O Autómata é a escolha perfeita para impulsionar a automação de comunicação no WhatsApp, aumentando a eficiência do seu negócio."
+    ];
+    const word = ref<string>(words[0])
+    let i = 1
+    setInterval(() => {
 
+
+      word.value = words[i]
+
+      i++
+      if (i >= words.length) {
+        i = 0
+      }
+    }, 5000)
+
+    return {
+      word
+    }
+  }
 })
+
 </script>
 <style scoped>
 .allboard {
- width: 100%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
-
+  margin: auto;
   box-sizing: border-box;
-  padding: 5px;
+  padding: 10px;
   flex-wrap: wrap;
+  text-align: justify;
+  position: relative;
 }
 
-.itens {
-  background-color: var(--modal-color);
-  width: 30%;
+.banner {
+  width: 100%;
+  background-image: url('../../public/wallpaper.jpg');
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  background-size: cover;
+  box-sizing: border-box;
   text-align: center;
-  min-height: 300px;
-  border-radius: 30px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 8px 8px #0000002e;
-  margin-bottom: 30px;
-  transition: linear 0.5s;
-  overflow: hidden;
+  justify-content: center;
+  box-shadow: 2px 2px 10px #000;
 }
 
-.itens h4,
-p,
-a,
-span {
-  text-decoration: none;
-  color: var(--font-color)
-}
-
-.itens h4 {
-  font-size: 24px;
-  z-index: 99;
-}
-
-.itens img {
-  transition: 0.5s linear;
-}
-
-.itens:hover img {
-  transform: scale(1.2);
-  opacity: 0.4;
-}
-
-.itens img {
-  width: 60%;
+.banner::after {
+  position: absolute;
+  content: " ";
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  right: 0;
+  background-color: var(--main-color);
+  filter: opacity(0.5);
 
 }
-@media screen and (max-width: 768px) {
-  .allboard{
-    flex-direction: column;
-    align-items: center;
+
+.banner h1,
+.banner p {
+  z-index: 999 !important;
+  font-weight: bold;
+
+}
+
+.banner h1 {
+  border-bottom: 2px solid var(--font-color);
+  margin-bottom: 24px;
+  padding: 10px;
+}
+
+.banner p {
+  font-size: 16px;
+
+  animation: 5s infinite digit;
+}
+
+@keyframes digit {
+  0% {
+    filter: opacity(1);
   }
-  .itens{
-    width: 90%;
-  }
+100%{
+  filter:opacity(0)
 }
-</style>
+
+}</style>
