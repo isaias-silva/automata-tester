@@ -9,9 +9,39 @@
             <h3 :class="name ? null : 'load'">{{ name }}</h3>
             <p>{{ email }}</p>
 
-
-
         </div>
+       <ul>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+        <li>
+            <router-link to="/">click</router-link>
+        </li>
+       </ul>
     </div>
 </template>
 <script lang="ts">
@@ -92,6 +122,28 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+
+ul{
+    list-style-type: none;
+    width: 100%;
+    margin-top: 20px;
+}
+li{
+    width: 100%;
+    background-color: var(--component-color);
+    border-bottom: 1px solid var(--component-two-color);
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--font-color);
+    width: 100%;
+ 
+}
 #profile {
     display: none;
 }
@@ -166,7 +218,7 @@ align-items: center;
     padding: 5px;
     margin-top: 10px;
     border-radius: 10px;
-
+box-shadow: 5px 5px #0000004d;
 }
 
 

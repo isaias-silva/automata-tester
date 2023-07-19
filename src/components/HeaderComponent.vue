@@ -92,6 +92,7 @@ export default defineComponent({
     border-right: 2px solid var(--component-two-color);
     transition: 0.2s linear;
     position: fixed;
+    overflow-y: scroll;
 
 }
 

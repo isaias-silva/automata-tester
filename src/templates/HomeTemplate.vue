@@ -24,4 +24,7 @@ export default {
     position: absolute;
     right: 0;
 }
+div .min ~ .content{
+width: 90%;
+}
 </style>
