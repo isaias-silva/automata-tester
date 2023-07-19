@@ -11,18 +11,29 @@
 
             </label>
             <div class="user-info">
-              
+
                 <div class="blockinfo">
-                    <h2>{{ name }}</h2>
+                    <h2 v-if="!editMode">{{ name }}</h2>
                     <span>{{ email }}</span>
+
                 </div>
                 <div class="blockinfo">
-                  <h2>{{ adm? 'Admin':'normal user' }}</h2>
+                    <h2>{{ adm ? 'Admin' : 'normal user' }}</h2>
                     <span>phone: <i>{{ phonenumber }}</i></span>
                 </div>
-          
+
+                <button class="edit">
+                    editar informações
+                </button>
 
             </div>
+        </div>
+        <div class="content">
+            <h3>seu plano</h3>
+            <p v-if="adm">
+            como você é admin, o vencimento do seu plano simplesmente não existe.
+            </p>
+            {{mountBirth() }}
         </div>
 
 
@@ -49,7 +60,8 @@ export default defineComponent({
         selectedImage?: string,
         phonenumber?: string,
         date_of_begginer?: string
-        profileFile?: File
+        profileFile?: File,
+        plan_duration?: number
 
     } {
         return {
@@ -62,7 +74,15 @@ export default defineComponent({
         }
     },
     methods: {
+        mountBirth() {
+            if (!this.date_of_begginer) {
+                return
+            }
+            const date=new Date(this.date_of_begginer)
 
+            return `plano criado dia ${date.getDay()} do ${date.getMonth()} de ${date.getFullYear()}`
+
+        },
         handleImageChange(event: Event) {
             const file = (event.target as HTMLInputElement).files?.[0];
             if (file) {
@@ -93,34 +113,64 @@ export default defineComponent({
         const info = await getAdm(cookies.get('token'))
         if (info.status == 200) {
 
-            const { name, email, profile, adm, phone_number, date_of_begginner } = info.data
+            const { name, email, profile, adm, phone_number, date_of_begginner, plan_duration } = info.data
             this.name = name;
             this.email = email;
             this.profile = profile;
             this.adm = adm;
             this.phonenumber = phone_number
             this.date_of_begginer = date_of_begginner
-
+            this.plan_duration = plan_duration
 
         } else {
             cookies.remove('token')
             this.$router.push('login')
         }
 
+    }, setup() {
+        const editMode = ref<boolean>(false)
+
+        return {
+            editMode
+        }
     }
-
-
 })
 
 </script>
 <style scoped>
+.content {
+    width: 90%;
+    margin: auto
+}
+
+button.edit {
+    background-color: var(--component-two-color);
+    border: 2px solid var(--component-color);
+    color: var(--component-color);
+    box-sizing: border-box;
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.4s linear;
+    margin: 2px;
+
+}
+
+button.edit:hover {
+    background-color: var(--component-color);
+    border-color: var(--component-two-color);
+    color: var(--component-two-color);
+    cursor: pointer;
+
+}
+
 .allboard {
     width: 100%;
     display: flex;
     justify-content: space-between;
     margin: auto;
     box-sizing: border-box;
-    padding: 10px;
+
     flex-wrap: wrap;
     text-align: justify;
     position: relative;
@@ -128,7 +178,7 @@ export default defineComponent({
 
 .banner {
     width: 100%;
-    margin:0;
+    margin: 0;
     background-color: #00000032;
     display: grid;
     position: relative;
@@ -150,7 +200,7 @@ export default defineComponent({
     grid-area: profile;
     align-self: end;
     box-sizing: border-box;
-    margin: 10px;
+
     overflow: hidden;
     border-radius: 100%;
     border: 2px solid var(--component-color);
@@ -196,5 +246,7 @@ export default defineComponent({
     display: flex;
     justify-content: space-around;
     align-self: end;
+
+    box-sizing: border-box;
 
 }</style>

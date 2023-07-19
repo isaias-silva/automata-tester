@@ -95,6 +95,10 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+*{
+    padding: 0;
+    margin: 0;
+}
 ul {
     list-style-type: none;
     width: 100%;
@@ -153,16 +157,21 @@ li a {
 .profile {
     position: relative;
     border-radius: 100%;
-    width: 70%;
+    width: 100px;
+    height: 100px;
     margin: auto;
-    border: 4px solid var(--component-two-color);
+    border: 2px solid var(--component-two-color);
     overflow: hidden;
     transition: 0.4s linear;
 }
-
+.min .profile{
+    width: 70px;
+    height: 70px;
+    border:1px solid var(--component-two-color)
+} 
 
 .profile img {
-    width: 100%;
+   height: 100%;
     transform: scale(1.1);
     transition: 0.5s linear;
 }

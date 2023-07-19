@@ -8,13 +8,13 @@
             </button>
             <button @click="toogleMin()">
 
-                <svg v-if="min==false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg v-if="min == false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
 
-                <svg v-if="min==true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg v-if="min == true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 18l6-6-6-6" />
                 </svg>
             </button>
@@ -96,6 +96,7 @@ export default defineComponent({
     box-shadow: 4px 4px 5px #000000;
 
 }
+
 .header::-webkit-scrollbar {
     display: none;
 }
@@ -174,14 +175,14 @@ export default defineComponent({
 
 
 
-.mode {
-   
+button.mode {
+
     background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     overflow: hidden;
     border-radius: 100%;
     flex-shrink: 0;
@@ -193,15 +194,15 @@ export default defineComponent({
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    font-size: 32px;
+    height: 100%;
+    width: 100%;
+    font-size: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
     transition: transform 0.3s ease;
-    color:#fff;
+    color: #fff;
 }
 
 .mode .moon {
@@ -351,4 +352,5 @@ export default defineComponent({
         border-bottom: none;
         padding: 0;
     }
-}</style>
+}
+</style>

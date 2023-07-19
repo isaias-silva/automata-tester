@@ -79,6 +79,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   box-shadow: 2px 2px 10px #000;
+  color:#fff;
 }
 
 .banner::after {
@@ -88,8 +89,9 @@ export default defineComponent({
   height: 100vh;
   top: 0;
   right: 0;
-  background-color: var(--main-color);
-  filter: opacity(0.5);
+  background-color: var(--component-color);
+  background-image: linear-gradient(to left, var(--component-color),var(--component-two-color));
+  filter: opacity(0.7);
 
 }
 
@@ -101,7 +103,7 @@ export default defineComponent({
 }
 
 .banner h1 {
-  border-bottom: 2px solid var(--font-color);
+  border-bottom: 2px solid #fff;
   margin-bottom: 24px;
   padding: 10px;
 }
