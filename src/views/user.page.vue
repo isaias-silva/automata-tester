@@ -6,7 +6,7 @@
 
             </div>
             <label class="profile" for="profile">
-                <img :src="selectedImage || profile || require('@/assets/icons/load.gif')" alt="">
+                <img :src="selectedImage || profile || require('@/assets/icons/profile-unknow.png')" alt="">
                 <input type="file" name="picture" id="profile" @change="handleImageChange" />
 
             </label>
@@ -31,13 +31,14 @@
         <div class="content">
             <h3>seu plano</h3>
             <p v-if="adm">
-            como você é admin, o vencimento do seu plano simplesmente não existe.
+                como você é admin, o vencimento do seu plano simplesmente não existe.
             </p>
-            {{mountBirth() }}
+            {{ mountBirth() }}
             <div class="lifebar">
-                <span class="status"></span>
+                <span ref="status" :style="{ width: mountTimeEnd() + '%' }" class="status"></span>
+
             </div>
-            <p>{{ mountTimeEnd() }}</p>
+            <router-link to="/buy" class="renovate-plan">renovar</router-link>
         </div>
 
 
@@ -50,7 +51,7 @@
 <script lang="ts">
 import getAdm from '@/services/get.adm';
 import uploadProfile from '@/services/upload.profile';
-import { compareAsc } from 'date-fns';
+import { differenceInCalendarDays, differenceInDays, differenceInMonths, format, getMonth } from 'date-fns';
 import { defineComponent, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
@@ -83,19 +84,24 @@ export default defineComponent({
             if (!this.date_of_begginer) {
                 return
             }
-            const date=new Date(this.date_of_begginer)
-
-            return `plano criado dia ${date.getDay()} do ${date.getMonth()} de ${date.getFullYear()}`
+            const date = new Date(this.date_of_begginer)
+            const month = (getMonth(date) + 1)
+            const formatMonth = month < 10 ? '0' + month.toString() : month.toString()
+            return 'plano iniciado em: ' + format(date, "dd / # / yyyy").replace('#', formatMonth)
 
         },
-        mountTimeEnd(){
-        if(!this.date_of_begginer){
-            return
-        }
-        const date=new Date(this.date_of_begginer)
-        const today=new Date()
-        const diference=compareAsc(date,today)
-        return diference
+        mountTimeEnd() {
+            if (!this.date_of_begginer || !this.plan_duration) {
+                return
+            }
+            const date = new Date(this.date_of_begginer)
+
+            const today = new Date()
+
+            const diference = (differenceInDays(date, today) / 100) * this.plan_duration
+            return diference != 0 ? diference : 100
+
+
         },
         handleImageChange(event: Event) {
             const file = (event.target as HTMLInputElement).files?.[0];
@@ -143,19 +149,20 @@ export default defineComponent({
 
     }, setup() {
         const editMode = ref<boolean>(false)
-
+        const status = ref<any>(null)
         return {
-            editMode
+            editMode,
+            status
         }
     }
 })
 
 </script>
 <style scoped>
-.lifebar{
+.lifebar {
     width: 50%;
     height: 30px;
-    margin:auto;
+    margin: auto;
     background-color: #00000077;
     margin-top: 10px;
     border-radius: 10px;
@@ -163,31 +170,35 @@ export default defineComponent({
     overflow: hidden;
     z-index: -2;
 }
-.lifebar::after{
-    content:"tempo restante de uso" ;
-    display:flex;
+
+.lifebar::after {
+    content: "tempo restante de uso";
+    display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999!important;
+    z-index: 9999 !important;
     font-weight: bold;
     height: 100%;
 }
-.status{
+
+.status {
     z-index: -1;
-position: absolute;
-display: block;
-left:0;
-background-color: var(--component-two-color);
-width: 100%;
-height: 100%;
-transition: linear 0.4s ;
+    position: absolute;
+    display: block;
+    left: 0;
+    background-color: var(--component-two-color);
+    width: 100%;
+    height: 100%;
+    transition: linear 0.4s;
 }
+
 .content {
     width: 90%;
     margin: auto
 }
 
-button.edit {
+button.edit,
+.renovate-plan {
     background-color: var(--component-two-color);
     border: 2px solid var(--component-color);
     color: var(--component-color);
@@ -208,6 +219,19 @@ button.edit:hover {
 
 }
 
+.renovate-plan {
+    display: block;
+    width: 20%;
+    margin:auto;
+    margin-top: 10px;
+    background-color: #ffb300;
+    text-decoration: none;
+    color: #000000;
+    border: 1px solid #000000;
+}
+.renovate-plan:hover{
+    background-color: #ffcc56;
+}
 .allboard {
     width: 100%;
     display: flex;
@@ -229,7 +253,7 @@ button.edit:hover {
     grid-template-rows: 80% 20% 20%;
     grid-template-areas: 'profile info info' 'profile info info';
     border-radius: 10px;
-    margin:auto;
+    margin: auto;
     box-sizing: border-box;
     padding: 4px;
 }
@@ -299,15 +323,15 @@ button.edit:hover {
 
 }
 
-.content{
+.content {
     width: 90%;
-background-color: #00000032;
-margin: auto;
-box-sizing: border-box;
-margin-top: 50px;
-text-align: center;
-padding: 10px;
-border-radius: 10px;
+    background-color: #00000032;
+    margin: auto;
+    box-sizing: border-box;
+    margin-top: 50px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
 
 }
 </style>

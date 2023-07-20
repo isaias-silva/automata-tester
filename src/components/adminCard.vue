@@ -1,7 +1,7 @@
 <template>
     <div class="usercard">
         <router-link to="/profile" for="profile" class="profile">
-            <img :src="profile || require('@/assets/icons/load.gif')" alt="">
+            <img :src="profile || require('@/assets/icons/profile-unknow.png')" alt="">
         </router-link>
 
         <ul>
@@ -19,7 +19,7 @@
                 <router-link to="/"> &#128241; <span>contatos</span></router-link>
             </li>
             <li>
-                <router-link to="/"> &#129302; <span>bot</span></router-link>
+                <router-link to="/chat"> &#129302; <span>bot</span></router-link>
             </li>
             <li>
                 <router-link to="/"> &#128190; <span>base de dados</span></router-link>
