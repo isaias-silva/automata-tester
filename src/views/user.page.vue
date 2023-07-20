@@ -34,6 +34,10 @@
             como você é admin, o vencimento do seu plano simplesmente não existe.
             </p>
             {{mountBirth() }}
+            <div class="lifebar">
+                <span class="status"></span>
+            </div>
+            <p>{{ mountTimeEnd() }}</p>
         </div>
 
 
@@ -46,6 +50,7 @@
 <script lang="ts">
 import getAdm from '@/services/get.adm';
 import uploadProfile from '@/services/upload.profile';
+import { compareAsc } from 'date-fns';
 import { defineComponent, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
@@ -82,6 +87,15 @@ export default defineComponent({
 
             return `plano criado dia ${date.getDay()} do ${date.getMonth()} de ${date.getFullYear()}`
 
+        },
+        mountTimeEnd(){
+        if(!this.date_of_begginer){
+            return
+        }
+        const date=new Date(this.date_of_begginer)
+        const today=new Date()
+        const diference=compareAsc(date,today)
+        return diference
         },
         handleImageChange(event: Event) {
             const file = (event.target as HTMLInputElement).files?.[0];
@@ -138,6 +152,36 @@ export default defineComponent({
 
 </script>
 <style scoped>
+.lifebar{
+    width: 50%;
+    height: 30px;
+    margin:auto;
+    background-color: #00000077;
+    margin-top: 10px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: -2;
+}
+.lifebar::after{
+    content:"tempo restante de uso" ;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999!important;
+    font-weight: bold;
+    height: 100%;
+}
+.status{
+    z-index: -1;
+position: absolute;
+display: block;
+left:0;
+background-color: var(--component-two-color);
+width: 100%;
+height: 100%;
+transition: linear 0.4s ;
+}
 .content {
     width: 90%;
     margin: auto
@@ -177,13 +221,17 @@ button.edit:hover {
 }
 
 .banner {
-    width: 100%;
+    width: 95%;
     margin: 0;
     background-color: #00000032;
     display: grid;
     position: relative;
     grid-template-rows: 80% 20% 20%;
     grid-template-areas: 'profile info info' 'profile info info';
+    border-radius: 10px;
+    margin:auto;
+    box-sizing: border-box;
+    padding: 4px;
 }
 
 .banner-image {
@@ -249,4 +297,17 @@ button.edit:hover {
 
     box-sizing: border-box;
 
-}</style>
+}
+
+.content{
+    width: 90%;
+background-color: #00000032;
+margin: auto;
+box-sizing: border-box;
+margin-top: 50px;
+text-align: center;
+padding: 10px;
+border-radius: 10px;
+
+}
+</style>
