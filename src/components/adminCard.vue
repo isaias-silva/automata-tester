@@ -19,9 +19,6 @@
                 <router-link to="/"> &#128241; <span>contatos</span></router-link>
             </li>
             <li>
-                <router-link to="/chat"> &#129302; <span>bot</span></router-link>
-            </li>
-            <li>
                 <router-link to="/"> &#128190; <span>base de dados</span></router-link>
             </li>
             <li>
@@ -44,6 +41,7 @@ import { defineComponent } from 'vue'
 import getAdm from '@/services/get.adm'
 import uploadProfile from '@/services/upload.profile'
 import { useCookies } from "vue3-cookies";
+import { disconnecteSocket } from '@/socket';
 const { cookies } = useCookies();
 
 export default defineComponent({
@@ -84,9 +82,10 @@ export default defineComponent({
             this.$router.push('login')
         }
 
-    },methods:{
-        logout(){
-            cookies.remove('token')
+    }, methods: {
+        logout() {
+            cookies.remove('token');
+            disconnecteSocket()
         }
     }
 
@@ -95,10 +94,11 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-*{
+* {
     padding: 0;
     margin: 0;
 }
+
 ul {
     list-style-type: none;
     width: 100%;
@@ -164,14 +164,15 @@ li a {
     overflow: hidden;
     transition: 0.4s linear;
 }
-.min .profile{
+
+.min .profile {
     width: 70px;
     height: 70px;
-    border:1px solid var(--component-two-color)
-} 
+    border: 1px solid var(--component-two-color)
+}
 
 .profile img {
-   height: 100%;
+    height: 100%;
     transform: scale(1.1);
     transition: 0.5s linear;
 }

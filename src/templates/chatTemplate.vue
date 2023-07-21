@@ -13,21 +13,29 @@ import AsideComponent from "@/components/AsideChatComponent.vue"
 import { connectSocket, socket, socketState, disconnecteSocket, messagesState } from "@/socket";
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
-
 import { defineComponent, watch, watchEffect } from 'vue'
 import soundMsg from '../assets/sounds/message.mp3'
 import useSound from "vue-use-sound"
 import { Icontact } from "@/interfaces/interface.bot.contact";
+import { useRoute, useRouter } from "vue-router";
+
+
 export default defineComponent({
     components: {
         AsideComponent
     }, setup() {
+        const route = useRoute()
+        const router = useRouter()
+
         const [play, audio] = useSound(soundMsg.toString())
         watchEffect(() => {
             const { connected } = socketState
             if (connected) {
-
-                socket.emit('start', cookies.get('idWa') || Math.random().toString(32).replace('0.', 'I'))
+                const botId = route.query.id
+                if (!botId) {
+                    router.push('/')
+                }
+                socket.emit('start', botId)
 
                 socket.on('msg.now', async (data: { id: string, payload: string }) => {
 
@@ -53,9 +61,11 @@ export default defineComponent({
         })
 
     }, mounted() {
+
         connectSocket()
 
     }, beforeUnmount() {
+
         disconnecteSocket()
     }
 

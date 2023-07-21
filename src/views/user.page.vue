@@ -13,7 +13,7 @@
             <div class="user-info">
 
                 <div class="blockinfo">
-                    <h2 v-if="!editMode">{{ name }}</h2>
+                    <h2>{{ name }}</h2>
                     <span>{{ email }}</span>
 
                 </div>
@@ -40,9 +40,58 @@
             </div>
             <router-link to="/buy" class="renovate-plan">renovar</router-link>
         </div>
+        <div class="content noback" v-if="modes.createBot">
+            <button class="closeBtn" @click="() => modes.createBot = false">x</button>
+            <createBotForm />
+
+        </div>
 
 
 
+
+        <div class="content">
+            <h3>seus Bots</h3>
+            <div class="flex">
+                <div class="bot-card" v-for=" bot, key of bots" :key="key">
+                    <span class="status-bot on"> online </span>
+                    <img src="../../public/wallpaper.jpg" alt="">
+                    <h4>{{ bot.name }}</h4>
+                   
+                    <ul>
+                        <li>
+                            <strong>type: </strong> botWa
+                        </li>
+                        <li>
+                            <strong>number: </strong> {{ bot.number }}
+                        </li>
+                        <li>
+                            <select name="mode" id="mode" :value="bot.mode">
+                                <option value="repasse">repasse</option>
+                                <option value="sniper">sniper</option>
+                                <option value="attendant">attendant</option>
+
+                            </select>
+                        </li>
+                        <li>
+                            <select name="flow" id="flow">
+                                <option value="1">flow1</option>
+                            </select>
+                        </li>
+                    </ul>
+                    <router-link class="buttonOpen" :to="'chat?id=' + bot._id">
+                        open
+                    </router-link>
+                </div>
+                <div class="plus-card" @click="() => modes.createBot = true">
+                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" stroke-width="5" />
+                        <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" stroke-width="5" />
+                    </svg>
+                </div>
+
+            </div>
+
+        </div>
 
 
 
@@ -50,14 +99,19 @@
 </template>
 <script lang="ts">
 import getAdm from '@/services/get.adm';
+import getBots from '@/services/get.bots';
 import uploadProfile from '@/services/upload.profile';
-import { differenceInCalendarDays, differenceInDays, differenceInMonths, format, getMonth } from 'date-fns';
+import { differenceInDays, format, getMonth } from 'date-fns';
+import createBotForm from '@/components/createBotForm.vue';
 import { defineComponent, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
 export default defineComponent({
     name: "UserPage",
+    components: {
+        createBotForm
+    },
     data(): {
         name: string,
         email: string,
@@ -67,7 +121,17 @@ export default defineComponent({
         phonenumber?: string,
         date_of_begginer?: string
         profileFile?: File,
-        plan_duration?: number
+        plan_duration?: number,
+        bots: {
+            number: string,
+            mode: string,
+            flowId: string,
+            userId: string,
+            status?: string,
+            name: string,
+            path: string,
+            _id: string
+        }[] | null
 
     } {
         return {
@@ -76,7 +140,8 @@ export default defineComponent({
             adm: undefined,
             selectedImage: undefined,
             profile: '',
-            profileFile: undefined
+            profileFile: undefined,
+            bots: []
         }
     },
     methods: {
@@ -98,7 +163,9 @@ export default defineComponent({
 
             const today = new Date()
 
-            const diference = (differenceInDays(date, today) / 100) * this.plan_duration
+            const diference = 100 - ((differenceInDays(today, date) * 100) / this.plan_duration)
+
+
             return diference != 0 ? diference : 100
 
 
@@ -124,6 +191,9 @@ export default defineComponent({
             const info = await uploadProfile(cookies.get('token'), this.profileFile)
 
             console.log(info)
+        },
+        async getmyBots() {
+            this.bots = await getBots(cookies.get('token'))
         }
 
     }
@@ -141,6 +211,7 @@ export default defineComponent({
             this.phonenumber = phone_number
             this.date_of_begginer = date_of_begginner
             this.plan_duration = plan_duration
+            await this.getmyBots()
 
         } else {
             cookies.remove('token')
@@ -148,10 +219,12 @@ export default defineComponent({
         }
 
     }, setup() {
-        const editMode = ref<boolean>(false)
+        const modes = ref<{ editProfile: boolean, createBot: boolean }>({ editProfile: false, createBot: false })
         const status = ref<any>(null)
+
+
         return {
-            editMode,
+            modes,
             status
         }
     }
@@ -159,79 +232,39 @@ export default defineComponent({
 
 </script>
 <style scoped>
-.lifebar {
-    width: 50%;
-    height: 30px;
-    margin: auto;
-    background-color: #00000077;
-    margin-top: 10px;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-    z-index: -2;
-}
-
-.lifebar::after {
-    content: "tempo restante de uso";
+.closeBtn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--font-color);
+    background-color: var(--component-color);
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--font-color);
+    border-radius: 100%;
+    position: absolute;
     display: flex;
     align-items: center;
+    transition: linear 1s;
     justify-content: center;
-    z-index: 9999 !important;
-    font-weight: bold;
-    height: 100%;
+    right: 0;
 }
 
-.status {
-    z-index: -1;
-    position: absolute;
-    display: block;
-    left: 0;
-    background-color: var(--component-two-color);
-    width: 100%;
-    height: 100%;
-    transition: linear 0.4s;
-}
-
-.content {
-    width: 90%;
-    margin: auto
-}
-
-button.edit,
-.renovate-plan {
-    background-color: var(--component-two-color);
-    border: 2px solid var(--component-color);
-    color: var(--component-color);
-    box-sizing: border-box;
-    padding: 5px;
-    border-radius: 10px;
-    font-weight: bold;
-    transition: 0.4s linear;
-    margin: 2px;
-
-}
-
-button.edit:hover {
-    background-color: var(--component-color);
-    border-color: var(--component-two-color);
-    color: var(--component-two-color);
+.closeBtn:hover {
     cursor: pointer;
-
+    background-color: red;
 }
 
-.renovate-plan {
-    display: block;
-    width: 20%;
-    margin:auto;
-    margin-top: 10px;
-    background-color: #ffb300;
-    text-decoration: none;
-    color: #000000;
-    border: 1px solid #000000;
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
 }
-.renovate-plan:hover{
-    background-color: #ffcc56;
-}
+
+
+
 .allboard {
     width: 100%;
     display: flex;
@@ -254,6 +287,7 @@ button.edit:hover {
     grid-template-areas: 'profile info info' 'profile info info';
     border-radius: 10px;
     margin: auto;
+    margin-bottom: 10px;
     box-sizing: border-box;
     padding: 4px;
 }
@@ -297,6 +331,7 @@ button.edit:hover {
     justify-content: center;
     align-items: center;
     color: #fff;
+
 }
 
 .profile input {
@@ -332,6 +367,223 @@ button.edit:hover {
     text-align: center;
     padding: 10px;
     border-radius: 10px;
+    position: relative;
 
+}
+
+.noback {
+    background-color: #00000000;
+}
+
+.bot-card,
+.plus-card {
+    width: 30%;
+    background-color: #0000001b;
+    overflow: hidden;
+    border-radius: 10px;
+    min-height: 350px;
+    margin: 10px;
+    transition: linear 0.5s;
+    position: relative;
+
+}
+
+.status-bot {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(54, 54, 54);
+    font-weight: bold;
+    border-radius: 100%;
+    top: 0;
+    box-sizing: border-box;
+    font-size: 12px;
+    margin: 4px;
+}
+
+.on {
+    background-color: #00b900;
+}
+
+.on::after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    display: block;
+    border-radius: 100%;
+    background-color: #03ff03;
+    animation: on 1s infinite;
+
+}
+
+.plus-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--component-two-color);
+    border: 2px dashed var(--component-two-color);
+}
+
+.plus-card svg {
+    transition: 0.3s linear;
+}
+
+.plus-card:hover {
+    cursor: pointer;
+    border-color: var(--link-color);
+    color: var(--link-color);
+}
+
+.plus-card:hover svg {
+    transform: rotate(270deg);
+
+}
+
+.plus-card::after {
+    content: "criar novo bot";
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    position: absolute;
+    background-color: #00000064;
+    backdrop-filter: blur(8px);
+    filter: opacity(0);
+    transition: linear 0.5s;
+}
+
+.plus-card:hover::after {
+    filter: opacity(1);
+}
+
+.bot-card img {
+    width: 100%;
+
+}
+
+
+.bot-card ul {
+    list-style: none;
+}
+
+.bot-card select {
+    width: 150px;
+    height: 30px;
+    margin-bottom: 10px;
+    color: var(--font-color);
+    background-color: var(--component-color);
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.lifebar {
+    width: 50%;
+    height: 30px;
+    margin: auto;
+    background-color: #00000077;
+    margin-top: 10px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: -2;
+}
+
+.lifebar::after {
+    content: "tempo restante de uso";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999 !important;
+    font-weight: bold;
+    height: 100%;
+}
+
+.status {
+    z-index: -1;
+    position: absolute;
+    display: block;
+    left: 0;
+    background-color: var(--component-two-color);
+    width: 100%;
+    height: 100%;
+    transition: linear 0.4s;
+}
+
+.content {
+    width: 90%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+button.edit,
+.buttonOpen,
+.renovate-plan {
+    background-color: var(--component-two-color);
+    border: 2px solid var(--component-color);
+    color: var(--component-color);
+    box-sizing: border-box;
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.4s linear;
+    margin: 2px;
+    text-decoration: none;
+
+}
+
+.buttonOpen {
+    margin: 0;
+    margin: auto;
+    display: block;
+    border: 1px solid var(--component-color);
+    width: 40%;
+
+}
+
+button.edit:hover,
+.buttonOpen:hover {
+    background-color: var(--component-color);
+    border-color: var(--component-two-color);
+    color: var(--component-two-color);
+    cursor: pointer;
+
+}
+
+.renovate-plan {
+    display: block;
+    width: 20%;
+    margin: auto;
+    margin-top: 10px;
+    background-color: #ffb300;
+    text-decoration: none;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.renovate-plan:hover {
+    background-color: #ffcc56;
+}
+
+@keyframes on {
+    0% {
+
+        width: 50px;
+        filter: opacity(1)
+    }
+
+    100% {
+        top: -25px;
+        width: 100px;
+        height: 100px;
+        filter: opacity(0)
+    }
 }
 </style>

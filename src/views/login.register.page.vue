@@ -251,6 +251,7 @@ form {
     border-radius: 15px;
     box-shadow: 8px 8px #1d1d1d99;
     transition: 1s linear;
+ 
 }
 
 .clickspan {

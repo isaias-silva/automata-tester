@@ -82,8 +82,7 @@ import getChats from '@/services/get.chats';
 import { useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
 import { parse, compareAsc } from 'date-fns';
-import useSound from "vue-use-sound"
-import audioMessage from '../assets/sounds/message.mp3'
+
 
 
 export default defineComponent({
@@ -261,6 +260,7 @@ export default defineComponent({
 
                             }
                         }
+                        forDateMessages.value.filter((item, index, array) => array[index] == item)
                     }
 
 

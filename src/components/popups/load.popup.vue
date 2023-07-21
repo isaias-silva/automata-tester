@@ -29,6 +29,7 @@ export default defineComponent({
     height: 100%;
     position: fixed;
     top: 0;
+    left:0;
     z-index: 999 !important;
     backdrop-filter: blur(5px);
     display: flex;
