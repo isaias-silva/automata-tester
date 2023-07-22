@@ -78,7 +78,7 @@
                             </select>
                         </li>
                     </ul>
-                    <router-link class="buttonOpen" :to="'chat?id=' + bot._id">
+                    <router-link class="buttonOpen" :to="'chat/' + bot._id">
                         open
                     </router-link>
                 </div>

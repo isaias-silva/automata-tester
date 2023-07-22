@@ -5,6 +5,7 @@ import { useCookies } from "vue3-cookies";
 import { Icontact } from "./interfaces/interface.bot.contact";
 import getContacts from "./services/get.contacts";
 import getChats from "./services/get.chats";
+import { useRoute } from "vue-router";
 const { cookies } = useCookies();
 
 
@@ -49,20 +50,14 @@ export function connectSocket() {
     socketState.WAconnect = data
 
     if (data.status == 'connected' && data.id) {
-      cookies.set('idWa', data.id)
+ 
 
       const messages = await getContacts(cookies.get('token'))
-
+     
       if (messages) {
-
+     
         messagesState.messages = messages
-        messagesState.messages.map(async (contact) => {
-          const chats = await getChats(cookies.get('token'), contact._id, 10, 1)
-          if (chats) {
-            contact.msgs = chats
-          }
-          return contact
-        })
+     
       }
     }
   })
@@ -83,10 +78,14 @@ export function connectSocket() {
       const [newMessage] = contact.msgs
 
       contactExisting.msgs.push(newMessage)
+    
       if (contactExisting.newMessages) {
-        contactExisting.newMessages += 1
-      }else{
-        contactExisting['newMessages']=1
+        if(!newMessage.isMe){
+          contactExisting.newMessages += 1
+   
+        }
+          }else{
+        contactExisting['newMessages']=newMessage.isMe?0:1
       }
       messagesState.messages.unshift(contactExisting)
 

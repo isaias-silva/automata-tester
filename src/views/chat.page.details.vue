@@ -4,7 +4,7 @@
             alt="profile">
         <h2> {{ chatInfo ? chatInfo?.value?.name : '' }}</h2>
         <div class="control">
-            <router-link to="/chat">
+            <router-link :to="'/chat/' + $route.params.botId">
                 <img :src="require('@/assets/icons/return.png')" alt="return">
 
             </router-link>
@@ -106,6 +106,11 @@ export default defineComponent({
         })
 
     },
+    beforeUnmount() {
+        if (this.interval) {
+            clearTimeout(this.interval)
+        }
+    },
 
     methods: {
 
@@ -122,7 +127,7 @@ export default defineComponent({
     },
     setup() {
         const Cookies = useCookies()
-       
+
         const { cookies } = Cookies
 
         let reqObj = reactive<{ messagesInfo: { id: number, page: number }[] }>({ messagesInfo: [] }
@@ -134,11 +139,11 @@ export default defineComponent({
         const showRef = ref(true);
         const inviRef = ref(false)
 
-       
+
 
 
         const route = useRoute()
-        const router=useRouter()
+        const interval = ref<any | null>(null)
         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
         function setChatInfo(info: Icontact) {
@@ -152,8 +157,6 @@ export default defineComponent({
             if (value) {
                 setChatInfo(value)
 
-            }else{
-                router.push('/chat')
             }
 
 
@@ -180,7 +183,7 @@ export default defineComponent({
         watch(() => route.params, () => {
 
             showRef.value = true
-
+            startInterval()
 
 
         })
@@ -204,7 +207,7 @@ export default defineComponent({
                 setTimeout(() => {
                     inviRef.value = false
                 }, 2000)
-              
+
             }
         }, { deep: true })
 
@@ -279,18 +282,15 @@ export default defineComponent({
             }
         }
 
-        onMounted(() => {
+        async function startInterval() {
 
-            const observer = new IntersectionObserver(async (entries) => {
-                const entry = entries[0];
-                if (entry.intersectionRatio) {
-
-                    if (chatInfo.value?._id && chatInfo.value.msgs) {
-
+            interval.value = setInterval(
+                async () => {
+                    if (chatInfo.value?._id && chatInfo.value.msgs && route.params.botId && typeof route.params.botId == 'string') {
 
                         const existsId = reqObj.messagesInfo.find(value => value.id == chatInfo.value?._id)
 
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, 10, existsId?.page || 2)
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, route.params.botId, 10, existsId?.page || 2)
 
                         if (pastMessages && pastMessages.length > 0) {
                             if (existsId) {
@@ -305,17 +305,19 @@ export default defineComponent({
                             })
 
                         } else {
-
+                            clearInterval(interval.value)
                             showRef.value = false
                         }
                     } else {
-                        alert('else')
+                        console.log('gangplank')
                     }
                 }
-            });
-            if (contentRef.value)
-                observer.observe(contentRef.value);
-        });
+                , 3000)
+
+
+
+
+        }
 
 
         return {
@@ -327,7 +329,8 @@ export default defineComponent({
             contentRef,
             showRef,
             inviRef,
-            chatRef
+            chatRef,
+            interval
         };
     }
 }

@@ -45,7 +45,8 @@
         <span></span>
         <span></span>
       </div>
-      <router-link :to="'/chat/' + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key"
+
+      <router-link :to="`/chat/${idBot}/` + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key"
         @click="readMessage(value.id)">
 
         <img v-if="value"
@@ -82,13 +83,14 @@
 </template>
 <script lang="ts">
 
-import { defineComponent, watch } from 'vue'
+import { defineComponent, watch, watchEffect } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
+import { useRoute } from 'vue-router';
+import getChats from '@/services/get.chats';
 const { cookies } = useCookies();
-import audioMessage from '../assets/sounds/message.mp3'
-import useSound from "vue-use-sound"
+
 
 
 
@@ -99,7 +101,8 @@ export default defineComponent({
     noturne: boolean,
     src?: string,
     status: string,
-    messages: Icontact[]
+    messages: Icontact[],
+    idBot: string
 
 
   } {
@@ -108,19 +111,36 @@ export default defineComponent({
       src: require('@/assets/icons/load.gif'),
       status: 'disconnected',
       loading: true,
-
+      idBot: '',
       messages: []
     }
   },
   async mounted() {
+    const route = useRoute()
+    if (route.params.botId && typeof route.params.botId == 'string') {
+      this.idBot = route.params.botId
 
+
+    }
+    watchEffect(() => {
+      messagesState.messages.map(async (contact) => {
+
+        const chats = await getChats(cookies.get('token'), contact._id, this.idBot, 10, 1)
+
+        if (chats) {
+          contact.msgs = chats
+        }
+
+      })
+    })
+
+    
     watch(messagesState, (newMessage => {
 
       this.loading = false
 
-
       this.messages = newMessage.messages
-      
+
 
     }))
     watch(socketState, (newSocketState => {
@@ -199,9 +219,10 @@ export default defineComponent({
     showMenu() {
 
       alert('show menu')
-    }
+    },
+
   }
-  
+
 
 })
 </script>

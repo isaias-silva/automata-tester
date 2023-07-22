@@ -31,7 +31,7 @@ export default defineComponent({
         watchEffect(() => {
             const { connected } = socketState
             if (connected) {
-                const botId = route.query.id
+                const botId = route.params.botId
                 if (!botId) {
                     router.push('/')
                 }
@@ -46,7 +46,7 @@ export default defineComponent({
                     if (contact.msgs && contact.msgs[0]) {
 
                         const message = contact.msgs[0]
-                        if (!message.isMe) {
+                        if (!message.isMe && route.params.id!=contact.id) {
                             play()
                         }
                     }

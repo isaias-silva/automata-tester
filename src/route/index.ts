@@ -34,7 +34,7 @@ const routes = [
 
 },
 {
-  path:'/chat',
+  path:'/chat/:botId',
   name:'chat',
   component: chatTemplate,
   children:[
@@ -42,7 +42,7 @@ const routes = [
     component: chatPage
   },
 
-  {path:':id',
+  {path:'/chat/:botId/:id',
     component: chatPageDetails
 }
   ]
