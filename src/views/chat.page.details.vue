@@ -82,6 +82,7 @@ import getChats from '@/services/get.chats';
 import { useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
 import { parse, compareAsc } from 'date-fns';
+import { config } from '@/botConfig';
 
 
 
@@ -98,14 +99,7 @@ export default defineComponent({
             message: undefined
         }
     },
-    mounted() {
 
-        watchEffect(() => {
-            this.updateChatInfo(this.$route.params.id)
-
-        })
-
-    },
     beforeUnmount() {
         if (this.interval) {
             clearTimeout(this.interval)
@@ -121,7 +115,7 @@ export default defineComponent({
             }
             socket.emit('sendText', { phone: this.$route.params.id, text: this.message })
             this.message = ''
-
+            this.scrollToBottom()
 
         }
     },
@@ -148,6 +142,10 @@ export default defineComponent({
 
         function setChatInfo(info: Icontact) {
             chatInfo.value = info
+            clearForDate()
+            organize()
+
+
         }
 
         function updateChatInfo(id: string | string[]) {
@@ -158,7 +156,6 @@ export default defineComponent({
                 setChatInfo(value)
 
             }
-
 
         }
 
@@ -180,37 +177,18 @@ export default defineComponent({
             { immediate: true }
         );
 
-        watch(() => route.params, () => {
-
-            showRef.value = true
-            startInterval()
-
-
-        })
-
         watch(
             () => chatInfo,
-            (novoValor) => {
-                if (novoValor) {
-                    clearForDate()
-                    organize()
-                }
+            () => {
+
+                clearForDate()
+                organize()
+
+
+
             },
-            { deep: true }
-
+            { immediate: true, deep: true }
         );
-
-        watch(() => forDateMessages, (update) => {
-            if (update) {
-                inviRef.value = true
-                scrollToBottom()
-                setTimeout(() => {
-                    inviRef.value = false
-                }, 2000)
-
-            }
-        }, { deep: true })
-
         function sortByDate(a: Imessage, b: Imessage) {
 
             const dateA = parse(a.date || new Date().toString(), 'dd/MM/yyyy HH:mm:ss', new Date());
@@ -284,13 +262,16 @@ export default defineComponent({
 
         async function startInterval() {
 
+            if (interval.value) {
+                return
+            }
             interval.value = setInterval(
                 async () => {
-                    if (chatInfo.value?._id && chatInfo.value.msgs && route.params.botId && typeof route.params.botId == 'string') {
+                    if (chatInfo.value?._id) {
 
                         const existsId = reqObj.messagesInfo.find(value => value.id == chatInfo.value?._id)
 
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, route.params.botId, 10, existsId?.page || 2)
+                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, config.botId, 10, existsId?.page || 2)
 
                         if (pastMessages && pastMessages.length > 0) {
                             if (existsId) {

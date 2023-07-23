@@ -54,7 +54,7 @@ export function connectSocket() {
 
       const messages = await getContacts(cookies.get('token'))
      
-      if (messages) {
+      if (messages && messagesState.messages.length<1) {
      
         messagesState.messages = messages
      

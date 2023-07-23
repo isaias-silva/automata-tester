@@ -118,31 +118,16 @@ export default defineComponent({
   async mounted() {
     const route = useRoute()
     if (route.params.botId && typeof route.params.botId == 'string') {
+     
       this.idBot = route.params.botId
+     
+      setTimeout(()=>{
+        this.loadMessages()
+  
+      },3000)
+       }
 
 
-    }
-    watchEffect(() => {
-      messagesState.messages.map(async (contact) => {
-
-        const chats = await getChats(cookies.get('token'), contact._id, this.idBot, 10, 1)
-
-        if (chats) {
-          contact.msgs = chats
-        }
-
-      })
-    })
-
-    
-    watch(messagesState, (newMessage => {
-
-      this.loading = false
-
-      this.messages = newMessage.messages
-
-
-    }))
     watch(socketState, (newSocketState => {
 
       if (!newSocketState.WAconnect) {
@@ -178,6 +163,21 @@ export default defineComponent({
   },
 
   methods: {
+    async loadMessages() {
+      messagesState.messages.map(async (contact) => {
+
+        const chats = await getChats(cookies.get('token'), contact._id, this.idBot, 10, 1)
+
+        if (chats) {
+          contact.msgs = chats
+        }
+
+      })
+
+      this.messages = messagesState.messages
+      this.loading = false
+    }
+    ,
     killBot() {
       cookies.remove('idWa')
       socket.emit('kill')

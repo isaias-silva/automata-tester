@@ -1,5 +1,7 @@
 <template>
-    <AsideComponent />
+    <keep-alive>
+        <AsideComponent />
+    </keep-alive>
     <div class="content">
         <router-view></router-view>
 
@@ -11,10 +13,10 @@
 
 import AsideComponent from "@/components/AsideChatComponent.vue"
 import { connectSocket, socket, socketState, disconnecteSocket, messagesState } from "@/socket";
-import { useCookies } from "vue3-cookies";
-const { cookies } = useCookies();
+
+
 import { defineComponent, watch, watchEffect } from 'vue'
-import soundMsg from '../assets/sounds/message.mp3'
+import soundMsg from '../assets/sounds/message-received.wav'
 import useSound from "vue-use-sound"
 import { Icontact } from "@/interfaces/interface.bot.contact";
 import { useRoute, useRouter } from "vue-router";
@@ -46,7 +48,7 @@ export default defineComponent({
                     if (contact.msgs && contact.msgs[0]) {
 
                         const message = contact.msgs[0]
-                        if (!message.isMe && route.params.id!=contact.id) {
+                        if (!message.isMe && route.params.id != contact.id) {
                             play()
                         }
                     }
