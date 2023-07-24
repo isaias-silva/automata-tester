@@ -20,6 +20,7 @@ import soundMsg from '../assets/sounds/message-received.wav'
 import useSound from "vue-use-sound"
 import { Icontact } from "@/interfaces/interface.bot.contact";
 import { useRoute, useRouter } from "vue-router";
+import { config } from "@/botConfig";
 
 
 export default defineComponent({
@@ -37,8 +38,10 @@ export default defineComponent({
                 if (!botId) {
                     router.push('/')
                 }
+                config.botId=botId.toString()
+             
+              
                 socket.emit('start', botId)
-
                 socket.on('msg.now', async (data: { id: string, payload: string }) => {
 
                     const contact: Icontact = JSON.parse(data.payload)

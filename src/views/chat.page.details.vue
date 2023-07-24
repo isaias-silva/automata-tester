@@ -21,9 +21,9 @@
     </div>
 
 
-    <div ref="chatRef" class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
+    <div class="section-chat" v-if="chatInfo.value?.msgs && chatInfo.value?.msgs.length > 0">
 
-        <div class="load-messages" ref="contentRef" v-show="!inviRef && showRef">
+        <div class="load-messages" ref="loadRef" v-show="!inviRef && showRef">
             <span></span>
             <span></span>
             <span></span>
@@ -34,12 +34,16 @@
             <span></span>
             <span></span>
             <span></span>
+        </div>
+        <div ref="nowRef">
+
         </div>
 
         <div class="warking" v-show="!showRef">
             <p>mensagens anteriores a esta não estão disponíveis.</p>
         </div>
-        <div v-for=" messageDate, key of forDateMessages.value?.filter(v => v != undefined && v != null)" :key="key">
+        <div class="blockMessages" :id="messageDate.id"
+            v-for=" messageDate, key of forDateMessages.value?.filter(v => v != undefined && v != null)" :key="key">
 
             <div class="warking min">
                 <p>{{ messageDate.date }}</p>
@@ -52,7 +56,7 @@
     </div>
 
 
-    <div class="footer-chat">
+    <div ref="foot" class="footer-chat">
         <button>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -83,8 +87,9 @@ import { useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
 import { parse, compareAsc } from 'date-fns';
 import { config } from '@/botConfig';
+import router from '@/route';
 
-//
+
 
 export default defineComponent({
 
@@ -99,14 +104,49 @@ export default defineComponent({
             message: undefined
         }
     },
+    mounted() {
+        const observer = new IntersectionObserver((entry) => {
+            const [object] = entry
+            if (object.isIntersecting) {
 
-    beforeUnmount() {
-        if (this.interval) {
-            clearTimeout(this.interval)
+                setTimeout(async () => {
+
+
+
+                    await this.searchMessage()
+                    if (this.$refs.nowRef) {
+
+                        (this.$refs.nowRef as Element).scrollIntoView({
+                            behavior: 'smooth'
+                        })
+
+                    }
+                }, 3000)
+
+            }
+        });
+
+        if (this.loadRef != undefined) {
+
+            observer.observe(this.loadRef)
+            socket.on('msg.now', (data: { id: string, payload: string }) => {
+
+                const contact: Icontact = JSON.parse(data.payload)
+                if (!contact) {
+                    return
+                }
+                if (contact.id == this.$route.params.id) {
+                    socket.emit('messageConfig', { read: true, id: this.$route.params.id })
+                    this.scrollToBottom()
+                }
+            })
+
         }
-    },
 
+
+    },
     methods: {
+
 
 
         sendMessage() {
@@ -124,21 +164,26 @@ export default defineComponent({
 
         const { cookies } = Cookies
 
-        let reqObj = reactive<{ messagesInfo: { id: number, page: number }[] }>({ messagesInfo: [] }
-        )
-        const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[] }> }>({ value: [] })
+       
+        
+        const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[], id: string }> }>({ value: [] })
 
-        const contentRef = ref(undefined);
-        const chatRef = ref(undefined)
+        const loadRef = ref<Element | undefined>(undefined);
         const showRef = ref(true);
         const inviRef = ref(false)
+        const nowRef = ref<Element | undefined>(undefined)
+
+
+
+
+
+
 
 
 
 
         const route = useRoute()
-        const interval = ref<any | null>(null)
-        const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
+         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
         function setChatInfo(info: Icontact) {
             chatInfo.value = info
@@ -155,11 +200,14 @@ export default defineComponent({
             if (value) {
                 setChatInfo(value)
 
+            } else {
+
+                router.push(`/chat/${route.params.botId}/`)
             }
 
         }
 
-        function scrollToBottom(speed?: number) {
+        function scrollToBottom() {
             window.scrollTo({
                 top: document.documentElement.scrollHeight,
                 behavior: 'smooth'
@@ -172,6 +220,7 @@ export default defineComponent({
                 if (newId && typeof newId == 'string') {
 
                     updateChatInfo(newId)
+
                 }
             },
             { immediate: true }
@@ -180,7 +229,7 @@ export default defineComponent({
         watch(
             () => chatInfo,
             () => {
-
+                showRef.value = true
                 clearForDate()
                 organize()
 
@@ -189,6 +238,8 @@ export default defineComponent({
             },
             { immediate: true, deep: true }
         );
+   
+
         function sortByDate(a: Imessage, b: Imessage) {
 
             const dateA = parse(a.date || new Date().toString(), 'dd/MM/yyyy HH:mm:ss', new Date());
@@ -233,9 +284,11 @@ export default defineComponent({
                                 const chatData: {
                                     date: string,
                                     messages: Imessage[]
+                                    id: string
                                 } = {
                                     date: value.date?.split(" ")[0],
-                                    messages: [value]
+                                    messages: [value],
+                                    id: Math.random().toString(32).replace('0.', 'div')
                                 }
                                 forDateMessages.value.push(chatData)
 
@@ -260,40 +313,37 @@ export default defineComponent({
             }
         }
 
-        async function startInterval() {
 
-            if (interval.value) {
-                return
-            }
-            interval.value = setInterval(
-                async () => {
-                    if (chatInfo.value?._id) {
 
-                        const existsId = reqObj.messagesInfo.find(value => value.id == chatInfo.value?._id)
 
-                        const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, config.botId, 10, existsId?.page || 2)
+        async function searchMessage() {
 
-                        if (pastMessages && pastMessages.length > 0) {
-                            if (existsId) {
-                                existsId.page += 1
-                            }
+            if (chatInfo.value?._id) {
 
-                            reqObj.messagesInfo.push({ id: chatInfo.value._id, page: 3 })
+                const existsId = config.messagesInfo.find(value => value.id == chatInfo.value?._id)
+             
+                const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, route.params.botId.toString(), 10, existsId?.page || 2)
 
-                            pastMessages.forEach(value => {
-                                clearForDate()
-                                chatInfo.value?.msgs?.push(value)
-                            })
-
-                        } else {
-                            clearInterval(interval.value)
-                            showRef.value = false
-                        }
-                    } else {
-                        console.log('gangplank')
+                if (pastMessages && pastMessages.length > 0) {
+                    if (existsId) {
+                        existsId.page += 1
                     }
+
+                    config.messagesInfo.push({ id: chatInfo.value._id, page: 3 })
+
+                    pastMessages.forEach(value => {
+                        clearForDate()
+                        chatInfo.value?.msgs?.push(value)
+                    })
+
+                } else {
+
+                    showRef.value = false
                 }
-                , 3000)
+            } else {
+                console.log('gangplank')
+            }
+
 
 
 
@@ -307,11 +357,11 @@ export default defineComponent({
             setChatInfo,
             scrollToBottom,
             updateChatInfo,
-            contentRef,
+            searchMessage,
+            loadRef,
             showRef,
             inviRef,
-            chatRef,
-            interval
+            nowRef,
         };
     }
 }
@@ -493,9 +543,11 @@ h2 {
     width: 50px;
     position: relative;
     margin-bottom: 100px;
+
 }
 
 .load-messages span {
+
     position: absolute;
     top: 0;
     display: block;
