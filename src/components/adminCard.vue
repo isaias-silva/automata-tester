@@ -42,6 +42,7 @@ import getAdm from '@/services/get.adm'
 import uploadProfile from '@/services/upload.profile'
 import { useCookies } from "vue3-cookies";
 import { disconnecteSocket } from '@/socket';
+import router from '@/route';
 const { cookies } = useCookies();
 
 export default defineComponent({
@@ -77,7 +78,11 @@ export default defineComponent({
             this.adm = adm;
 
 
-        } else {
+        } else if(info.status==402){
+            router.push('/renovate')
+        }
+        else {
+           
             cookies.remove('token')
             this.$router.push('login')
         }
