@@ -196,10 +196,12 @@ export default defineComponent({
         function updateChatInfo(id: string | string[]) {
 
 
-            const value = messagesState.messages.find(value => value.id == id)
-            if (value) {
-                setChatInfo(value)
-
+            const bot = messagesState.messages.find(value=>value.botId==route.params.botId)
+            if (bot) {
+             const chat=  bot.contacts.find(value=>value.id==route.params.id)
+                if(chat){
+                    setChatInfo(chat)
+                }
             } else {
 
                 router.push(`/chat/${route.params.botId}/`)
@@ -319,8 +321,8 @@ export default defineComponent({
         async function searchMessage() {
 
             if (chatInfo.value?._id) {
-
-                const existsId = config.messagesInfo.find(value => value.id == chatInfo.value?._id)
+                const botInfo=config.bots.find(value=>value.botId==route.params.botId)
+                const existsId = botInfo?.messagesInfo.find(value => value.id == chatInfo.value?._id)
              
                 const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, route.params.botId.toString(), 10, existsId?.page || 2)
 
@@ -329,7 +331,7 @@ export default defineComponent({
                         existsId.page += 1
                     }
 
-                    config.messagesInfo.push({ id: chatInfo.value._id, page: 3 })
+                    botInfo?.messagesInfo.push({ id: chatInfo.value._id, page: 3 })
 
                     pastMessages.forEach(value => {
                         clearForDate()

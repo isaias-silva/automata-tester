@@ -8,7 +8,8 @@ export default async (token: string): Promise<{
     status?:string,
     name: string,
     path:string,
-    _id:string
+    _id:string,
+    type:string
 }[]|null> => {
     const info = await axios.get('botConfig/my', {
 

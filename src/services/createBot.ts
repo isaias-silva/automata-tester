@@ -4,7 +4,14 @@ export default async (token: string, object: {
     name: string,
     type: string,
     mode: string,
-    path: string
+    path?: string,
+    integrations:{
+        telegram:{
+            apiKey?:string
+  
+        }
+         } ,
+
 }): Promise<{ message: string }> => {
     
     const info = await axios.post('botConfig/create', object, {

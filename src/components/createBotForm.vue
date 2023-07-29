@@ -1,6 +1,7 @@
 <template>
     <LoadPopup v-if="load" />
-    <Popup :title="popupMessages.title" :message="popupMessages.message" v-if="showPopup" @close="() => showPopup = false" />
+    <Popup :title="popupMessages.title" :message="popupMessages.message" v-if="showPopup"
+        @close="() => showPopup = false" />
 
     <form @submit.prevent="createBotForm">
         <h3>crie um novo bot</h3>
@@ -14,13 +15,17 @@
                 <select v-model="mode" id="mode">
                     <option value="attendant">attendant</option>
                     <option value="attendant">sniper</option>
+                    <option value="attendant">repasse</option>
                 </select>
             </div>
             <div class="block">
                 <label for="type">tipo de bot</label>
                 <select v-model="type" id="type">
                     <option value="WaBot">whatsapp</option>
+                    <option value="TelBot">Telegram</option>
+
                 </select>
+                <input type="text" v-model="apiKeyTel" v-if="type == 'TelBot'">
             </div>
         </div>
 
@@ -45,6 +50,7 @@ export default defineComponent({
             name: "",
             mode: "",
             type: "",
+            apiKeyTel: "",
             load: false,
             showPopup: false,
             popupMessages: { title: '', message: '' }
@@ -55,7 +61,14 @@ export default defineComponent({
             if (this.name.length > 2 && this.mode.length > 1 && this.type.length > 1) {
                 this.load = true
                 setTimeout(async () => {
-                    const response = await createBot(cookies.get("token"), { name: this.name, mode: this.mode, type: this.type, path: Math.random().toString(32).replace('0.', 'I') });
+                    const response = await createBot(cookies.get("token"), {
+                        name: this.name, mode: this.mode, type: this.type, path: Math.random().toString(32).replace('0.', 'I'),
+                        integrations: {
+                            telegram: {
+                                apiKey: this.apiKeyTel
+                            }
+                        }
+                    });
                     this.load = false
                     this.popupMessages.message = response.message
                     this.showPopup = true

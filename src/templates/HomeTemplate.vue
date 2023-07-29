@@ -1,5 +1,7 @@
 <template>
-    <HeaderComponent />
+       
+       <HeaderComponent />
+   
     <div class="content">
         <router-view></router-view>
     </div>

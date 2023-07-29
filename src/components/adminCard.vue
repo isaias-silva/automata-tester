@@ -1,7 +1,7 @@
 <template>
     <div class="usercard">
         <router-link to="/profile" for="profile" class="profile">
-            <img :src="profile || require('@/assets/icons/profile-unknow.png')" alt="">
+            <img :src="sessionInfo.profile || require('@/assets/icons/profile-unknow.png')" alt="">
         </router-link>
 
         <ul>
@@ -9,7 +9,7 @@
             <li>
                 <router-link to="/">&#128264; <span>fluxos</span></router-link>
             </li>
-            <li v-if="adm">
+            <li v-if="sessionInfo.adm">
                 <router-link to="/"> &#128101; <span>usuários</span></router-link>
             </li>
             <li>
@@ -37,63 +37,54 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, reactive, ref } from 'vue'
 import getAdm from '@/services/get.adm'
 import uploadProfile from '@/services/upload.profile'
 import { useCookies } from "vue3-cookies";
 import { disconnecteSocket } from '@/socket';
 import router from '@/route';
+import { sessionInfo, updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 
 export default defineComponent({
     name: 'adminCard',
     data(): {
-        name: string,
-        email: string,
-        adm?: boolean,
-        profile: string,
+       
         selectedImage?: string,
         profileFile?: File
 
     } {
         return {
-            name: '',
-            email: '',
-            adm: undefined,
+         
+         
+           
             selectedImage: undefined,
-            profile: '',
+          
             profileFile: undefined
         }
     }
     ,
-    async mounted() {
-
-        const info = await getAdm(cookies.get('token'))
-        if (info.status == 200) {
-
-            const { name, email, profile, adm } = info.data
-            this.name = name;
-            this.email = email;
-            this.profile = profile;
-            this.adm = adm;
-
-
-        } else if(info.status==402){
-            router.push('/renovate')
-        }
-        else {
-           
-            cookies.remove('token')
-            this.$router.push('login')
-        }
-
-    }, methods: {
+    methods: {
         logout() {
             cookies.remove('token');
             disconnecteSocket()
         }
-    }
 
+    }, setup() {
+     
+       
+         onMounted(async () => {
+       if(sessionInfo.name.length<2){
+        await updateSessionInfo()
+
+       }
+        
+
+        })
+        return {
+            sessionInfo
+        }
+    }
 
 
 })

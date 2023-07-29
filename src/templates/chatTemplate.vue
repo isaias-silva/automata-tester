@@ -38,9 +38,13 @@ export default defineComponent({
                 if (!botId) {
                     router.push('/')
                 }
-                config.botId=botId.toString()
-             
-              
+                const existsBotInfo = config.bots.find((value) => value.botId == botId)
+                if (!existsBotInfo) {
+                    config.bots.push({ botId: botId.toString(), messagesInfo: [] })
+                }
+           
+
+
                 socket.emit('start', botId)
                 socket.on('msg.now', async (data: { id: string, payload: string }) => {
 

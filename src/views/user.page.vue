@@ -6,20 +6,20 @@
 
             </div>
             <label class="profile" for="profile">
-                <img :src="selectedImage || profile || require('@/assets/icons/profile-unknow.png')" alt="">
+                <img :src="selectedImage || sessionInfo.profile || require('@/assets/icons/profile-unknow.png')" alt="">
                 <input type="file" name="picture" id="profile" @change="handleImageChange" />
 
             </label>
             <div class="user-info">
 
                 <div class="blockinfo">
-                    <h2>{{ name }}</h2>
-                    <span>{{ email }}</span>
+                    <h2>{{ sessionInfo.name }}</h2>
+                    <span>{{ sessionInfo.email }}</span>
 
                 </div>
                 <div class="blockinfo">
-                    <h2>{{ adm ? 'Admin' : 'normal user' }}</h2>
-                    <span>phone: <i>{{ phonenumber }}</i></span>
+                    <h2>{{ sessionInfo.adm ? 'Admin' : 'normal user' }}</h2>
+                    <span>phone: <i>{{ sessionInfo.phonenumber }}</i></span>
                 </div>
 
                 <button class="edit">
@@ -30,12 +30,12 @@
         </div>
         <div class="content">
             <h3>seu plano</h3>
-            <p v-if="adm">
+            <p v-if="sessionInfo.adm">
                 como você é admin, o vencimento do seu plano simplesmente não existe.
             </p>
             {{ mountBirth() }}
             <div class="lifebar">
-                <span ref="status" :style="{ width: mountTimeEnd() + '%' }" class="status"></span>
+                <span ref="status" :style="{ width: widthLifeBar + '%' }" class="status"></span>
 
             </div>
             <router-link to="/buy" class="renovate-plan">renovar</router-link>
@@ -52,16 +52,17 @@
         <div class="content">
             <h3>seus Bots</h3>
             <div class="flex">
-                <div class="bot-card" v-for=" bot, key of bots" :key="key">
-                    <span class="status-bot on"> online </span>
-                    <img src="../../public/wallpaper.jpg" alt="">
+                <div :class="bot.type == 'TelBot' ? 'bot-card blue' : 'bot-card'" v-for=" bot, key of bots" :key="key">
+                    <span :class="bot.status == 'online' ? 'status-bot on' : 'status-bot off'"> {{ bot.status }}</span>
+                    <img :src="bot.type == 'TelBot' ? 'telwallpaper.png' : 'wallpaper.jpg'" alt="">
+
                     <h4>{{ bot.name }}</h4>
-                   
+
                     <ul>
                         <li>
-                            <strong>type: </strong> botWa
+                            <strong>type: </strong> {{ bot.type }}
                         </li>
-                        <li>
+                        <li v-if="bot.number">
                             <strong>number: </strong> {{ bot.number }}
                         </li>
                         <li>
@@ -81,6 +82,7 @@
                     <router-link class="buttonOpen" :to="'chat/' + bot._id">
                         open
                     </router-link>
+
                 </div>
                 <div class="plus-card" @click="() => modes.createBot = true">
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -103,8 +105,10 @@ import getBots from '@/services/get.bots';
 import uploadProfile from '@/services/upload.profile';
 import { differenceInDays, format, getMonth } from 'date-fns';
 import createBotForm from '@/components/createBotForm.vue';
-import { defineComponent, ref } from 'vue'
+import { defineComponent, onMounted, reactive, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
+import { useRouter } from 'vue-router';
+import { sessionInfo, updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 
 export default defineComponent({
@@ -113,63 +117,36 @@ export default defineComponent({
         createBotForm
     },
     data(): {
-        name: string,
-        email: string,
-        adm?: boolean,
-        profile: string,
+
         selectedImage?: string,
-        phonenumber?: string,
-        date_of_begginer?: string
+
         profileFile?: File,
-        plan_duration?: number,
-        bots: {
-            number: string,
-            mode: string,
-            flowId: string,
-            userId: string,
-            status?: string,
-            name: string,
-            path: string,
-            _id: string
-        }[] | null
+
+
 
     } {
         return {
-            name: '',
-            email: '',
-            adm: undefined,
+
+
+
             selectedImage: undefined,
-            profile: '',
+
             profileFile: undefined,
-            bots: []
+
         }
     },
     methods: {
         mountBirth() {
-            if (!this.date_of_begginer) {
+            if (!this.sessionInfo.date_of_begginer) {
                 return
             }
-            const date = new Date(this.date_of_begginer)
+            const date = new Date(this.sessionInfo.date_of_begginer)
             const month = (getMonth(date) + 1)
             const formatMonth = month < 10 ? '0' + month.toString() : month.toString()
             return 'plano iniciado em: ' + format(date, "dd / # / yyyy").replace('#', formatMonth)
 
         },
-        mountTimeEnd() {
-            if (!this.date_of_begginer || !this.plan_duration) {
-                return
-            }
-            const date = new Date(this.date_of_begginer)
 
-            const today = new Date()
-
-            const diference = 100 - ((differenceInDays(today, date) * 100) / this.plan_duration)
-
-
-            return diference != 0 ? diference : 100
-
-
-        },
         handleImageChange(event: Event) {
             const file = (event.target as HTMLInputElement).files?.[0];
             if (file) {
@@ -192,40 +169,70 @@ export default defineComponent({
 
             console.log(info)
         },
-        async getmyBots() {
-            this.bots = await getBots(cookies.get('token'))
-        }
+
 
     }
     ,
-    async mounted() {
-
-        const info = await getAdm(cookies.get('token'))
-        if (info.status == 200) {
-
-            const { name, email, profile, adm, phone_number, date_of_begginner, plan_duration } = info.data
-            this.name = name;
-            this.email = email;
-            this.profile = profile;
-            this.adm = adm;
-            this.phonenumber = phone_number
-            this.date_of_begginer = date_of_begginner
-            this.plan_duration = plan_duration
-            await this.getmyBots()
-
-        } else {
-            cookies.remove('token')
-            this.$router.push('login')
-        }
-
-    }, setup() {
+    setup() {
+        const router = useRouter()
         const modes = ref<{ editProfile: boolean, createBot: boolean }>({ editProfile: false, createBot: false })
+
         const status = ref<any>(null)
 
+        const widthLifeBar = ref<number>(0)
+        const bots = ref<{
+            number: string,
+            mode: string,
+            flowId: string,
+            userId: string,
+            status?: string,
+            name: string,
+            path: string,
+            _id: string,
+            type: string
+        }[] | null>()
+
+        async function getmyBots() {
+            bots.value = await getBots(cookies.get('token'))
+        }
+        function mountTimeEnd() {
+            if (!sessionInfo.date_of_begginer || !sessionInfo.plan_duration) {
+
+                return
+            }
+            const date = new Date(sessionInfo.date_of_begginer)
+
+            const today = new Date()
+
+            const diference = 100 - ((differenceInDays(today, date) * 100) / sessionInfo.plan_duration)
+
+
+            setTimeout(() => {
+                widthLifeBar.value = diference
+
+            }, 1000)
+
+
+        }
+        onMounted(async () => {
+            if(sessionInfo.name.length<2){
+                await updateSessionInfo()
+
+            }
+          setTimeout(async()=>{
+            await getmyBots()
+            await mountTimeEnd()
+          },1000)
+           
+
+        })
 
         return {
             modes,
-            status
+            status,
+            sessionInfo,
+            widthLifeBar,
+            bots
         }
     }
 })
@@ -408,6 +415,10 @@ export default defineComponent({
     background-color: #00b900;
 }
 
+.blue .on {
+    background-color: #00a6ff;
+}
+
 .on::after {
     content: " ";
     position: absolute;
@@ -466,6 +477,7 @@ export default defineComponent({
 .bot-card img {
     width: 100%;
 
+
 }
 
 
@@ -482,6 +494,10 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     font-weight: bold;
+}
+
+.bot-card.blue {
+    border: 2px solid #44a5d2;
 }
 
 .lifebar {
@@ -548,6 +564,10 @@ button.edit,
 
 }
 
+.blue .buttonOpen {
+    background-color: #44a5d2;
+}
+
 button.edit:hover,
 .buttonOpen:hover {
     background-color: var(--component-color);
@@ -555,6 +575,11 @@ button.edit:hover,
     color: var(--component-two-color);
     cursor: pointer;
 
+}
+
+.blue .buttonOpen:hover {
+    border-color: #44a5d2;
+    color: #44a5d2;
 }
 
 .renovate-plan {

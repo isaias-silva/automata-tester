@@ -11,7 +11,8 @@ const { cookies } = useCookies();
 
 type WAconnectType = {
   status: 'qrcode' | 'connected' | 'disconnected' | 'loading' | "phone closed session",
-  qr?: string, id?: string
+  qr?: string,
+  id?: string
 }
 
 export const socketState = reactive<{ connected: boolean, WAconnect?: WAconnectType }>({
@@ -21,7 +22,7 @@ export const socketState = reactive<{ connected: boolean, WAconnect?: WAconnectT
     status: 'loading'
   }
 });
-export const messagesState = reactive<{ messages: Icontact[] }>({ messages: [] })
+export const messagesState = reactive<{ messages: { botId: string, contacts: Icontact[] }[] }>({ messages: [] })
 
 
 const token = cookies.get('token')
@@ -49,61 +50,67 @@ export function connectSocket() {
   socket.on('conn', async (data: WAconnectType) => {
     socketState.WAconnect = data
 
+    console.log(data)
     if (data.status == 'connected' && data.id) {
- 
+
 
       const messages = await getContacts(cookies.get('token'))
-     
-      if (messages && messagesState.messages.length<1) {
-     
-        messagesState.messages = messages
-     
+
+      if (messages && messagesState.messages.length < 1) {
+
+        const bot = messagesState.messages.find(value => value.botId == data.id)
+        if (bot) {
+          bot.contacts = messages
+        } else {
+          const newBot = { botId: data.id, contacts: messages }
+          messagesState.messages.push(newBot)
+        }
+
       }
     }
   })
 
 
-  socket.on('msg.now', (data: { id: string, payload: string }) => {
-    
+  socket.on('msg.now', (data: { botId: string, id: string, payload: string }) => {
+
     const contact: Icontact = JSON.parse(data.payload)
     if (!contact) {
       return
     }
     console.log(contact)
-    const contactExisting = messagesState.messages.find(contact => contact.id == data.id)
+    const botExist = messagesState.messages.find(value => value.botId == data.botId)
+    if (!botExist) {
+      
+      return
+    }
+    const contactExisting = botExist.contacts.find(value => value.id == data.id)
+
     if (contactExisting && contactExisting.msgs && contact.msgs) {
 
-      messagesState.messages.splice(messagesState.messages.indexOf(contactExisting), 1)
+      botExist.contacts.splice(botExist.contacts.indexOf(contactExisting), 1)
 
       const [newMessage] = contact.msgs
 
       contactExisting.msgs.push(newMessage)
-    
+
       if (contactExisting.newMessages) {
-        if(!newMessage.isMe){
+        if (!newMessage.isMe) {
           contactExisting.newMessages += 1
-   
+
         }
-          }else{
-        contactExisting['newMessages']=newMessage.isMe?0:1
+      } else {
+        contactExisting['newMessages'] = newMessage.isMe ? 0 : 1
       }
-      messagesState.messages.unshift(contactExisting)
+      botExist.contacts.unshift(contactExisting)
 
     } else {
-
-      messagesState.messages.unshift(contact)
+      botExist.contacts.unshift(contact)
     }
 
   })
-  socket.on('msg.read', (data:{id:string}) => {
-    const contactExisting = messagesState.messages.find(contact => contact.id == data.id)
-  
-    if (contactExisting && contactExisting.newMessages) {
-    
-      contactExisting.newMessages = 0
-    }
-  })
+
 }
+
 export function disconnecteSocket() {
   if (socketState.connected == true) {
     socket.disconnect()

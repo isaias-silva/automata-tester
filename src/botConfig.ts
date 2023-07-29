@@ -1,3 +1,3 @@
 import { reactive } from "vue";
 
-export const config = reactive<{ botId: string, messagesInfo: { id: number, page: number }[] }>({ botId: '', messagesInfo: [] })
+export const config = reactive<{bots:{botId: string, messagesInfo: { id: number, page: number }[]}[]}>({bots:[]})

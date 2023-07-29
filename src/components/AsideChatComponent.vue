@@ -3,7 +3,7 @@
 <template>
   <div class="aside">
     <div class="control">
-      <router-link to="/">
+      <router-link to="/profile">
         <button>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
@@ -46,7 +46,8 @@
         <span></span>
       </div>
 
-      <router-link :to="`/chat/${idBot}/` + value.id" v-for="(value, key) in messages" class="contact" v-bind:key="key"
+      <router-link :to="`/chat/${idBot}/` + value.id"
+        v-for="(value, key) in messages.filter((msg) => msg.msgs && msg.msgs?.length > 0)" class="contact" v-bind:key="key"
         @click="readMessage(value.id)">
 
         <img v-if="value"
@@ -89,6 +90,7 @@ import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
 import { useRoute } from 'vue-router';
 import getChats from '@/services/get.chats';
+import { id } from 'date-fns/locale';
 const { cookies } = useCookies();
 
 
@@ -118,14 +120,14 @@ export default defineComponent({
   async mounted() {
     const route = useRoute()
     if (route.params.botId && typeof route.params.botId == 'string') {
-     
+
       this.idBot = route.params.botId
-     
-      setTimeout(()=>{
+
+      setTimeout(() => {
         this.loadMessages()
-  
-      },3000)
-       }
+
+      }, 3000)
+    }
 
 
     watch(socketState, (newSocketState => {
@@ -164,7 +166,11 @@ export default defineComponent({
 
   methods: {
     async loadMessages() {
-      messagesState.messages.map(async (contact) => {
+      const bot = messagesState.messages.find(value => value.botId == this.idBot)
+      if (!bot) {
+        return
+      }
+      bot?.contacts.map(async (contact) => {
 
         const chats = await getChats(cookies.get('token'), contact._id, this.idBot, 10, 1)
 
@@ -174,13 +180,13 @@ export default defineComponent({
 
       })
 
-      this.messages = messagesState.messages
+      this.messages = bot?.contacts
       this.loading = false
     }
     ,
     killBot() {
-      cookies.remove('idWa')
-      socket.emit('kill')
+
+      socket.emit('kill', { id: this.idBot })
       window.location.reload();
 
     },
