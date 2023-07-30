@@ -62,7 +62,8 @@ export default defineComponent({
                 this.load = true
                 setTimeout(async () => {
                     const response = await createBot(cookies.get("token"), {
-                        name: this.name, mode: this.mode, type: this.type, path: Math.random().toString(32).replace('0.', 'I'),
+                        name: this.name, mode: this.mode, type: this.type, 
+                        path: Math.random().toString(32).replace('0.', 'I'),
                         integrations: {
                             telegram: {
                                 apiKey: this.apiKeyTel

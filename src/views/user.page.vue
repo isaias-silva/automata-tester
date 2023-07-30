@@ -52,38 +52,7 @@
         <div class="content">
             <h3>seus Bots</h3>
             <div class="flex">
-                <div :class="bot.type == 'TelBot' ? 'bot-card blue' : 'bot-card'" v-for=" bot, key of bots" :key="key">
-                    <span :class="bot.status == 'online' ? 'status-bot on' : 'status-bot off'"> {{ bot.status }}</span>
-                    <img :src="bot.type == 'TelBot' ? 'telwallpaper.png' : 'wallpaper.jpg'" alt="">
-
-                    <h4>{{ bot.name }}</h4>
-
-                    <ul>
-                        <li>
-                            <strong>type: </strong> {{ bot.type }}
-                        </li>
-                        <li v-if="bot.number">
-                            <strong>number: </strong> {{ bot.number }}
-                        </li>
-                        <li>
-                            <select name="mode" id="mode" :value="bot.mode">
-                                <option value="repasse">repasse</option>
-                                <option value="sniper">sniper</option>
-                                <option value="attendant">attendant</option>
-
-                            </select>
-                        </li>
-                        <li>
-                            <select name="flow" id="flow">
-                                <option value="1">flow1</option>
-                            </select>
-                        </li>
-                    </ul>
-                    <router-link class="buttonOpen" :to="'chat/' + bot._id">
-                        open
-                    </router-link>
-
-                </div>
+                <BotCard :bot-data="bot" v-for="bot,key in bots" :key="key"/>
                 <div class="plus-card" @click="() => modes.createBot = true">
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                         <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" stroke-width="5" />
@@ -110,11 +79,12 @@ import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
 import { sessionInfo, updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
-
+import BotCard from '@/components/bot.card.vue';
 export default defineComponent({
     name: "UserPage",
     components: {
-        createBotForm
+        createBotForm,
+        BotCard
     },
     data(): {
 
@@ -540,7 +510,6 @@ export default defineComponent({
 }
 
 button.edit,
-.buttonOpen,
 .renovate-plan {
     background-color: var(--component-two-color);
     border: 2px solid var(--component-color);
@@ -555,21 +524,12 @@ button.edit,
 
 }
 
-.buttonOpen {
-    margin: 0;
-    margin: auto;
-    display: block;
-    border: 1px solid var(--component-color);
-    width: 40%;
-
-}
 
 .blue .buttonOpen {
     background-color: #44a5d2;
 }
 
-button.edit:hover,
-.buttonOpen:hover {
+button.edit:hover{
     background-color: var(--component-color);
     border-color: var(--component-two-color);
     color: var(--component-two-color);
@@ -577,10 +537,7 @@ button.edit:hover,
 
 }
 
-.blue .buttonOpen:hover {
-    border-color: #44a5d2;
-    color: #44a5d2;
-}
+
 
 .renovate-plan {
     display: block;
@@ -597,18 +554,5 @@ button.edit:hover,
     background-color: #ffcc56;
 }
 
-@keyframes on {
-    0% {
 
-        width: 50px;
-        filter: opacity(1)
-    }
-
-    100% {
-        top: -25px;
-        width: 100px;
-        height: 100px;
-        filter: opacity(0)
-    }
-}
 </style>
