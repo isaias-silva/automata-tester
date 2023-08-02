@@ -3,7 +3,7 @@
     <Popup :title="popupMessages.title" :message="popupMessages.message" v-if="showPopup"
         @close="() => showPopup = false" />
 
-    <form @submit.prevent="createBotForm">
+    <form @submit.prevent="createBotNow">
         <h3>crie um novo bot</h3>
 
         <div class="inputBlock">
@@ -41,37 +41,51 @@ const { cookies } = useCookies()
 
 import Popup from './popups/popup.vue';
 import LoadPopup from './popups/load.popup.vue';
+import updateBot from '@/services/update.bot';
+import { updateBots, updateSessionInfo } from '@/session';
 
 export default defineComponent({
     name: "createBotForm",
 
-    data() {
+    data(): {
+        name?: string,
+        mode?: string,
+        type?: string,
+        apiKeyTel?: string,
+        load: boolean,
+        showPopup: boolean,
+        popupMessages: { title: string, message: string }
+    } {
         return {
-            name: "",
-            mode: "",
-            type: "",
-            apiKeyTel: "",
+
+
+
             load: false,
             showPopup: false,
             popupMessages: { title: '', message: '' }
         };
     },
     methods: {
-        async createBotForm() {
-            if (this.name.length > 2 && this.mode.length > 1 && this.type.length > 1) {
+        async createBotNow() {
+
+            if (this.name && this.mode && this.type) {
                 this.load = true
-                setTimeout(async () => {
-                    const response = await createBot(cookies.get("token"), {
-                        name: this.name, mode: this.mode, type: this.type, 
-                        path: Math.random().toString(32).replace('0.', 'I'),
-                        integrations: {
-                            telegram: {
-                                apiKey: this.apiKeyTel
-                            }
+                const response = await createBot(cookies.get("token"), {
+                    name: this.name, mode: this.mode, type: this.type,
+                    path: Math.random().toString(32).replace('0.', 'I'),
+                    integrations: {
+                        telegram: {
+                            apiKey: this.apiKeyTel
                         }
-                    });
+                    }
+                });
+                setTimeout(async () => {
+
+                    await updateBots()
+
                     this.load = false
                     this.popupMessages.message = response.message
+
                     this.showPopup = true
                 }, 5000)
 

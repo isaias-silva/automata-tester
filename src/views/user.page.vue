@@ -52,7 +52,7 @@
         <div class="content">
             <h3>seus Bots</h3>
             <div class="flex">
-                <BotCard :bot-data="bot" v-for="bot,key in bots" :key="key"/>
+                <BotCard :bot-data="bot" v-for="bot, key in sessionInfo.bots" :key="key" />
                 <div class="plus-card" @click="() => modes.createBot = true">
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                         <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" stroke-width="5" />
@@ -80,6 +80,7 @@ import { useRouter } from 'vue-router';
 import { sessionInfo, updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 import BotCard from '@/components/bot.card.vue';
+import { IBotInfo } from '@/interfaces/interface.bot.info';
 export default defineComponent({
     name: "UserPage",
     components: {
@@ -150,21 +151,7 @@ export default defineComponent({
         const status = ref<any>(null)
 
         const widthLifeBar = ref<number>(0)
-        const bots = ref<{
-            number: string,
-            mode: string,
-            flowId: string,
-            userId: string,
-            status?: string,
-            name: string,
-            path: string,
-            _id: string,
-            type: string
-        }[] | null>()
-
-        async function getmyBots() {
-            bots.value = await getBots(cookies.get('token'))
-        }
+       
         function mountTimeEnd() {
             if (!sessionInfo.date_of_begginer || !sessionInfo.plan_duration) {
 
@@ -185,15 +172,15 @@ export default defineComponent({
 
         }
         onMounted(async () => {
-            if(sessionInfo.name.length<2){
+            if (sessionInfo.name.length < 2) {
                 await updateSessionInfo()
 
             }
-          setTimeout(async()=>{
-            await getmyBots()
-            await mountTimeEnd()
-          },1000)
-           
+            setTimeout(async () => {
+              
+                await mountTimeEnd()
+            }, 1000)
+
 
         })
 
@@ -202,7 +189,7 @@ export default defineComponent({
             status,
             sessionInfo,
             widthLifeBar,
-            bots
+        
         }
     }
 })
@@ -529,7 +516,7 @@ button.edit,
     background-color: #44a5d2;
 }
 
-button.edit:hover{
+button.edit:hover {
     background-color: var(--component-color);
     border-color: var(--component-two-color);
     color: var(--component-two-color);
@@ -553,6 +540,4 @@ button.edit:hover{
 .renovate-plan:hover {
     background-color: #ffcc56;
 }
-
-
 </style>

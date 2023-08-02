@@ -1,18 +1,31 @@
 import { reactive } from "vue";
 import getAdm from "./services/get.adm";
 import { useCookies } from "vue3-cookies";
+import { IBotInfo } from '@/interfaces/interface.bot.info'
+import getBots from "./services/get.bots";
 
-
-export const sessionInfo = reactive({
-    name: "",
-    email: '',
-    adm: false,
-    profile: "",
-    selectedImage: "",
-    phonenumber: "",
-    date_of_begginer: "",
-    plan_duration: 0
-})
+export const sessionInfo = reactive<
+    {
+        name: string,
+        email: string,
+        adm: boolean,
+        profile: string,
+        selectedImage: string,
+        phonenumber: string,
+        date_of_begginer: string,
+        plan_duration: number,
+        bots: IBotInfo[]
+    }>({
+        name: "",
+        email: '',
+        adm: false,
+        profile: "",
+        selectedImage: "",
+        phonenumber: "",
+        date_of_begginer: "",
+        plan_duration: 0,
+        bots: []
+    })
 
 export async function updateSessionInfo() {
     const { cookies } = useCookies()
@@ -28,5 +41,15 @@ export async function updateSessionInfo() {
         sessionInfo.phonenumber = phone_number
         sessionInfo.date_of_begginer = date_of_begginner
         sessionInfo.plan_duration = plan_duration
+
+        await updateBots()
+    }
+}
+
+export async function updateBots() {
+    const { cookies } = useCookies()
+    const bots = await getBots(cookies.get('token'))
+    if (bots) {
+        sessionInfo.bots = bots
     }
 }

@@ -1,6 +1,7 @@
 <template>
     <div :class="bot.type == 'TelBot' ? 'bot-card blue' : 'bot-card'">
         <span :class="bot.status == 'online' ? 'status-bot on' : 'status-bot off'"> {{ bot.status }}</span>
+        <button class="delete-bot" @click="deleteThisBot">&#x1F5D1;</button>
         <img :src="bot.type == 'TelBot' ? 'telwallpaper.png' : 'wallpaper.jpg'" alt="">
 
         <h4>{{ bot.name }}</h4>
@@ -13,7 +14,7 @@
                 <strong>number: </strong> {{ bot.number }}
             </li>
             <li>
-                <select name="mode" id="mode" v-model="mode" @change="updateBot">
+                <select name="mode" id="mode" v-model="mode" @change="updateThisBot">
                     <option value="repasse">repasse</option>
                     <option value="sniper">sniper</option>
                     <option value="attendant">attendant</option>
@@ -34,21 +35,14 @@
     </div>
 </template>
 <script lang="ts">
+import { IBotInfo } from '@/interfaces/interface.bot.info';
+import deleteBot from '@/services/delete.bot';
 import updateBot from '@/services/update.bot';
+import { sessionInfo, updateSessionInfo } from '@/session';
 import { defineComponent, reactive, ref, defineProps, onMounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 const { cookies } = useCookies()
-type BotInfo = {
-    number: string,
-    mode: string,
-    flowId: string,
-    userId: string,
-    status?: string,
-    name: string,
-    path: string,
-    _id: string,
-    type: string
-}
+
 export default defineComponent({
     name: "BotCard",
 
@@ -57,17 +51,27 @@ export default defineComponent({
         return { mode: '', flowId: '' }
     },
     methods: {
-        async updateBot() {
+        async updateThisBot() {
             await updateBot(cookies.get('token'), this.bot._id, this.mode, this.flowId)
-        }
+        },
+        async deleteThisBot() {
+
+            await deleteBot(cookies.get('token'), this.bot._id)
+            const botExist = sessionInfo.bots.find((value => value._id == this.bot._id))
+           if(botExist){
+            sessionInfo.bots.splice(sessionInfo.bots.indexOf(botExist),1)
+      
+           }
+            }
     },
     mounted() {
 
         this.mode = this.bot.mode
 
     },
+
     setup(props) {
-        const bot = reactive<BotInfo>(props.botData)
+        const bot = reactive<IBotInfo>(props.botData)
 
         return {
             bot
@@ -102,6 +106,22 @@ export default defineComponent({
     box-sizing: border-box;
     font-size: 12px;
     margin: 4px;
+}
+
+.delete-bot {
+    position: absolute;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background-color: #00000000;
+    font-size: 30px;
+    border: none;
+    transition: 0.2s linear;
+}
+
+.delete-bot:hover {
+    rotate: 45deg;
+    cursor: pointer;
 }
 
 .on {

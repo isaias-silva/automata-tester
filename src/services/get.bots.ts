@@ -1,16 +1,7 @@
+import { IBotInfo } from "@/interfaces/interface.bot.info"
 import axios from "./axios"
 
-export default async (token: string): Promise<{
-    number:string,
-    mode:string,
-    flowId:string,
-    userId:string,
-    status?:string,
-    name: string,
-    path:string,
-    _id:string,
-    type:string
-}[]|null> => {
+export default async (token: string): Promise<IBotInfo[]|null> => {
     const info = await axios.get('botConfig/my', {
 
         headers:
