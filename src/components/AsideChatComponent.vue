@@ -187,7 +187,7 @@ export default defineComponent({
     killBot() {
 
       socket.emit('kill', { id: this.idBot })
-      window.location.reload();
+   
 
     },
 

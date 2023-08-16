@@ -9,15 +9,6 @@
         <div class="inputBlock">
 
             <input v-model="name" placeholder="nome do bot" type="text">
-
-            <label for="mode">modo do bot</label>
-            <div class="block">
-                <select v-model="mode" id="mode">
-                    <option value="attendant">attendant</option>
-                    <option value="attendant">sniper</option>
-                    <option value="attendant">repasse</option>
-                </select>
-            </div>
             <div class="block">
                 <label for="type">tipo de bot</label>
                 <select v-model="type" id="type">
@@ -25,8 +16,23 @@
                     <option value="TelBot">Telegram</option>
 
                 </select>
-                <input type="text" v-model="apiKeyTel" v-if="type == 'TelBot'">
+                <div v-if="type == 'TelBot'">
+                    <input type="text" v-model="apiKeyTel" placeholder="chave do bot">
+
+                </div>
+
             </div>
+
+            <label for="mode">modo do bot</label>
+
+            <div class="block">
+                <select v-model="mode" id="mode">
+                    <option value="attendant">attendant</option>
+                    <option value="attendant">sniper</option>
+                    <option value="attendant">repasse</option>
+                </select>
+            </div>
+
         </div>
 
 
@@ -35,23 +41,20 @@
 </template>
 <script lang="ts">
 import createBot from '@/services/createBot';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 const { cookies } = useCookies()
 
 import Popup from './popups/popup.vue';
 import LoadPopup from './popups/load.popup.vue';
-import updateBot from '@/services/update.bot';
-import { updateBots, updateSessionInfo } from '@/session';
+
+import { updateBots } from '@/session';
 
 export default defineComponent({
     name: "createBotForm",
 
     data(): {
-        name?: string,
-        mode?: string,
-        type?: string,
-        apiKeyTel?: string,
+
         load: boolean,
         showPopup: boolean,
         popupMessages: { title: string, message: string }
@@ -64,6 +67,17 @@ export default defineComponent({
             showPopup: false,
             popupMessages: { title: '', message: '' }
         };
+    },
+    setup() {
+        const name = ref<string>()
+        const mode = ref<string>()
+        const type = ref<string>()
+        const apiKeyTel = ref<string>()
+
+        return {
+            name, mode, type, apiKeyTel
+        }
+
     },
     methods: {
         async createBotNow() {
