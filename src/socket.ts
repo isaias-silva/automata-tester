@@ -32,10 +32,14 @@ const token = cookies.get('token')
 export let socket: Socket
 export function connectSocket() {
 
-  const URL = `http://localhost:8080?token=${token}`;
+  const URL = `http://localhost:8080`;
 
   if (socketState.connected == false) {
-    socket = io(URL)
+    socket = io(URL, {
+     auth: {
+        token
+      }
+    })
 
   }
 
@@ -80,7 +84,7 @@ export function connectSocket() {
     console.log(contact)
     const botExist = messagesState.messages.find(value => value.botId == data.botId)
     if (!botExist) {
-      
+
       return
     }
     const contactExisting = botExist.contacts.find(value => value.id == data.id)
