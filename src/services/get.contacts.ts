@@ -1,9 +1,9 @@
 import { Icontact } from "@/interfaces/interface.bot.contact";
 import axios from "./axios";
 
-export default async (token: string): Promise<Icontact[] | null> => {
-    
-    const info = await axios.get('chats/me', {
+export default async (token: string, botId: string): Promise<Icontact[] | null> => {
+
+    const info = await axios.get(`chats/me/${botId}`, {
         headers:
             { 'Authorization': token ? 'Bearer ' + token : null }
     })
@@ -14,7 +14,7 @@ export default async (token: string): Promise<Icontact[] | null> => {
     }
     const data: Icontact[] = info.data
     console.log('contacts')
-console.log(data)
+    console.log(data)
     return data
 
 }

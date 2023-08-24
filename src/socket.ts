@@ -36,7 +36,7 @@ export function connectSocket() {
 
   if (socketState.connected == false) {
     socket = io(URL, {
-     auth: {
+      auth: {
         token
       }
     })
@@ -58,7 +58,7 @@ export function connectSocket() {
     if (data.status == 'connected' && data.id) {
 
 
-      const messages = await getContacts(cookies.get('token'))
+      const messages = await getContacts(cookies.get('token'), data.id)
 
       if (messages && messagesState.messages.length < 1) {
 

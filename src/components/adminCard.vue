@@ -74,10 +74,13 @@ export default defineComponent({
      
        
          onMounted(async () => {
-       if(sessionInfo.name.length<2){
-        await updateSessionInfo()
-
-       }
+     
+        let info=await updateSessionInfo()
+if(!info || (info && info.status && info?.status!=200)){
+    cookies.remove('token')
+    router.push('/login')
+}
+       
         
 
         })
