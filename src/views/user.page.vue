@@ -262,7 +262,7 @@ export default defineComponent({
     width: 100%;
     height: 70%;
     z-index: -1;
-    background-image: url('../../public/wallpaper.jpg');
+   background-image: linear-gradient(to left,var(--component-color),var(--component-two-color));
     background-size: 100%;
 }
 

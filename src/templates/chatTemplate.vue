@@ -43,7 +43,7 @@ export default defineComponent({
                     config.bots.push({ botId: botId.toString(), messagesInfo: [] })
                 }
            
-
+                
 
                 socket.emit('start', botId)
                 socket.on('msg.now', async (data: { id: string, payload: string }) => {
