@@ -78,7 +78,7 @@
 </template>
 <script lang="ts">
 import { Icontact } from '@/interfaces/interface.bot.contact';
-import { messagesState, socket } from '@/socket';
+import { messagesState, socket, disconnecteSocket, connectSocket } from '@/socket';
 import MessagesComponent from '@/components/Messages.vue'
 import { defineComponent, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
@@ -104,14 +104,14 @@ export default defineComponent({
             message: undefined
         }
     },
-    mounted() {
+
+mounted() {
+
         const observer = new IntersectionObserver((entry) => {
             const [object] = entry
             if (object.isIntersecting) {
-
+                alert('nya')
                 setTimeout(async () => {
-
-
 
                     await this.searchMessage()
                     if (this.$refs.nowRef) {
@@ -124,11 +124,15 @@ export default defineComponent({
                 }, 3000)
 
             }
+        },{
+            root:null,
+            threshold: 0.1
         });
 
         if (this.loadRef != undefined) {
 
             observer.observe(this.loadRef)
+           
             socket.on('msg.now', (data: { id: string, payload: string }) => {
 
                 const contact: Icontact = JSON.parse(data.payload)
@@ -145,6 +149,7 @@ export default defineComponent({
 
 
     },
+
     methods: {
 
 
@@ -164,8 +169,8 @@ export default defineComponent({
 
         const { cookies } = Cookies
 
-       
-        
+
+
         const forDateMessages = reactive<{ value?: Array<{ date: string, messages: Imessage[], id: string }> }>({ value: [] })
 
         const loadRef = ref<Element | undefined>(undefined);
@@ -181,11 +186,22 @@ export default defineComponent({
 
 
 
-
         const route = useRoute()
-         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
+        const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
-        function setChatInfo(info: Icontact) {
+        function setChatInfo(info: Icontact, botId: string) {
+            if (info.msgs && info.msgs.length < 1) {
+
+
+                getChats(cookies.get('token'), info._id, botId, 10).then(response => {
+                    if (response) {
+                        info.msgs = response
+                    }
+                }).catch(() => router.push(`/chat/${route.params.botId}/`))
+
+
+
+            }
             chatInfo.value = info
             clearForDate()
             organize()
@@ -196,11 +212,12 @@ export default defineComponent({
         function updateChatInfo(id: string | string[]) {
 
 
-            const bot = messagesState.messages.find(value=>value.botId==route.params.botId)
+            const bot = messagesState.messages.find(value => value.botId == route.params.botId)
             if (bot) {
-             const chat=  bot.contacts.find(value=>value.id==route.params.id)
-                if(chat){
-                    setChatInfo(chat)
+                const chat = bot.contacts.find(value => value.id == route.params.id)
+                if (chat) {
+
+                    setChatInfo(chat, bot.botId)
                 }
             } else {
 
@@ -219,13 +236,14 @@ export default defineComponent({
         watch(
             () => route.params.id,
             (newId) => {
+
                 if (newId && typeof newId == 'string') {
 
                     updateChatInfo(newId)
 
                 }
             },
-            { immediate: true }
+            { immediate: true, deep: true }
         );
 
         watch(
@@ -240,7 +258,7 @@ export default defineComponent({
             },
             { immediate: true, deep: true }
         );
-   
+
 
         function sortByDate(a: Imessage, b: Imessage) {
 
@@ -258,7 +276,6 @@ export default defineComponent({
         }
         function clearForDate() {
             forDateMessages.value = []
-            console.log(forDateMessages)
         }
         function organize() {
 
@@ -321,9 +338,9 @@ export default defineComponent({
         async function searchMessage() {
 
             if (chatInfo.value?._id) {
-                const botInfo=config.bots.find(value=>value.botId==route.params.botId)
+                const botInfo = config.bots.find(value => value.botId == route.params.botId)
                 const existsId = botInfo?.messagesInfo.find(value => value.id == chatInfo.value?._id)
-             
+
                 const pastMessages = await getChats(cookies.get('token'), chatInfo.value?._id, route.params.botId.toString(), 10, existsId?.page || 2)
 
                 if (pastMessages && pastMessages.length > 0) {

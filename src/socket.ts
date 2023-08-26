@@ -59,18 +59,19 @@ export function connectSocket() {
 
 
       const messages = await getContacts(cookies.get('token'), data.id)
-
-      if (messages && messagesState.messages.length < 1) {
+    
+      
 
         const bot = messagesState.messages.find(value => value.botId == data.id)
-        if (bot) {
+        if (bot && messages) {
           bot.contacts = messages
         } else {
-          const newBot = { botId: data.id, contacts: messages }
+          const newBot = { botId: data.id, contacts: messages||[] }
+     
           messagesState.messages.push(newBot)
         }
 
-      }
+      
     }
   })
 

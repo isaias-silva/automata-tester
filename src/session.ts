@@ -4,6 +4,7 @@ import { useCookies } from "vue3-cookies";
 import { IBotInfo } from '@/interfaces/interface.bot.info'
 import getBots from "./services/get.bots";
 import { useRouter } from "vue-router";
+import { messagesState } from "./socket";
 
 export const sessionInfo = reactive<
     {
@@ -58,6 +59,7 @@ export async function updateBots() {
     const { cookies } = useCookies()
     const bots = await getBots(cookies.get('token'))
     if (bots) {
+      
         sessionInfo.bots = bots
     }
 }

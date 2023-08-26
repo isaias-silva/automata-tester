@@ -91,6 +91,7 @@ import { Icontact } from '@/interfaces/interface.bot.contact';
 import { useRoute } from 'vue-router';
 import getChats from '@/services/get.chats';
 import { id } from 'date-fns/locale';
+import { updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 
 
@@ -166,8 +167,10 @@ export default defineComponent({
 
   methods: {
     async loadMessages() {
-      const bot = messagesState.messages.find(value => value.botId == this.idBot)
+      await updateSessionInfo()
+      let bot = messagesState.messages.find(value => value.botId == this.idBot)
       if (!bot) {
+        alert(this.idBot)
         return
       }
       bot?.contacts.map(async (contact) => {

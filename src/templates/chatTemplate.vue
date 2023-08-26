@@ -1,7 +1,7 @@
 <template>
-    <keep-alive>
+  
         <AsideComponent />
-    </keep-alive>
+    
     <div class="content">
         <router-view></router-view>
 
