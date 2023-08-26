@@ -412,7 +412,7 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 5px;
     position: fixed;
-    z-index: 999 !important;
+    z-index: 996 !important;
 }
 
 h2 {

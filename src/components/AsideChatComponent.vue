@@ -1,7 +1,10 @@
 
 
 <template>
+  <EditBotForm :class="visibleMenu ? 'lateral' : 'invi'" />
   <div class="aside">
+
+
     <div class="control">
       <router-link to="/profile">
         <button>
@@ -16,13 +19,21 @@
         <span class="moon">&#127769;</span>
         <span class="sun">&#9728;</span>
       </button>
-      <button @click="showMenu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          class="feather feather-menu">
+      <button @click="toogleMenu">
+
+        <svg v-if="!visibleMenu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg></button>
+        </svg>
+
+        <svg v-if="visibleMenu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
 
       <button @click="killBot()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -89,23 +100,25 @@ import { useCookies } from "vue3-cookies";
 import { socketState, messagesState, socket } from '@/socket'
 import { Icontact } from '@/interfaces/interface.bot.contact';
 import { useRoute } from 'vue-router';
-import getChats from '@/services/get.chats';
-import { id } from 'date-fns/locale';
+import EditBotForm from '@/components/editFormBot.vue'
 import { updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 
 
 
-
 export default defineComponent({
   name: 'HeaderComponent',
+  components: {
+    EditBotForm
+  },
   data(): {
     loading: boolean,
     noturne: boolean,
     src?: string,
     status: string,
     messages: Icontact[],
-    idBot: string
+    idBot: string,
+    visibleMenu: boolean
 
 
   } {
@@ -115,7 +128,8 @@ export default defineComponent({
       status: 'disconnected',
       loading: true,
       idBot: '',
-      messages: []
+      messages: [],
+      visibleMenu: false
     }
   },
   async mounted() {
@@ -179,6 +193,7 @@ export default defineComponent({
 
       this.messages = bot?.contacts
       this.loading = false
+
     }
     ,
     killBot() {
@@ -219,9 +234,8 @@ export default defineComponent({
     logout() {
       socket.emit('kill')
     },
-    showMenu() {
-
-      alert('show menu')
+    toogleMenu() {
+      this.visibleMenu = !this.visibleMenu
     },
 
   }
@@ -232,6 +246,17 @@ export default defineComponent({
 <style scoped>
 * {
   text-align: center;
+}
+
+.invi {
+
+  transform: translateX(-100%);
+}
+
+.lateral {
+
+
+  transform: translateX(100%);
 }
 
 .qr {
