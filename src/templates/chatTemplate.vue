@@ -15,7 +15,7 @@ import AsideComponent from "@/components/AsideChatComponent.vue"
 import { connectSocket, socket, socketState, disconnecteSocket, messagesState } from "@/socket";
 
 
-import { defineComponent, watch, watchEffect } from 'vue'
+import { defineComponent, onUpdated, watch, watchEffect } from 'vue'
 import soundMsg from '../assets/sounds/message-received.wav'
 import useSound from "vue-use-sound"
 import { Icontact } from "@/interfaces/interface.bot.contact";
@@ -26,11 +26,14 @@ import { config } from "@/botConfig";
 export default defineComponent({
     components: {
         AsideComponent
-    }, setup() {
+    }
+    
+    , setup() {
         const route = useRoute()
         const router = useRouter()
 
         const [play, audio] = useSound(soundMsg.toString())
+   
         watchEffect(() => {
             const { connected } = socketState
             if (connected) {
@@ -43,9 +46,8 @@ export default defineComponent({
                     config.bots.push({ botId: botId.toString(), messagesInfo: [] })
                 }
            
-                
-
                 socket.emit('start', botId)
+
                 socket.on('msg.now', async (data: { id: string, payload: string }) => {
 
                     const contact: Icontact = JSON.parse(data.payload)

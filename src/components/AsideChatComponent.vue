@@ -47,8 +47,8 @@
       </div>
 
       <router-link :to="`/chat/${idBot}/` + value.id"
-        v-for="(value, key) in messages.filter((msg) => msg.msgs && msg.msgs?.length > 0)" class="contact" v-bind:key="key"
-        @click="readMessage(value.id)">
+        v-for="(value, key) in messages.filter((msg) => msg.msgs && msg.msgs?.length > 0)" class="contact"
+        v-bind:key="key" @click="readMessage(value.id)">
 
         <img v-if="value"
           :src="value.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
@@ -130,7 +130,10 @@ export default defineComponent({
       }, 3000)
     }
 
+    watch(messagesState, (oldState, newState) => {
 
+      this.loadMessages()
+    }, { deep: true })
     watch(socketState, (newSocketState => {
 
       if (!newSocketState.WAconnect) {
@@ -173,15 +176,6 @@ export default defineComponent({
         alert(this.idBot)
         return
       }
-      bot?.contacts.map(async (contact) => {
-
-        const chats = await getChats(cookies.get('token'), contact._id, this.idBot, 10, 1)
-
-        if (chats) {
-          contact.msgs = chats
-        }
-
-      })
 
       this.messages = bot?.contacts
       this.loading = false
@@ -190,7 +184,7 @@ export default defineComponent({
     killBot() {
 
       socket.emit('kill', { id: this.idBot })
-   
+
 
     },
 

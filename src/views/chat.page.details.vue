@@ -98,41 +98,18 @@ export default defineComponent({
         MessagesComponent,
 
     },
-    data(): { message?: string } {
+    data(): { message?: string, observer?: IntersectionObserver } {
         return {
-
+            observer: undefined,
             message: undefined
         }
     },
+    updated() {
 
-mounted() {
+        if (this.loadRef && this.observer) {
+            console.log('observando')
+            this.observer.observe(this.loadRef)
 
-        const observer = new IntersectionObserver((entry) => {
-            const [object] = entry
-            if (object.isIntersecting) {
-                alert('nya')
-                setTimeout(async () => {
-
-                    await this.searchMessage()
-                    if (this.$refs.nowRef) {
-
-                        (this.$refs.nowRef as Element).scrollIntoView({
-                            behavior: 'smooth'
-                        })
-
-                    }
-                }, 3000)
-
-            }
-        },{
-            root:null,
-            threshold: 0.1
-        });
-
-        if (this.loadRef != undefined) {
-
-            observer.observe(this.loadRef)
-           
             socket.on('msg.now', (data: { id: string, payload: string }) => {
 
                 const contact: Icontact = JSON.parse(data.payload)
@@ -146,6 +123,34 @@ mounted() {
             })
 
         }
+    },
+
+    mounted() {
+        this.updateChatInfo()
+
+        this.observer = new IntersectionObserver((entry) => {
+            console.log('callback')
+
+            const [object] = entry
+            if (object.isIntersecting) {
+                console.log('intersection')
+                setTimeout(async () => {
+
+                    await this.searchMessage()
+                    if (this.$refs.nowRef) {
+
+                        (this.$refs.nowRef as Element).scrollIntoView({
+                            behavior: 'smooth'
+                        })
+
+                    }
+                }, 3000)
+
+            }
+        }, {
+            root: null,
+            threshold: 0.1
+        });
 
 
     },
@@ -189,19 +194,12 @@ mounted() {
         const route = useRoute()
         const chatInfo = reactive<{ value: Icontact | undefined }>({ value: undefined });
 
-        function setChatInfo(info: Icontact, botId: string) {
-            if (info.msgs && info.msgs.length < 1) {
+        watch(() => route.params.id, (newChatId, oldChatId) => {
+            updateChatInfo()
+        });
 
+        function setChatInfo(info: Icontact) {
 
-                getChats(cookies.get('token'), info._id, botId, 10).then(response => {
-                    if (response) {
-                        info.msgs = response
-                    }
-                }).catch(() => router.push(`/chat/${route.params.botId}/`))
-
-
-
-            }
             chatInfo.value = info
             clearForDate()
             organize()
@@ -209,15 +207,15 @@ mounted() {
 
         }
 
-        function updateChatInfo(id: string | string[]) {
+        function updateChatInfo() {
 
 
             const bot = messagesState.messages.find(value => value.botId == route.params.botId)
             if (bot) {
                 const chat = bot.contacts.find(value => value.id == route.params.id)
                 if (chat) {
+                    setChatInfo(chat)
 
-                    setChatInfo(chat, bot.botId)
                 }
             } else {
 
@@ -233,18 +231,8 @@ mounted() {
             });
         }
 
-        watch(
-            () => route.params.id,
-            (newId) => {
 
-                if (newId && typeof newId == 'string') {
 
-                    updateChatInfo(newId)
-
-                }
-            },
-            { immediate: true, deep: true }
-        );
 
         watch(
             () => chatInfo,

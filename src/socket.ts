@@ -59,19 +59,41 @@ export function connectSocket() {
 
 
       const messages = await getContacts(cookies.get('token'), data.id)
-    
-      
 
-        const bot = messagesState.messages.find(value => value.botId == data.id)
-        if (bot && messages) {
-          bot.contacts = messages
-        } else {
-          const newBot = { botId: data.id, contacts: messages||[] }
-     
-          messagesState.messages.push(newBot)
+      messages?.map(async (v) => {
+        
+        if (data.id) {
+
+          const chats = await getChats(cookies.get('token'), v._id, data.id, 1, 0)
+          if (chats)
+            v.msgs = chats
         }
 
-      
+
+      })
+
+      const bot = messagesState.messages.find(value => value.botId == data.id)
+
+      if (bot && messages) {
+        messages.map(async (contact) => {
+          if (data.id) {
+            const chats = await getChats(cookies.get('token'), contact._id, data.id, 1, 0)
+            if (chats) {
+              contact.msgs = chats
+            }
+
+          }
+
+
+        })
+        bot.contacts = messages
+      } else {
+        const newBot = { botId: data.id, contacts: messages || [] }
+
+        messagesState.messages.push(newBot)
+      }
+
+
     }
   })
 
@@ -82,6 +104,7 @@ export function connectSocket() {
     if (!contact) {
       return
     }
+
     console.log(contact)
     const botExist = messagesState.messages.find(value => value.botId == data.botId)
     if (!botExist) {
@@ -89,7 +112,7 @@ export function connectSocket() {
       return
     }
     const contactExisting = botExist.contacts.find(value => value.id == data.id)
-
+   
     if (contactExisting && contactExisting.msgs && contact.msgs) {
 
       botExist.contacts.splice(botExist.contacts.indexOf(contactExisting), 1)
