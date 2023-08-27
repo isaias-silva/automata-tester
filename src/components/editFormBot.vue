@@ -7,6 +7,30 @@
             <p>{{ botInfo?.type }}</p>
         </div>
         <button>submissões</button>
+        <div class="block-hidden">
+            <label for="hierarchy">
+                <span>hierarquia:</span>
+                <select id="hierarchy">
+                   
+                    <option value="own">comandante</option>
+                    <option value="sub">submisso</option>
+               
+                </select>
+
+            </label>
+              <label for="botrelation">
+                <span>bot relacionado:</span>
+                <select id="botrelation">
+                   
+                    <option value="own">comandante</option>
+                    <option value="sub">submisso</option>
+               
+                </select>
+
+            </label>
+             
+            <button>alterar</button>
+        </div>
         <button>grupos</button>
         <button>integrações</button>
         <button>fluxos</button>
@@ -60,7 +84,7 @@ export default defineComponent({
     width: 20%;
     height: 100vh;
     margin: auto;
-    border: 1px solid var(--component-two-color);
+    border-right: 1px solid var(--component-two-color);
 
     display: flex;
     align-items: center;
@@ -135,5 +159,34 @@ button:hover {
     color: var(--component-two-color);
     cursor: pointer;
 
+}
+.block-hidden button{
+    width: 100px;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 0;
+}
+.block-hidden{
+    width: 100%;
+    background-color: #00000045;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.block-hidden label{
+    width: 60%;
+    margin-top: 10px;
+}
+.block-hidden select{
+    width: 100%;
+    height: 30px;
+    font-size: 16px;
+    border-radius: 3px;
+}
+
+.block-hidden button:before{
+    content: "";
+    display: none;
 }
 </style>
