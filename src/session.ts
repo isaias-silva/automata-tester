@@ -56,10 +56,12 @@ export async function updateSessionInfo() {
 }
 
 export async function updateBots() {
+    
     const { cookies } = useCookies()
     const bots = await getBots(cookies.get('token'))
+    
     if (bots) {
-      
+    console.log(bots)  
         sessionInfo.bots = bots
     }
 }

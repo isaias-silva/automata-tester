@@ -37,7 +37,7 @@
         </label>
         <div class="block-hidden">
             <div v-for="group, i of groups" class="group-card" :key="i">
-                <img :src="group.picture" alt="image">
+                <img :src="group.picture||'https://developer.jboss.org/images/jive-sgroup-default-portrait-large.png'" alt="image">
                 <h5>{{ group.name }}</h5>
                 <button>{{ group.marked ? 'excluir da lista' : 'adicionar a lista' }}</button>
             </div>
@@ -230,6 +230,9 @@ export default defineComponent({
     width: 100%;
     background-color: #00000045;
     max-height: 50%;
+    min-height: 130px;
+    box-sizing: border-box;
+
     overflow-y: scroll;
     flex-direction: column;
     align-items: center;
@@ -243,8 +246,13 @@ export default defineComponent({
     margin-top: 10px;
 }
 
+.block-hidden span{
+    display: block;
+}
 .block-hidden select {
-    width: 100%;
+    display: block;
+    margin: auto;
+    width: 50%;
     height: 30px;
     font-size: 16px;
     border-radius: 3px;

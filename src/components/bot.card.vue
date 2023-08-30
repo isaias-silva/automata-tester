@@ -38,7 +38,7 @@
 import { IBotInfo } from '@/interfaces/interface.bot.info';
 import deleteBot from '@/services/delete.bot';
 import updateBot from '@/services/update.bot';
-import { sessionInfo, updateSessionInfo } from '@/session';
+import { sessionInfo, updateBots, updateSessionInfo } from '@/session';
 import { defineComponent, reactive, ref, defineProps, onMounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 const { cookies } = useCookies()
@@ -57,12 +57,10 @@ export default defineComponent({
         async deleteThisBot() {
 
             await deleteBot(cookies.get('token'), this.bot._id)
-            const botExist = sessionInfo.bots.find((value => value._id == this.bot._id))
-           if(botExist){
-            sessionInfo.bots.splice(sessionInfo.bots.indexOf(botExist),1)
       
-           }
-            }
+               await updateBots()
+
+        }
     },
     mounted() {
 
@@ -168,8 +166,14 @@ export default defineComponent({
     font-weight: bold;
 }
 
+
 .bot-card.blue {
     border: 2px solid #44a5d2;
+}
+
+.bot-card.blue select {
+    background-color: #000;
+    color: #fff;
 }
 
 .buttonOpen {
@@ -206,9 +210,12 @@ export default defineComponent({
 .blue .buttonOpen:hover {
     border-color: #44a5d2;
     color: #44a5d2;
+    background-color: #000;
 }
 
 .blue .buttonOpen {
+    color: #000;
+    border-color: #000;
     background-color: #44a5d2;
 }
 

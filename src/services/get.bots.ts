@@ -14,8 +14,6 @@ export default async (token: string): Promise<IBotInfo[]|null> => {
     }
     const data = info.data
     
-    console.log(data)
-    
     return data
 
 }
