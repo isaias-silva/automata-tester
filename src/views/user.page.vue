@@ -52,7 +52,8 @@
         <div class="content">
             <h3>seus Bots</h3>
             <div class="flex">
-                <BotCard :bot-data="bot" v-for="bot, key in sessionInfo.bots" :key="key" />
+                <BotCard :bot-data="bot" v-for="bot, key of sessionInfo.bots" :key="key" />
+             
                 <div class="plus-card" @click="() => modes.createBot = true">
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                         <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" stroke-width="5" />
@@ -69,15 +70,13 @@
     </div>
 </template>
 <script lang="ts">
-import getAdm from '@/services/get.adm';
-import getBots from '@/services/get.bots';
 import uploadProfile from '@/services/upload.profile';
 import { differenceInDays, format, getMonth } from 'date-fns';
 import createBotForm from '@/components/createBotForm.vue';
 import { defineComponent, onMounted, reactive, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
-import { sessionInfo, updateSessionInfo } from '@/session';
+import { sessionInfo, updateSessionInfo,updateBots } from '@/session';
 const { cookies } = useCookies();
 import BotCard from '@/components/bot.card.vue';
 import { IBotInfo } from '@/interfaces/interface.bot.info';
@@ -174,6 +173,7 @@ export default defineComponent({
         onMounted(async () => {
             if (sessionInfo.name.length < 2) {
                 await updateSessionInfo()
+                await updateBots()
 
             }
             setTimeout(async () => {

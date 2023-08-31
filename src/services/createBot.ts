@@ -24,7 +24,7 @@ export default async (token: string, object: {
 
     const data = info.data
 
-    console.log(data)
+  
 
     return data
 
