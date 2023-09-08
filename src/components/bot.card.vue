@@ -57,13 +57,12 @@ export default defineComponent({
         async deleteThisBot() {
 
             await deleteBot(cookies.get('token'), this.bot._id)
-      
-               await updateBots()
+          location.reload()
 
         }
     },
     mounted() {
-
+        console.log(this.bot.name)
         this.mode = this.bot.mode
 
     },
@@ -80,7 +79,7 @@ export default defineComponent({
 <style scoped>
 .bot-card {
     width: 30%;
-    background-color: #0000001b;
+    background-color:var(--component-transparent-color);
     overflow: hidden;
     border-radius: 10px;
     min-height: 350px;

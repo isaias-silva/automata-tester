@@ -187,7 +187,6 @@ export default defineComponent({
       await updateSessionInfo()
       let bot = messagesState.messages.find(value => value.botId == this.idBot)
       if (!bot) {
-        alert(this.idBot)
         return
       }
 

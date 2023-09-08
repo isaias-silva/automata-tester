@@ -16,7 +16,7 @@ export const sessionInfo = reactive<
         phonenumber: string,
         date_of_begginer: string,
         plan_duration: number,
-        bots: IBotInfo[]
+       
     }>({
         name: "",
         email: '',
@@ -26,9 +26,10 @@ export const sessionInfo = reactive<
         phonenumber: "",
         date_of_begginer: "",
         plan_duration: 0,
-        bots: []
+
     })
 
+export const bots=reactive<{info:IBotInfo[]}>({info:[]});
 export async function updateSessionInfo() {
     const { cookies } = useCookies()
     const info = await getAdm(cookies.get('token'))
@@ -45,7 +46,6 @@ export async function updateSessionInfo() {
         sessionInfo.date_of_begginer = date_of_begginner
         sessionInfo.plan_duration = plan_duration
 
-        await updateBots()
         return info
 
     } else if (info && info.status) {
@@ -58,10 +58,10 @@ export async function updateSessionInfo() {
 export async function updateBots() {
     
     const { cookies } = useCookies()
-    const bots = await getBots(cookies.get('token'))
+    const nowBots = await getBots(cookies.get('token'))
    
-    if (bots) {
- console.log(bots.map(val=>val.name))
-        sessionInfo.bots = bots
+    if (nowBots) {
+        bots.info=nowBots
+        
     }
 }

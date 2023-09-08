@@ -52,7 +52,7 @@
         <div class="content">
             <h3>seus Bots</h3>
             <div class="flex">
-                <BotCard :bot-data="bot" v-for="bot, key of sessionInfo.bots" :key="key" />
+                <BotCard :bot-data="bot" v-for="bot, key of bots.info" :key="key" />
              
                 <div class="plus-card" @click="() => modes.createBot = true">
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -76,7 +76,7 @@ import createBotForm from '@/components/createBotForm.vue';
 import { defineComponent, onMounted, reactive, ref } from 'vue'
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
-import { sessionInfo, updateSessionInfo,updateBots } from '@/session';
+import { sessionInfo, updateSessionInfo,updateBots,bots } from '@/session';
 const { cookies } = useCookies();
 import BotCard from '@/components/bot.card.vue';
 import { IBotInfo } from '@/interfaces/interface.bot.info';
@@ -146,7 +146,7 @@ export default defineComponent({
     setup() {
         const router = useRouter()
         const modes = ref<{ editProfile: boolean, createBot: boolean }>({ editProfile: false, createBot: false })
-
+      
         const status = ref<any>(null)
 
         const widthLifeBar = ref<number>(0)
@@ -174,6 +174,7 @@ export default defineComponent({
             if (sessionInfo.name.length < 2) {
                 await updateSessionInfo()
                 await updateBots()
+             
 
             }
             setTimeout(async () => {
@@ -189,6 +190,7 @@ export default defineComponent({
             status,
             sessionInfo,
             widthLifeBar,
+            bots
         
         }
     }
@@ -339,7 +341,7 @@ export default defineComponent({
     background-color: #00000000;
 }
 
-.bot-card,
+
 .plus-card {
     width: 30%;
     background-color: #0000001b;
@@ -431,31 +433,9 @@ export default defineComponent({
     filter: opacity(1);
 }
 
-.bot-card img {
-    width: 100%;
 
 
-}
 
-
-.bot-card ul {
-    list-style: none;
-}
-
-.bot-card select {
-    width: 150px;
-    height: 30px;
-    margin-bottom: 10px;
-    color: var(--font-color);
-    background-color: var(--component-color);
-    text-align: center;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-.bot-card.blue {
-    border: 2px solid #44a5d2;
-}
 
 .lifebar {
     width: 50%;
