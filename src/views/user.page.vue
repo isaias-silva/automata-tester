@@ -38,7 +38,7 @@
                 <span ref="status" :style="{ width: widthLifeBar + '%' }" class="status"></span>
 
             </div>
-            <router-link to="/buy" class="renovate-plan">renovar</router-link>
+            <router-link to="/renovate" class="renovate-plan">renovar</router-link>
         </div>
         <div class="content noback" v-if="modes.createBot">
             <button class="closeBtn" @click="() => modes.createBot = false">x</button>
@@ -172,9 +172,9 @@ export default defineComponent({
         }
         onMounted(async () => {
             if (sessionInfo.name.length < 2) {
-                await updateSessionInfo()
+               const info= await updateSessionInfo()
                 await updateBots()
-             
+         
 
             }
             setTimeout(async () => {

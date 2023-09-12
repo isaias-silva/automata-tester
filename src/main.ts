@@ -14,3 +14,4 @@ app.use(VueCookies)
 
 
 app.mount('#app')
+

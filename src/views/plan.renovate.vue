@@ -5,19 +5,19 @@
     <div class="plans">
       <div v-for="product, key of products" :key="key" class="blockplan">
         <h3>{{ product.name }}</h3>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu_ip7G3oUseZI4Lu91vQZa42zp0joc-2PwOKcKzk_0G0UtotZH1b1VR1LsnZV4wD2XmA&usqp=CAU" alt="">
         <ul>
           
-           
-            <img :src="product.images[0]" alt="img">
+           <li>{{ product.rules.maxBots }} Bots</li>
+         <li> {{ product.rules.maxGroups }} Grupos </li>
+         <li>telegram e whatsapp</li> 
           
-          
-          <li v-for="item, key of  product.description.split(',')" :key="key">{{ item }}</li>
-        </ul>
+           </ul>
         <p class="price">
-          {{ product.price / 100 }} R$<span> /mensal </span>
+          {{ product.price}} R$<span> /{{ product.days }} dia(s) de acesso</span>
         </p>
 
-        <button>eu quero</button>
+        <RouterLink :to="`/pay?id=${product._id}`">eu quero</RouterLink>
       </div>
     </div>
 
@@ -48,6 +48,7 @@ export default defineComponent({
       const products = await getProducts()
       if (products) {
         console.log(products)
+      
         this.products = products
 
       }
@@ -97,7 +98,7 @@ export default defineComponent({
   
 }
 
-.blockplan button {
+.blockplan a {
   width: 90%;
   height: 40px;
   font-size: 24px;
@@ -105,9 +106,14 @@ export default defineComponent({
   background-color: var(--link-color);
   border: 1px solid;
   transition: 0.4s linear;
+  text-decoration: none;
+  color: #141414;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.blockplan button:hover {
+.blockplan a:hover {
   cursor: pointer;
   background-color: var(--component-two-color);
 }

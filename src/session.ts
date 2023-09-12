@@ -3,7 +3,7 @@ import getAdm from "./services/get.adm";
 import { useCookies } from "vue3-cookies";
 import { IBotInfo } from '@/interfaces/interface.bot.info'
 import getBots from "./services/get.bots";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { messagesState } from "./socket";
 
 export const sessionInfo = reactive<
@@ -32,8 +32,9 @@ export const sessionInfo = reactive<
 export const bots=reactive<{info:IBotInfo[]}>({info:[]});
 export async function updateSessionInfo() {
     const { cookies } = useCookies()
+   const route= useRoute()
     const info = await getAdm(cookies.get('token'))
-    const router = useRouter()
+    
 
     if (info && info.status == 200) {
 
@@ -45,10 +46,11 @@ export async function updateSessionInfo() {
         sessionInfo.phonenumber = phone_number
         sessionInfo.date_of_begginer = date_of_begginner
         sessionInfo.plan_duration = plan_duration
-
+        updateBots()
         return info
 
     } else if (info && info.status) {
+    
         return info
     } else {
         return null

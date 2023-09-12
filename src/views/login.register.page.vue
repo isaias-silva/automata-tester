@@ -114,7 +114,8 @@ export default defineComponent({
                                     if (status == 201) {
                                         cookies.set('token', data.token)
                                         this.$router.push('/')
-                                    } else {
+                                    }
+                                     else {
                                         throw new Error(data.message)
                                     }
                                 } catch (err: any) {
@@ -140,7 +141,7 @@ export default defineComponent({
                                 if (status == 201 || status == 200) {
                                     cookies.set('token', data.token)
 
-                                    this.$router.push('/buy')
+                                    this.$router.push('/renovate')
                                 } else {
                                     this.createPopUp("erro ao tentar registrar", `${data.message}`)
 

@@ -49,17 +49,17 @@ const { cookies } = useCookies();
 export default defineComponent({
     name: 'adminCard',
     data(): {
-       
+
         selectedImage?: string,
         profileFile?: File
 
     } {
         return {
-         
-         
-           
+
+
+
             selectedImage: undefined,
-          
+
             profileFile: undefined
         }
     }
@@ -71,17 +71,24 @@ export default defineComponent({
         }
 
     }, setup() {
-     
+
+
+        onMounted(async () => {
+
+            let info = await updateSessionInfo()
+            if (!info || (info && info.status && info?.status != 200)) {
+                if (info.status == 402) {
        
-         onMounted(async () => {
-     
-        let info=await updateSessionInfo()
-if(!info || (info && info.status && info?.status!=200)){
-    cookies.remove('token')
-    router.push('/login')
-}
-       
+                    router.push('/renovate')
+                }else{
+                    cookies.remove('token')
+                router.push('/login')
+
+                }
         
+            }
+
+
 
         })
         return {

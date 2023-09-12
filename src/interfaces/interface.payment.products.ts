@@ -1,7 +1,13 @@
-export interface Iproduct{
+export interface Iproduct {
+    days:number,
     name:string,
-    id: string,
-    images: string[],
-    description: string
-    price: number
+    price:number,
+    rules
+    : {
+        maxAttendants:number
+        maxBots:number
+        sizeOfCsv:number
+        maxGroups:number
+    },
+    _id:string
 }
