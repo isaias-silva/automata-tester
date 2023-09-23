@@ -126,9 +126,12 @@ export default defineComponent({
                     this.selectedImage = require('@/assets/icons/corrupted.jpg')
                     return
                 }
-                this.updateProfile()
+                this.updateProfile().then(()=>{ location.reload()})
+               
+               
+               
                 this.selectedImage = URL.createObjectURL(file);
-                console.log(this.selectedImage)
+             
             }
         },
         async updateProfile() {
