@@ -2,7 +2,7 @@ import axios from "./axios"
 
 export default async (token: string, id: string): Promise<any | null> => {
   
-    const info = await axios.delete(`botConfig/delete/${id}`, {
+    const info = await axios.delete(`bot/delete/${id}`, {
 
         headers:
             { 'Authorization': token ? 'Bearer ' + token : null }

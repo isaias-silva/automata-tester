@@ -1,4 +1,4 @@
-import { IBotInfo } from "@/interfaces/interface.bot.info"
+
 import axios from "./axios"
 
 export default async (token: string, id: string): Promise<{ picture: string, name: string, id: string }[] | null> => {

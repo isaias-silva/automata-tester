@@ -79,7 +79,6 @@ import { useRouter } from 'vue-router';
 import { sessionInfo, updateSessionInfo,updateBots,bots } from '@/session';
 const { cookies } = useCookies();
 import BotCard from '@/components/bot.card.vue';
-import { IBotInfo } from '@/interfaces/interface.bot.info';
 export default defineComponent({
     name: "UserPage",
     components: {
@@ -121,8 +120,10 @@ export default defineComponent({
             const file = (event.target as HTMLInputElement).files?.[0];
             if (file) {
                 this.profileFile = file
-                const [name, type] = file.name.split('.')
-                if (!type || (type.toLowerCase() != 'png' && type.toLowerCase() != 'jpg')) {
+               const [type,format]=file.type.split('/')
+             
+                if (type!='image') {
+                    alert(file.type)
                     this.selectedImage = require('@/assets/icons/corrupted.jpg')
                     return
                 }

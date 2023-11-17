@@ -32,7 +32,7 @@
 
 
         </div>
-        <button type="submit">{{ mode == 'login' ? 'Log in' : 'Register' }}</button>
+        <button type="submit">{{ mode == 'login' ? 'Entrar' : 'Cadastrar' }}</button>
 
         <span class="clickspan" @click="toggleLoginResister"> {{ mode == 'login' ? 'não possui conta? registre!' : `possui
             uma

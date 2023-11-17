@@ -83,11 +83,12 @@ import MessagesComponent from '@/components/Messages.vue'
 import { defineComponent, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import getChats from '@/services/get.chats';
-import { useCookies } from 'vue3-cookies';
+import { globalCookiesConfig, useCookies } from 'vue3-cookies';
 import { Imessage } from '@/interfaces/interface.bot.message';
 import { parse, compareAsc } from 'date-fns';
 import { config } from '@/botConfig';
 import router from '@/route';
+import sendMessageBot from '@/services/send.message.bot';
 
 
 
@@ -98,10 +99,10 @@ export default defineComponent({
         MessagesComponent,
 
     },
-    data(): { message?: string, observer?: IntersectionObserver } {
+    data(): { observer?: IntersectionObserver } {
         return {
             observer: undefined,
-            message: undefined
+
         }
     },
     updated() {
@@ -155,20 +156,7 @@ export default defineComponent({
 
     },
 
-    methods: {
 
-
-
-        sendMessage() {
-            if (!this.message || this.message.length < 1) {
-                return
-            }
-            socket.emit('sendText', { phone: this.$route.params.id, text: this.message })
-            this.message = ''
-            this.scrollToBottom()
-
-        }
-    },
     setup() {
         const Cookies = useCookies()
 
@@ -357,8 +345,16 @@ export default defineComponent({
 
         }
 
+        async function sendMessage() {
+            if (message.value && chatInfo.value?.id)
+                await sendMessageBot(cookies.get('token'), message.value, chatInfo.value?.id, route.params.botId.toString())
+                message.value=undefined
+        }
 
+        const message = ref<string>()
         return {
+            message,
+            sendMessage,
             chatInfo,
             forDateMessages,
             setChatInfo,

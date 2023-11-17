@@ -14,7 +14,7 @@ export default async (token: string, object: {
 
 }): Promise<{ message: string }> => {
     
-    const info = await axios.post('botConfig/create', object, {
+    const info = await axios.post('bot/create', object, {
 
         headers:
             { 'Authorization': token ? 'Bearer ' + token : null }

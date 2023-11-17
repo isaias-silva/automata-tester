@@ -38,8 +38,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from 'vue'
-import getAdm from '@/services/get.adm'
-import uploadProfile from '@/services/upload.profile'
 import { useCookies } from "vue3-cookies";
 import { disconnecteSocket } from '@/socket';
 import router from '@/route';
