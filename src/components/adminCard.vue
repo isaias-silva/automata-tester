@@ -74,7 +74,11 @@ export default defineComponent({
         onMounted(async () => {
 
             let info = await updateSessionInfo()
-            if (!info || (info && info.status && info?.status != 200)) {
+            if(!info){
+                cookies.remove('token')
+                router.push('/login')
+            }
+            if ( (info && info.status && info?.status != 200)) {
                 if (info.status == 402) {
        
                     router.push('/renovate')

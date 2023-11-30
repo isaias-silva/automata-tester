@@ -48,7 +48,7 @@ export default defineComponent({
         return {
             noturne: cookies.get('noturne') ? true : false,
             message: 'the tester automata',
-            min: false
+            min: true
         }
     },
     methods: {
@@ -93,7 +93,7 @@ export default defineComponent({
     transition: 0.2s linear;
     position: fixed;
     overflow-y: scroll;
-    box-shadow: 4px 4px 5px #000000;
+    box-shadow: 2px 2px 5px #000000;
 
 }
 

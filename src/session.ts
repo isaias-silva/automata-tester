@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import getAdm from "./services/get.adm";
+import getAdm from "./services/get.user";
 import { useCookies } from "vue3-cookies";
 import { IBotInfo } from '@/interfaces/interface.bot.info'
 import getBots from "./services/get.bots";

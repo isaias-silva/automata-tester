@@ -3,37 +3,34 @@
     <span :class="bot.status == 'online' ? 'status-bot on' : 'status-bot off'">
       {{ bot.status }}</span
     >
-    <button class="delete-bot" @click="deleteThisBot">&#x1F5D1;</button>
+
     <img
-      :src="
-      
-        bot.type == 'TelBot'
-          ? 'telwallpaper.png'
-          : 'wallpaper.jpg'
-      "
+      :src="bot.type == 'TelBot' ? 'telwallpaper.png' : 'wallpaper.jpg'"
       alt=""
+      class="bot-banner"
     />
-    <img v-if="bot.botCreds.profile" :src="bot.botCreds.profile" alt="profile" class="botProfile">
+    <img
+      v-if="bot.botCreds.profile"
+      :src="bot.botCreds.profile"
+      alt="profile"
+      class="botProfile"
+    />
 
     <h4>{{ bot.name }}</h4>
 
     <ul>
-      <li><strong>type: </strong> {{ bot.type }}</li>
-      <li v-if="bot.number"><strong>number: </strong> {{ bot.number }}</li>
-      <li>
-        <select name="mode" id="mode" v-model="mode" @change="updateThisBot">
-          <option value="repasse">repasse</option>
-          <option value="sniper">sniper</option>
-          <option value="attendant">attendant</option>
-        </select>
-      </li>
-      <li>
-        <select name="flow" id="flow" v-model="flowId">
-          <option value="1">flow1</option>
-        </select>
-      </li>
+      <li><strong>plataforma: </strong> {{ bot.type=='TelBot'?'Telegram':'Whatsapp' }}</li>
+
+      <li v-if="bot.botCreds"><strong>nickname: </strong>{{ bot.botCreds.name }}</li>
     </ul>
-    <router-link class="buttonOpen" :to="'chat/' + bot._id"> open </router-link>
+    <div class="control">
+      <router-link class="buttonOpen" :to="'bot/' + bot._id">
+        configurações
+      </router-link>
+      <router-link class="buttonOpen" :to="'chat/' + bot._id">
+        mensagens
+      </router-link>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -86,10 +83,11 @@ export default defineComponent({
   background-color: var(--component-transparent-color);
   overflow: hidden;
   border-radius: 10px;
-  min-height: 380px;
+  min-height: 320px;
   margin: 10px;
   transition: linear 0.5s;
   position: relative;
+  padding-bottom: 10px;
 }
 
 .status-bot {
@@ -106,23 +104,24 @@ export default defineComponent({
   box-sizing: border-box;
   font-size: 12px;
   margin: 4px;
+  z-index: 999 !important;
 }
 
-
-
-.delete-bot {
+.stop-bot {
   position: absolute;
   right: 0;
   width: 50px;
   height: 50px;
-  background-color: #00000000;
-  font-size: 30px;
+  background-color: var(--component-two-color);
+  font-size: 18px;
   border: none;
+  color: var(--font-color);
   transition: 0.2s linear;
+  border-radius: 100%;
 }
 
-.delete-bot:hover {
-  rotate: 45deg;
+.stop-bot:hover {
+  background-color: var(--component-color);
   cursor: pointer;
 }
 
@@ -146,13 +145,14 @@ export default defineComponent({
   animation: on 1s infinite;
 }
 
-.bot-card img {
+.bot-card .bot-banner {
   width: 100%;
-
+  opacity: 0.3;
 }
 
 .bot-card ul {
   list-style: none;
+  margin-bottom: 10px;
 }
 
 .bot-card select {
@@ -179,12 +179,16 @@ export default defineComponent({
   background-color: var(--component-two-color);
   border: 2px solid var(--component-color);
   color: var(--component-color);
-  box-sizing: border-box;
-  padding: 5px;
+ 
+  padding: 10px;
+ 
   border-radius: 10px;
+  display: flex;
+  justify-content: center;
   font-weight: bold;
   transition: 0.4s linear;
   margin: 2px;
+
   text-decoration: none;
 }
 
@@ -215,18 +219,23 @@ export default defineComponent({
   background-color: #44a5d2;
 }
 
-.bot-card .botProfile{
-  
+.bot-card .botProfile {
   width: 100px;
   height: 100px;
-  z-index: 9999999!important;
+  z-index: 9999999 !important;
   position: absolute;
   left: 35%;
   top: 20%;
   border-radius: 100%;
   opacity: 1;
 
-  border: 2px solid var(--component-color)
+  border: 2px solid var(--component-color);
+}
+
+.control{
+  display: flex;
+  width: 90%;
+  margin: auto;
 }
 
 @keyframes on {

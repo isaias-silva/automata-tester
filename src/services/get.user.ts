@@ -1,6 +1,8 @@
+import { Iuser } from "@/interfaces/interface.user"
 import axios from "./axios"
+import { AxiosResponse } from "axios"
 
-export default async function (token: string) {
+export default async function (token: string):Promise<AxiosResponse<Iuser>> {
 
     const info = await axios.get('/user/me', {
         headers:

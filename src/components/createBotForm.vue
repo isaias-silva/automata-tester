@@ -3,7 +3,8 @@
     <Popup :title="popupMessages.title" :message="popupMessages.message" v-if="showPopup"
         @close="() => showPopup = false" />
 
-    <form @submit.prevent="createBotNow">
+        <div class="modal">
+            <form @submit.prevent="createBotNow">
         <h3>crie um novo bot</h3>
 
         <div class="inputBlock">
@@ -38,6 +39,8 @@
 
         <button> criar </button>
     </form>
+        </div>
+   
 </template>
 <script lang="ts">
 import createBot from '@/services/createBot';
@@ -110,14 +113,15 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+
 form {
     position: relative;
     background-color: var(--modal-color);
     color: var(--font-color);
+    border: 2px solid var(--component-two-color);
     width: 50%;
     min-height: 250px;
     margin: auto;
-
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -126,7 +130,7 @@ form {
     border-radius: 15px;
     box-shadow: 8px 8px #1d1d1d99;
     transition: 1s linear;
-    margin-top: 20px;
+    margin-top: 200px;
     margin-bottom: 20px
 }
 
