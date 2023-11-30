@@ -14,7 +14,8 @@ export default async (token: string,id:string): Promise<IBotInfo|null> => {
     }
     const data = info.data
     
-    console.log(data)
+    console.log('bot')
+    console.log( data)
     
     return data
 

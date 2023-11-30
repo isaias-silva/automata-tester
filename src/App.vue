@@ -35,25 +35,19 @@ export default defineComponent({
 }
 
 :root {
-  --main-color: #e9eee4;
-
-  --modal-color: #ffffff;
-
-  --component-color: #539d72;
-
-  --component-two-color: #a6e7a3;
-
-  --font-color: #404040;
-
-  --link-color: #007b2f;
-
+  --main-color: #d4f3dc; /* Light green */
+  --modal-color: #ffffff; /* White */
+  --component-color: #337658; /* Dark green */
+  --component-two-color: #6abd85; /* Pastel green */
+  --font-color: #000000; /* Black */
+  --link-color: #00aa44; /* Deep green */
   --popup-text-color: var(--font-color);
-  --component-transparent-color: rgba(255, 255, 255, 0.457);
-
-
-
-
+  --component-transparent-color: rgba(255, 255, 255, 0.457); /* White with transparency */
 }
+
+
+
+
 
 body {
   background-color: var(--main-color);

@@ -32,7 +32,7 @@ const token = cookies.get('token')
 export let socket: Socket
 export function connectSocket() {
 
-  const URL = `http://localhost:8080`;
+  const URL = `http://localhost:8080/`;
 
   if (socketState.connected == false) {
     socket = io(URL, {
