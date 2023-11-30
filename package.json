@@ -9,6 +9,9 @@
     "start": "vue-cli service dist"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.0",
+    "@fortawesome/free-solid-svg-icons": "^6.5.0",
+    "@fortawesome/vue-fontawesome": "^3.0.5",
     "@types/vue-the-mask": "^0.11.1",
     "axios": "^1.4.0",
     "buffer": "^6.0.3",

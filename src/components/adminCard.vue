@@ -7,31 +7,31 @@
         <ul>
 
             <li>
-                <router-link to="/">&#128264; <span>fluxos</span></router-link>
+                <router-link to="/"><font-awesome-icon icon='diagram-project'/> <span>fluxos</span></router-link>
             </li>
             <li v-if="sessionInfo.adm">
-                <router-link to="/"> &#128101; <span>usuários</span></router-link>
+                <router-link to="/"> <font-awesome-icon icon='people-group'/> <span>usuários</span></router-link>
             </li>
             <li>
-                <router-link to="/">&#128079; <span>atendentes</span></router-link>
+                <router-link to="/"><font-awesome-icon icon='people-line'/> <span>atendentes</span></router-link>
             </li>
             <li>
-                <router-link to="/"> &#128241; <span>contatos</span></router-link>
+                <router-link to="/"> <font-awesome-icon icon='contact-card'/>  <span>contatos</span></router-link>
             </li>
             <li>
-                <router-link to="/"> &#128190; <span>base de dados</span></router-link>
+                <router-link to="/"> <font-awesome-icon icon='database'/>  <span>base de dados</span></router-link>
             </li>
             <li>
-                <router-link to="/">&#128279; <span>integrações</span></router-link>
+                <router-link to="/"><font-awesome-icon icon='network-wired'/> <span>integrações</span></router-link>
             </li>
             <li>
-                <router-link to="/">&#8505;<span> sobre</span></router-link>
+                <router-link to="/"><font-awesome-icon icon='info'/><span> sobre</span></router-link>
             </li>
             <li>
-                <router-link to="/">&#128200; <span>dashboard</span></router-link>
+                <router-link to="/"><font-awesome-icon icon='dashboard'/> <span>dashboard</span></router-link>
             </li>
             <li>
-                <router-link to="/login" @click="logout">&#128682; <span>sair</span></router-link>
+                <router-link to="/login" @click="logout"><font-awesome-icon icon='power-off'/> <span>sair</span></router-link>
             </li>
         </ul>
     </div>
@@ -117,7 +117,7 @@ li {
     width: 100%;
     background-color: var(--component-color);
     border-bottom: 1px solid var(--component-two-color);
-    height: 50px;
+    height: 70px;
 
     transition: 0.2s linear;
 }
@@ -136,6 +136,10 @@ li a {
     width: 100%;
     height: 100%;
 
+}
+li a span{
+    display:block;
+    margin-left: 10px;
 }
 
 .min li a span {

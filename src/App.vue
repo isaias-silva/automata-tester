@@ -5,6 +5,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useCookies } from "vue3-cookies";
+
+
 const { cookies } = useCookies();
 
 export default defineComponent({

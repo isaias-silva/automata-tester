@@ -3,10 +3,10 @@
         <div class="control">
 
             <button class="mode" @click="toggleDarkMode">
-                <span class="moon">&#127769;</span>
-                <span class="sun">&#9728;</span>
+                <div class="moon"><font-awesome-icon icon="moon"/></div>
+                <div class="sun"><font-awesome-icon icon="sun"/></div>
             </button>
-            <button @click="toogleMin()">
+            <button class="redutor" @click="toogleMin()">
 
                 <svg v-if="min == false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -39,7 +39,7 @@ export default defineComponent({
     components: {
         AdminCard
     },
-    name: 'HeaderComponent',
+    name: 'AsideComponent',
     data(): {
         message: string,
         noturne: boolean,
@@ -140,7 +140,7 @@ export default defineComponent({
 
 }
 
-.control button:hover {
+.control .redutor:hover {
     cursor: pointer;
     background-color: var(--link-color);
 }
@@ -181,8 +181,8 @@ button.mode {
     border: none;
     cursor: pointer;
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     overflow: hidden;
     border-radius: 100%;
     flex-shrink: 0;
@@ -209,12 +209,14 @@ button.mode {
     background-color: #000;
     transition-delay: 0.1s;
     transform-origin: left;
+    font-size: 24px;
 }
 
 .mode .sun {
     background-color: #ffc107;
     transition-delay: 0s;
     transform-origin: right;
+    font-size: 24px;
 }
 
 

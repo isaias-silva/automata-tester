@@ -1,6 +1,6 @@
 <template>
        
-       <HeaderComponent />
+       <AsideComponent/>
    
     <div class="content">
         <router-view></router-view>
@@ -11,11 +11,11 @@
   
 <script lang="ts">
 
-import HeaderComponent from "@/components/HeaderComponent.vue"
+import AsideComponent from "@/components/AsideComponent.vue"
 
 export default {
     components: {
-        HeaderComponent
+        AsideComponent
     }
 }
 </script>

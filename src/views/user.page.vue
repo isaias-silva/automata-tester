@@ -89,8 +89,7 @@ import { differenceInDays, format, getMonth } from "date-fns";
 import createBotForm from "@/components/createBotForm.vue";
 import editFormUser from "@/components/editFormUser.vue";
 
-import { defineComponent, onMounted, reactive, ref } from "vue";
-import { useCookies } from "vue3-cookies";
+import { defineComponent, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { sessionInfo, updateSessionInfo, updateBots, bots } from "@/session";
 
