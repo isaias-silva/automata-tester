@@ -214,19 +214,20 @@ export default defineComponent({
   display: grid;
   position: relative;
   grid-template-rows: 80% 20% 20%;
-  grid-template-areas: "profile info info" "profile info info";
+  grid-template-areas: "profile info info " "profile info info";
   border-radius: 10px;
   margin: auto;
   margin-bottom: 10px;
   box-sizing: border-box;
   padding: 4px;
+  overflow: hidden;
 }
 
 .banner-image {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 70%;
+  height: 65%;
   z-index: -1;
   background-image: linear-gradient(
     to left,
@@ -278,10 +279,17 @@ export default defineComponent({
   background-color: #0000001b;
   overflow: hidden;
   border-radius: 10px;
-  min-height: 350px;
+  min-height: 330px;
   margin: 10px;
   transition: linear 0.5s;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--component-color);
+  border: 2px dashed var(--component-color);
+
+
 }
 
 .status-bot {
@@ -320,14 +328,6 @@ export default defineComponent({
   animation: on 1s infinite;
 }
 
-.plus-card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--component-two-color);
-  border: 2px dashed var(--component-two-color);
-}
-
 .plus-card svg {
   transition: 0.3s linear;
 }
@@ -355,6 +355,7 @@ export default defineComponent({
   backdrop-filter: blur(8px);
   filter: opacity(0);
   transition: linear 0.5s;
+  color:var(--link-color)
 }
 
 .plus-card:hover::after {

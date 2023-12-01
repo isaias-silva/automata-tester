@@ -45,7 +45,7 @@ import { sessionInfo, updateSessionInfo } from '@/session';
 const { cookies } = useCookies();
 
 export default defineComponent({
-    name: 'adminCard',
+    name: 'AsideLinks',
     data(): {
 
         selectedImage?: string,

@@ -1,5 +1,5 @@
 <template>
-    <div :class="min ? 'min header' : 'header'">
+    <div :class="min ? 'min aside' : 'aside'">
         <div class="control">
 
             <button class="mode" @click="toggleDarkMode">
@@ -21,7 +21,7 @@
 
 
         </div>
-        <AdminCard />
+        <AsideLinks/>
 
 
     </div>
@@ -31,14 +31,16 @@
 import { socket } from '@/socket';
 import { defineComponent } from 'vue'
 import { useCookies } from "vue3-cookies";
-import AdminCard from './adminCard.vue';
+import AsideLinks from './AsideLinks.vue';
+
 const { cookies } = useCookies();
 
 
 export default defineComponent({
     components: {
-        AdminCard
-    },
+   
+    AsideLinks
+},
     name: 'AsideComponent',
     data(): {
         message: string,
@@ -81,7 +83,7 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-.header {
+.aside {
     z-index: 999 !important;
     color: var(--font-color);
     background: var(--component-color);
@@ -97,7 +99,7 @@ export default defineComponent({
 
 }
 
-.header::-webkit-scrollbar {
+.aside::-webkit-scrollbar {
     display: none;
 }
 
@@ -321,7 +323,7 @@ button.mode {
 }
 
 @media screen and (max-width: 768px) {
-    .header {
+    .aside {
         display: flex;
     }
 
