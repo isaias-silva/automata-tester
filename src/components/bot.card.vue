@@ -10,8 +10,8 @@
       class="bot-banner"
     />
     <img
-      v-if="bot.botCreds.profile"
-      :src="bot.botCreds.profile"
+      v-if="bot?.botCreds?.profile"
+      :src="bot?.botCreds?.profile"
       alt="profile"
       class="botProfile"
     />

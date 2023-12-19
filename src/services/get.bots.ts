@@ -1,7 +1,7 @@
 import { IBotInfo } from "@/interfaces/interface.bot.info"
 import axios from "./axios"
 
-export default async (token: string): Promise<IBotInfo[]|null> => {
+export default async (token: string): Promise<IBotInfo[] | null> => {
     const info = await axios.get('bot/my', {
 
         headers:
@@ -13,7 +13,8 @@ export default async (token: string): Promise<IBotInfo[]|null> => {
         return null
     }
     const data = info.data
-    
+
+    console.log(data.length)
     return data
 
 }

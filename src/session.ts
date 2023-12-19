@@ -30,6 +30,7 @@ export const sessionInfo = reactive<
     })
 
 export const bots=reactive<{info:IBotInfo[]}>({info:[]});
+
 export async function updateSessionInfo() {
     const { cookies } = useCookies()
    const route= useRoute()
