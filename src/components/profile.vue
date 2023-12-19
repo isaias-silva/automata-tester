@@ -53,7 +53,7 @@ export default defineComponent({
         }
         this.updateProfile().then(() => {
             if(this.reload.valueOf()){
-              alert(this.reload)
+          
                 location.reload();
             }
           });
@@ -76,7 +76,7 @@ export default defineComponent({
 <style scoped>
 .profile {
   box-sizing: border-box;
-
+background-color: var(--font-color);
   overflow: hidden;
   border-radius: 100%;
   border: 2px solid var(--component-color);

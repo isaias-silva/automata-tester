@@ -13,7 +13,7 @@
 
       <div class="collum">
         <div class="collum">
-          <Profile :profile-prop="infoUpdated?.profile" :reload="false" />
+          <Profile :profile-prop="infoUpdated?.profile" :reload="true" />
         </div>
         <div class="collum">
           <div class="block">
@@ -164,7 +164,7 @@ input {
   border-radius: 3px;
   padding-left: 4px;
   height: 26px;
-  border: none;
+  border: 1px solid var(--component-two-color);
 }
 button {
   background-color: var(--component-two-color);

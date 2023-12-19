@@ -45,6 +45,7 @@ export default defineComponent({
   --link-color: #00aa44; /* Deep green */
   --popup-text-color: var(--font-color);
   --component-transparent-color: rgba(255, 255, 255, 0.457); /* White with transparency */
+
 }
 
 

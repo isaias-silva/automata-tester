@@ -43,7 +43,7 @@
     <div class="content">
       <h3>seus Bots</h3>
       <div class="flex">
-        <BotCard :bot-data="bot" v-for="(bot, key) of bots.info" :key="key" />
+        <BotCard :bot-data="bot" v-for="(bot, key) of bots.info" :key="(key*2).toString()" />
 
         <div class="plus-card" @click="() => (modes.createBot = true)">
           <svg

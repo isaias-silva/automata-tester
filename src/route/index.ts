@@ -8,6 +8,7 @@ import chatPageDetails from '@/views/chat.page.details.vue'
 import hometemplate from '@/templates/HomeTemplate.vue'
 import chatTemplate from '@/templates/chatTemplate.vue'
 import planRenovate from '@/views/plan.renovate.vue'
+import botDetailsPage from '@/views/bot.details.page.vue'
 const routes = [
 
   {
@@ -24,6 +25,11 @@ const routes = [
         name: 'profile',
         path: '/profile',
         component: userPage
+      },
+      {
+        name: 'bot_details',
+        path: '/bot/:id',
+        component: botDetailsPage
       }
     ]
   },
