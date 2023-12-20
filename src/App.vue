@@ -105,4 +105,16 @@ body.dark {
 *::-webkit-scrollbar-thumb {
   background-color: var(--link-color)
 }
+
+.allboard {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+  box-sizing: border-box;
+
+  flex-wrap: wrap;
+  text-align: justify;
+  position: relative;
+}
 </style>

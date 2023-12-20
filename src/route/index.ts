@@ -27,7 +27,7 @@ const routes = [
         component: userPage
       },
       {
-        name: 'bot_details',
+        name: 'botDetails',
         path: '/bot/:id',
         component: botDetailsPage
       }
