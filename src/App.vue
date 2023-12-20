@@ -49,7 +49,13 @@ export default defineComponent({
 }
 
 
+.tel{
+ 
+  --component-color: #334c76; /* Dark green */
+  --component-two-color: #6ec0ff;
+  --component-transparent-color: rgba(43, 78, 106, 0.457);
 
+}
 
 
 body {
@@ -115,6 +121,17 @@ body.dark {
 
   flex-wrap: wrap;
   text-align: justify;
+  position: relative;
+}
+.content {
+  width: 90%;
+  background-color: #00000032;
+  margin: auto;
+  box-sizing: border-box;
+  margin-top: 50px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
   position: relative;
 }
 </style>

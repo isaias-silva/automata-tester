@@ -195,17 +195,7 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-.allboard {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin: auto;
-  box-sizing: border-box;
 
-  flex-wrap: wrap;
-  text-align: justify;
-  position: relative;
-}
 
 .banner {
   width: 95%;
@@ -251,17 +241,7 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-.content {
-  width: 90%;
-  background-color: #00000032;
-  margin: auto;
-  box-sizing: border-box;
-  margin-top: 50px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 10px;
-  position: relative;
-}
+
 
 .noback {
   top: 0;

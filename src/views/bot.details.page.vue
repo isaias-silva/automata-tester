@@ -1,19 +1,34 @@
 <template>
-  <div class="allboard">
+  <div :class="bot?.type == 'TelBot' ? 'allboard tel' : 'allboard norm'">
     <div class="banner">
       <div class="banner-image"></div>
       <img
-        :src="bot?.botCreds?.profile"
+        :src="bot?.botCreds?.profile || require('../../public/profile.png')"
         alt="profile"
         class="profile rounded-image"
       />
       <div class="bot-info">
         <div class="blockinfo">
-          <h2>{{ bot?.name }}</h2>
-          <span>{{ bot?.type=="TelBot"?'telegram':'whatsapp'}}</span>
+          <h2>{{ bot?.name || "robot" }}</h2>
+          <span>@{{ bot?.botCreds?.name || "bot automatizado" }}</span>
+        </div>
+        <div class="blockinfo">
+          <h2>{{ bot?.mode }}</h2>
+          <span>{{
+            bot?.type == "TelBot"
+              ? "Telegram"
+              : bot?.type == "WaBot"
+              ? "Whatsapp"
+              : "tipo de bot"
+          }}</span>
         </div>
       </div>
+   
     </div>
+    <div class="content">
+        <h3>Detalhes </h3>
+        <font-awesome-icon icon='network-wired'/> 
+      </div>
   </div>
 </template>
 
@@ -32,6 +47,7 @@ export default defineComponent({
     const token = cookies.get("token");
     const route = useRoute();
     const bot = ref<IBotInfo>();
+
     onMounted(async () => {
       if (!token) {
         router.push("/login");
@@ -49,14 +65,14 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-
 .banner {
   width: 95%;
   margin: 0;
-  background-color: #00000032;
+  background-color: var(--component-transparent-color);
   display: grid;
   position: relative;
   grid-template-rows: 80% 20% 20%;
+  grid-template-columns: 50% 50%;
   grid-template-areas: "profile info info " "profile info info";
   border-radius: 10px;
   margin: auto;
@@ -85,7 +101,9 @@ export default defineComponent({
   align-self: end;
   width: 200px;
   border-radius: 100%;
-
+  margin: 10px;
+  box-sizing: border-box;
+  border: 10px solid var(--component-transparent-color);
 }
 .bot-info {
   width: 100%;
@@ -95,5 +113,8 @@ export default defineComponent({
   align-self: end;
 
   box-sizing: border-box;
+}
+.blockinfo h2 {
+  font-size: 32px;
 }
 </style>

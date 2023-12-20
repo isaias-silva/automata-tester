@@ -145,6 +145,16 @@ export default defineComponent({
   animation: on 1s infinite;
 }
 
+.blue .on::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  display: block;
+  border-radius: 100%;
+  background-color: #03bcff;
+}
 .bot-card .bot-banner {
   width: 100%;
   opacity: 0.3;
