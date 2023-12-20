@@ -118,7 +118,7 @@ body.dark {
   justify-content: space-between;
   margin: auto;
   box-sizing: border-box;
-
+height: 100%;
   flex-wrap: wrap;
   text-align: justify;
   position: relative;
@@ -131,6 +131,7 @@ body.dark {
   margin-top: 50px;
   text-align: center;
   padding: 10px;
+
   border-radius: 10px;
   position: relative;
 }
